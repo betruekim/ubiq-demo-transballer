@@ -4,9 +4,20 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 0
+    path: Assets/NetworkedPhysics.unity
+    guid: e8d8f70976c18554a9bc8063bb78fc6e
+  - enabled: 0
+    path: Assets/Test.unity
+    guid: 0179625e10b008f4f8b9ebe6ca4c71ed
+  - enabled: 1
+    path: Assets/Samples/Ubik/0.0.5/Samples/Introduction/Hello World.unity
+    guid: 2de505d34345ab340bdde30d419b24eb
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260,
+      type: 2}
+    Unity.XR.OpenVR.Settings: {fileID: 11400000, guid: 7aee060f378a48a459d051cf0c5583d2,
       type: 2}
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: dc5a169419fa04987b057f65238cf3ba,
       type: 2}
