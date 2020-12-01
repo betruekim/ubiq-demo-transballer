@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.ucl.ubik": {
-      "version": "file:../ubik-0.0.4-full-source/uclcve-master/Unity/Assets",
+      "version": "file:../ubik-0.0.5",
       "depth": 0,
       "source": "local",
       "dependencies": {
