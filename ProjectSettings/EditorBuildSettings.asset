@@ -6,14 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/NetworkedPhysics.unity
-    guid: e8d8f70976c18554a9bc8063bb78fc6e
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/Test.unity
-    guid: 0179625e10b008f4f8b9ebe6ca4c71ed
-  - enabled: 1
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: Assets/Samples/Ubik/0.0.5/Samples/Introduction/Hello World.unity
     guid: 2de505d34345ab340bdde30d419b24eb
+  - enabled: 1
+    path: Assets/NetworkedPhysics/Testing.unity
+    guid: 4156898f1312b2e4e8ec1fcd45b97424
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260,
       type: 2}
