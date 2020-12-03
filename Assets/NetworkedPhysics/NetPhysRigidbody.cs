@@ -42,6 +42,10 @@ public class NetPhysRigidbody : MonoBehaviour, INetworkObject, INetworkComponent
 
     public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
     {
+        if (owner)
+        {
+            throw new System.Exception("received update for locally controlled gameobject");
+        }
         var decoded = message.FromJson<RigidbodyUpdateMessage>();
 
         transform.position = decoded.position;
@@ -62,7 +66,7 @@ public class NetPhysRigidbody : MonoBehaviour, INetworkObject, INetworkComponent
         manager.Register(this);
     }
 
-    float elapsed = 0;
+    // float elapsed = 0;
 
     // private void FixedUpdate()
     // {

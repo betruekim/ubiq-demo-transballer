@@ -4,6 +4,8 @@ using System.Collections.Generic;
 // singleton class that manages which rigidbodies get updated each frame
 public class NetPhysManager : MonoBehaviour
 {
+
+    [System.Serializable]
     public class NetRBMetadata
     {
         public NetPhysRigidbody rigidbody;
@@ -18,7 +20,7 @@ public class NetPhysManager : MonoBehaviour
         }
     }
 
-    List<NetRBMetadata> rigidbodies = new List<NetRBMetadata>();
+    public List<NetRBMetadata> rigidbodies = new List<NetRBMetadata>();
 
     public void Register(NetPhysRigidbody rigidbody)
     {
@@ -49,10 +51,14 @@ public class NetPhysManager : MonoBehaviour
                 rigidbodies[i].priority = 0;
             }
         }
-        rigidbodies.Sort((a, b) => a.priority - b.priority);
+        rigidbodies.Sort((a, b) => b.priority - a.priority);
         for (int i = 0; i < Mathf.Min(10, rigidbodies.Count); i++)
         {
-            if (rigidbodies[i].rigidbody.velSquareMag > 0)
+            if (rigidbodies[i].rigidbody.velSquareMag == 0)
+            {
+                break;
+            }
+            if (rigidbodies[i].rigidbody.owner)
             {
                 rigidbodies[i].rigidbody.SendUpdate();
                 rigidbodies[i].elapsed = 0;

@@ -4,9 +4,14 @@ using Ubik.Samples;
 
 public class TestSpawner : MonoBehaviour
 {
-    // TODO replace this with a findOfType call
+
     public NetworkSpawner networkSpawner;
     public GameObject spawnPrefab;
+
+    private void Awake()
+    {
+        networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
+    }
 
     private void Update()
     {
