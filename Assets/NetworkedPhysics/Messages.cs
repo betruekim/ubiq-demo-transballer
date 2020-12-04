@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Ubik.Physics
+namespace Ubik.Messaging
 {
     public class Messages
     {
