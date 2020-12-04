@@ -4,7 +4,6 @@ using UnityEngine;
 using Ubik.Messaging;
 using Ubik.Samples;
 using Ubik.XR;
-using OdinSerializer;
 
 
 namespace Ubik.Physics
@@ -30,14 +29,8 @@ namespace Ubik.Physics
 
         public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
-            Debug.Log(message);
-
-            Messages.Message typeCheck = SerializationUtility.DeserializeValue<Messages.Message>(message.bytes, DataFormat.JSON);
-            if (typeCheck == null)
-            {
-                throw new System.Exception("received empty/non-deserializable message!");
-            }
-            string messageType = typeCheck.messageType;
+            string msgString = message.ToString();
+            string messageType = Messages.GetType(msgString);
 
             switch (messageType)
             {
@@ -46,16 +39,18 @@ namespace Ubik.Physics
                     {
                         throw new System.Exception("received update for locally controlled gameobject");
                     }
-                    Messages.RigidbodyUpdate rbUpdate = SerializationUtility.DeserializeValue<Messages.RigidbodyUpdate>(message.bytes, DataFormat.JSON);
+                    Messages.RigidbodyUpdate rbUpdate = Messages.RigidbodyUpdate.Deserialize(msgString);
                     transform.position = rbUpdate.position;
                     transform.rotation = rbUpdate.rotation;
                     rb.velocity = rbUpdate.linearVelocity;
                     rb.angularVelocity = rbUpdate.angularVelocity;
                     break;
-                case "onGrasp":
-                    Debug.Log("received onGrasp notification, turning off owner");
+                case "graspUpdate":
+                    // Debug.Log("received onGrasp notification, turning off owner");
                     owner = false;
-                    Messages.OnGrasp graspUpdate = SerializationUtility.DeserializeValue<Messages.OnGrasp>(message.bytes, DataFormat.JSON);
+                    Messages.GraspUpdate graspUpdate = Messages.GraspUpdate.Deserialize(msgString);
+                    // disable gravity when picked up
+                    rb.useGravity = !graspUpdate.grasped;
                     break;
                 default:
                     throw new System.Exception($"error, message of type {messageType} unknown");
@@ -83,13 +78,14 @@ namespace Ubik.Physics
             owner = true;
             graspingController = controller;
             rb.useGravity = false;
-            ctx.Send(new Messages.OnGrasp().Serialize());
+            ctx.Send(new Messages.GraspUpdate(true).Serialize());
         }
 
         public void Release(Hand controller)
         {
             graspingController = null;
             rb.useGravity = true;
+            ctx.Send(new Messages.GraspUpdate(false).Serialize());
         }
 
         private void Update()

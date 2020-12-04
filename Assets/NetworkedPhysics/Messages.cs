@@ -1,5 +1,4 @@
 using UnityEngine;
-using OdinSerializer;
 
 namespace Ubik.Physics
 {
@@ -11,25 +10,12 @@ namespace Ubik.Physics
         {
             public abstract string messageType { get; }
 
-            public string Serialize()
-            {
-                return System.Text.Encoding.ASCII.GetString(SerializationUtility.SerializeValue(this, DataFormat.JSON));
-            }
+            public abstract string Serialize();
         }
 
-        public static Message Deserialize(string message)
+        public static string GetType(string message)
         {
-            byte[] bytes = System.Text.Encoding.ASCII.GetBytes(message);
-            string messageType = SerializationUtility.DeserializeValue<Ubik.Physics.Messages.Message>(bytes, DataFormat.JSON).messageType;
-            switch (messageType)
-            {
-                case "rigidbodyUpdate":
-                    return SerializationUtility.DeserializeValue<Ubik.Physics.Messages.RigidbodyUpdate>(bytes, DataFormat.JSON);
-                case "onGrasp":
-                    return SerializationUtility.DeserializeValue<Ubik.Physics.Messages.OnGrasp>(bytes, DataFormat.JSON);
-                default:
-                    throw new System.Exception($"error, message of type {messageType} unknown");
-            }
+            return message.Split('$')[0];
         }
 
         [System.Serializable]
@@ -51,12 +37,53 @@ namespace Ubik.Physics
                 this.linearVelocity = rigidbody.velocity;
                 this.angularVelocity = rigidbody.angularVelocity;
             }
+
+            public RigidbodyUpdate()
+            {
+
+            }
+
+            public override string Serialize()
+            {
+
+                string message = $"{this.messageType}${JsonUtility.ToJson(this.position)}${JsonUtility.ToJson(this.rotation)}${JsonUtility.ToJson(this.linearVelocity)}${JsonUtility.ToJson(this.angularVelocity)}";
+
+                return message;
+            }
+
+            public static RigidbodyUpdate Deserialize(string message)
+            {
+                string[] components = message.Split('$');
+                RigidbodyUpdate update = new RigidbodyUpdate();
+                update.position = JsonUtility.FromJson<Vector3>(components[1]);
+                update.rotation = JsonUtility.FromJson<Quaternion>(components[2]);
+                update.linearVelocity = JsonUtility.FromJson<Vector3>(components[3]);
+                update.angularVelocity = JsonUtility.FromJson<Vector3>(components[4]);
+                return update;
+            }
         }
 
         [System.Serializable]
-        public class OnGrasp : Message
+        public class GraspUpdate : Message
         {
-            public override string messageType => "onGrasp";
+            public override string messageType => "graspUpdate";
+            public bool grasped;
+
+            public GraspUpdate(bool grasped)
+            {
+                this.grasped = grasped;
+            }
+
+            public override string Serialize()
+            {
+                return $"{this.messageType}${JsonUtility.ToJson(grasped)}";
+            }
+
+            public static GraspUpdate Deserialize(string message)
+            {
+                string[] components = message.Split('$');
+                return new GraspUpdate(JsonUtility.FromJson<bool>(components[1]));
+            }
         }
     }
 }
