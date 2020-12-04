@@ -51,7 +51,6 @@ namespace Ubik.Physics
             {
                 if (rigidbodies[i].rigidbody.owner)
                 {
-                    rigidbodies[i].elapsed += Time.fixedDeltaTime;
                     rigidbodies[i].priority = Mathf.CeilToInt((rigidbodies[i].rigidbody.velSquareMag + 1) * rigidbodies[i].elapsed);
                     if (rigidbodies[i].rigidbody.graspingController)
                     {
@@ -72,6 +71,10 @@ namespace Ubik.Physics
                     rigidbodies[i].rigidbody.SendUpdate();
                     rigidbodies[i].elapsed = 0;
                 }
+            }
+            for (int i = 0; i < rigidbodies.Count; i++)
+            {
+                rigidbodies[i].elapsed += Time.fixedDeltaTime;
             }
         }
     }
