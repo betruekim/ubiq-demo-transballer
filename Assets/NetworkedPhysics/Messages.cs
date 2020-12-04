@@ -76,13 +76,13 @@ namespace Ubik.Physics
 
             public override string Serialize()
             {
-                return $"{this.messageType}${JsonUtility.ToJson(grasped)}";
+                return $"{this.messageType}${grasped.ToString()}";
             }
 
             public static GraspUpdate Deserialize(string message)
             {
                 string[] components = message.Split('$');
-                return new GraspUpdate(JsonUtility.FromJson<bool>(components[1]));
+                return new GraspUpdate(bool.Parse(components[1]));
             }
         }
     }

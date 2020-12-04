@@ -47,7 +47,9 @@ namespace Ubik.Physics
                     break;
                 case "graspUpdate":
                     // Debug.Log("received onGrasp notification, turning off owner");
+                    Debug.Log(msgString);
                     owner = false;
+                    graspingController = null;
                     Messages.GraspUpdate graspUpdate = Messages.GraspUpdate.Deserialize(msgString);
                     // disable gravity when picked up
                     rb.useGravity = !graspUpdate.grasped;
@@ -83,9 +85,12 @@ namespace Ubik.Physics
 
         public void Release(Hand controller)
         {
-            graspingController = null;
-            rb.useGravity = true;
-            ctx.Send(new Messages.GraspUpdate(false).Serialize());
+            if (graspingController)
+            {
+                graspingController = null;
+                rb.useGravity = true;
+                ctx.Send(new Messages.GraspUpdate(false).Serialize());
+            }
         }
 
         private void Update()
