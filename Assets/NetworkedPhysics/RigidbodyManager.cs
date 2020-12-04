@@ -6,7 +6,7 @@ namespace Ubik.Physics
     // singleton class that manages which rigidbodies get updated each frame
     public class RigidbodyManager : MonoBehaviour
     {
-        const int syncsPerFixedUpdate = 50;
+        const int syncsPerFixedUpdate = 10;
 
 
         [System.Serializable]
