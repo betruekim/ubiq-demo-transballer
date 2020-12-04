@@ -30,6 +30,8 @@ namespace Ubik.Physics
 
         public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
+            Debug.Log(message);
+
             Messages.Message typeCheck = SerializationUtility.DeserializeValue<Messages.Message>(message.bytes, DataFormat.JSON);
             if (typeCheck == null)
             {
