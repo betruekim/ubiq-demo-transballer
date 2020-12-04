@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Ubik.Physics
 {
     // singleton class that manages which rigidbodies get updated each frame
-    public class Manager : MonoBehaviour
+    public class RigidbodyManager : MonoBehaviour
     {
         const int syncsPerFixedUpdate = 50;
 

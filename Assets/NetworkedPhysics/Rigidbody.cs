@@ -17,14 +17,14 @@ namespace Ubik.Physics
         public float velSquareMag { get { return rb.velocity.sqrMagnitude; } }
 
         NetworkContext ctx;
-        Manager manager;
+        RigidbodyManager manager;
         public bool owner = true;
         public Hand graspingController;
 
         private void Awake()
         {
             ctx = NetworkScene.Register(this);
-            manager = GameObject.FindObjectOfType<Manager>();
+            manager = GameObject.FindObjectOfType<RigidbodyManager>();
             rb = GetComponent<UnityEngine.Rigidbody>();
         }
 
