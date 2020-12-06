@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Ubik.Samples;
 using Ubik.XR;
@@ -40,24 +41,8 @@ namespace PlacableObjects
 
         public PrefabCatalogue placables;
         GameObject[] objects { get => placables.prefabs.ToArray(); }
-        (Vector3, Quaternion)[] snapAs; // position and rotational offset of object from snapA
-        (Vector3, Quaternion)[] snapBs; // position and rotational offset of object from snapB
-
-        private void Start()
-        {
-            snapAs = new (Vector3, Quaternion)[objects.Length];
-            snapBs = new (Vector3, Quaternion)[objects.Length];
-
-            for (int i = 0; i < objects.Length; i++)
-            {
-                snapAs[i] = (objects[i].transform.GetChild(1).localPosition, objects[i].transform.GetChild(1).localRotation);
-                snapBs[i] = (objects[i].transform.GetChild(2).localPosition, objects[i].transform.GetChild(2).localRotation);
-            }
-        }
-
         public int selectedObject { get; private set; } = -1;
         Placable ghostObject = null;
-        Snap[] ghostSnaps = null;
         float placeDist = 1f;
         const float minPlaceDist = 0.2f;
         const float maxPlaceDist = 5f;
@@ -83,19 +68,7 @@ namespace PlacableObjects
         private void SpawnGhostObject()
         {
             Debug.Log("SpawnGhostObject");
-            // ghostObject = GameObject.Instantiate(objects[selectedObject]);
             ghostObject = networkSpawner.Spawn(objects[selectedObject]).GetComponent<Placable>();
-            // Material transparentMat = new Material(Shader.Find("Transparent/Diffuse"));
-            // transparentMat.color = new Color(transparentMat.color.r, transparentMat.color.g, transparentMat.color.b, 0.5f);
-            // foreach (MeshRenderer mr in ghostObject.GetComponentsInChildren<MeshRenderer>())
-            // {
-            //     mr.material = transparentMat;
-            // }
-            foreach (Collider col in ghostObject.GetComponentsInChildren<Collider>())
-            {
-                col.enabled = false;
-                col.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-            }
             MoveGhostToHandPos();
         }
 
@@ -127,7 +100,8 @@ namespace PlacableObjects
             }
         }
 
-        private GameObject cachedHit;
+        private GameObject cachedHit; // the thing we hit using snap raycasts
+        private int snapIndex = -1; // the index of the snap object on ghostObject
         const float maxRaycastDist = 2f;
 
         private void MoveGhostToHandPos()
@@ -144,25 +118,24 @@ namespace PlacableObjects
             }
             // first move the object to where it would be just using hands
             MoveGhostToHandPos();
-            if (ghostSnaps != null)
+            // check rays from each snap
+            for (int i = 0; i < ghostObject.snaps.Length; i++)
             {
-                // check rays from each snap
-                for (int i = 0; i < ghostSnaps.Length; i++)
+                Ray ray = new Ray(ghostObject.snaps[i].transform.position - ghostObject.snaps[i].transform.right * 0.1f, ghostObject.snaps[i].transform.right);
+                Debug.DrawRay(ray.origin, ray.direction, Color.red, Time.deltaTime);
+                RaycastHit[] hits = Physics.RaycastAll(ray, 0.25f, LayerMask.GetMask("Snap"));
+                foreach (RaycastHit hit in hits)
                 {
-                    Ray ray = new Ray(ghostSnaps[i].transform.position - ghostSnaps[i].transform.right * 0.1f, ghostSnaps[i].transform.right);
-                    Debug.DrawRay(ray.origin, ray.direction, Color.red, Time.deltaTime);
-                    RaycastHit[] hits = Physics.RaycastAll(ray, 0.25f, LayerMask.GetMask("Snap"));
-                    foreach (RaycastHit hit in hits)
+                    if (hit.collider.gameObject != ghostObject.snaps[i].gameObject)
                     {
-                        if (hit.collider.gameObject != ghostSnaps[i].gameObject)
-                        {
-                            cachedHit = hit.transform.gameObject;
-                            return;
-                        }
+                        cachedHit = hit.transform.gameObject;
+                        snapIndex = i;
+                        return;
                     }
                 }
             }
             cachedHit = null;
+            snapIndex = -1;
         }
 
         private void MoveGhostToSnapPos()
@@ -170,8 +143,9 @@ namespace PlacableObjects
             DoRaycast();
             if (cachedHit)
             {
-                ghostObject.transform.position = cachedHit.transform.position - cachedHit.transform.rotation * snapAs[selectedObject].Item1;
-                ghostObject.transform.rotation = cachedHit.transform.rotation * snapAs[selectedObject].Item2;
+                Debug.Log($"{snapIndex}, {cachedHit.GetComponent<Snap>().index}");
+                ghostObject.transform.rotation = ghostObject.snaps[snapIndex].transform.localRotation * cachedHit.transform.rotation * Quaternion.Euler(0, 180, 0);
+                ghostObject.transform.position = cachedHit.transform.position - ghostObject.transform.rotation * ghostObject.snaps[snapIndex].transform.localPosition;
             }
             ghostObject.Move();
         }
@@ -192,7 +166,6 @@ namespace PlacableObjects
             if (ghostObject)
             {
                 ghostObject.Deselect();
-                ghostSnaps = null;
             }
         }
 
@@ -201,10 +174,15 @@ namespace PlacableObjects
             if (selectedObject >= 0)
             {
                 Debug.Log("placing the ting");
-                // GameObject placed = networkSpawner.Spawn(objects[selectedObject]);
-                // placed.transform.position = ghostObject.transform.position;
-                // placed.transform.rotation = ghostObject.transform.rotation;
-                ghostObject.Place();
+                if (cachedHit)
+                {
+                    Snap snappedTo = cachedHit.GetComponent<Snap>();
+                    ghostObject.Place(snapIndex, snappedTo.placable.Id, snappedTo.index);
+                }
+                else
+                {
+                    ghostObject.Place();
+                }
                 selectedObject = -1;
                 ghostObject = null;
             }

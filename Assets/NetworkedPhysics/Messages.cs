@@ -128,9 +128,33 @@ namespace Ubik.Messaging
         {
             public override string messageType => "onPlace";
 
+            public int snapIndex;
+            public NetworkId snappedTo;
+            public int snappedToSnapIndex;
+
+            public OnPlace(int snapIndex, NetworkId snappedTo, int snappedToSnapIndex)
+            {
+                this.snapIndex = snapIndex;
+                this.snappedTo = snappedTo;
+                this.snappedToSnapIndex = snappedToSnapIndex;
+            }
+
             public override string Serialize()
             {
-                return "onPlace$";
+                if (snapIndex >= 0)
+                {
+                    return $"onPlace${snapIndex}${snappedTo.ToString()}${snappedToSnapIndex}";
+                }
+                else
+                {
+                    return $"onPlace$-1$-1$-1";
+                }
+            }
+
+            public static OnPlace Deserialize(string message)
+            {
+                string[] components = message.Split('$');
+                return new OnPlace(int.Parse(components[1]), new NetworkId(int.Parse(components[2])), int.Parse(components[3]));
             }
         }
     }
