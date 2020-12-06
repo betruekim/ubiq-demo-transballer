@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1826705699984635591}
   - component: {fileID: 1018845548893035535}
+  - component: {fileID: 3255223878762743154}
   m_Layer: 9
   m_Name: snapB
   m_TagString: Untagged
@@ -44,6 +45,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.02, y: 0.5, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3255223878762743154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3189652704474183781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ba171ab71c8fe44b726e96e5fe31ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3732105514027827871
 GameObject:
   m_ObjectHideFlags: 0
@@ -90,8 +103,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b98a8b886be88346847dc5cbd964e85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  snapA: {fileID: 5957779603365943806}
-  snapB: {fileID: 1826705699984635591}
+  snapA: {fileID: 4966590507991861661}
+  snapB: {fileID: 3255223878762743154}
   snappedTo: []
 --- !u!1 &4717571826256580141
 GameObject:
@@ -229,6 +242,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5957779603365943806}
   - component: {fileID: 9048993268379537625}
+  - component: {fileID: 4966590507991861661}
   m_Layer: 9
   m_Name: snapA
   m_TagString: Untagged
@@ -263,6 +277,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.02, y: 0.5, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4966590507991861661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6349030420777391157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ba171ab71c8fe44b726e96e5fe31ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7970251681771275840
 GameObject:
   m_ObjectHideFlags: 0

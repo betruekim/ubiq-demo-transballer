@@ -38,9 +38,9 @@ namespace Ubik.Messaging
                 this.angularVelocity = rigidbody.angularVelocity;
             }
 
-            public RigidbodyUpdate()
+            private RigidbodyUpdate()
             {
-
+                // private default constructor to allow for Deserialize() below
             }
 
             public override string Serialize()
@@ -83,6 +83,54 @@ namespace Ubik.Messaging
             {
                 string[] components = message.Split('$');
                 return new GraspUpdate(bool.Parse(components[1]));
+            }
+        }
+
+        [System.Serializable]
+        public class OnDestroy : Message
+        {
+            public override string messageType => "onDestroy";
+
+            public override string Serialize()
+            {
+                return "onDestroy$";
+            }
+        }
+
+        [System.Serializable]
+        public class PositionUpdate : Message
+        {
+            public override string messageType => "positionUpdate";
+
+            public Vector3 position;
+            public Quaternion rotation;
+
+            public PositionUpdate(Vector3 position, Quaternion rotation)
+            {
+                this.position = position;
+                this.rotation = rotation;
+            }
+
+            public override string Serialize()
+            {
+                return $"{this.messageType}${JsonUtility.ToJson(this.position)}${JsonUtility.ToJson(this.rotation)}";
+            }
+
+            public static PositionUpdate Deserialize(string message)
+            {
+                string[] components = message.Split('$');
+                return new PositionUpdate(JsonUtility.FromJson<Vector3>(components[1]), JsonUtility.FromJson<Quaternion>(components[2])); ;
+            }
+        }
+
+        [System.Serializable]
+        public class OnPlace : Message
+        {
+            public override string messageType => "onPlace";
+
+            public override string Serialize()
+            {
+                return "onPlace$";
             }
         }
     }
