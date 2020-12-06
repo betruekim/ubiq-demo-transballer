@@ -65,7 +65,7 @@ namespace PlacableObjects
                 index++;
             }
             ctx = NetworkScene.Register(this);
-            PlacableManager.AddPlacedObject(this);
+            PlacableIndex.AddPlacedObject(this);
 
             // start out as a ghost before being placed
             MakeGhost();
@@ -73,7 +73,7 @@ namespace PlacableObjects
 
         private void OnDestroy()
         {
-            PlacableManager.RemovePlacedObject(this);
+            PlacableIndex.RemovePlacedObject(this);
         }
 
         public virtual void OnSpawned(bool local)
@@ -140,7 +140,7 @@ namespace PlacableObjects
             }
             if (snapIndex >= 0)
             {
-                Placable placableSnappedTo = PlacableManager.placedObjects[snappedTo];
+                Placable placableSnappedTo = PlacableIndex.placedObjects[snappedTo];
                 Attach(snaps[snapIndex], placableSnappedTo.snaps[snappedToSnapIndex]);
                 placableSnappedTo.Attach(placableSnappedTo.snaps[snappedToSnapIndex], snaps[snapIndex]);
             }

@@ -5,7 +5,7 @@ using Ubik.Messaging;
 
 namespace PlacableObjects
 {
-    public static class PlacableManager
+    public static class PlacableIndex
     {
         public static Dictionary<NetworkId, Placable> placedObjects = new Dictionary<NetworkId, Placable>();
 
