@@ -54,12 +54,12 @@ namespace PlacableObjects
             {
                 throw new System.Exception($"index {index} less than zero or greater than objects length ${objects.Length}");
             }
-            selectedObject = index;
 
             if (ghostObject != null)
             {
                 DeselectObject();
             }
+            selectedObject = index;
             customRotation = Quaternion.identity;
             placeDist = 1f;
             SpawnGhostObject();

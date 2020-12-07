@@ -47,6 +47,11 @@ namespace PlacableObjects
                         Ubik.Physics.Rigidbody ball = col.gameObject.GetComponent<Ubik.Physics.Rigidbody>();
                         Debug.Log(ball);
 
+                        if (ball.graspedRemotely || ball.graspingController)
+                        {
+                            continue;
+                        }
+
                         if (!ball.owner)
                         {
                             ball.TakeControl();

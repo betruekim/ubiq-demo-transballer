@@ -42,6 +42,11 @@ namespace PlacableObjects
                     Vector3 force = attractionPoint.position - meta.rigidbody.transform.position;
                     if (force.sqrMagnitude < radius * radius)
                     {
+                        if (meta.rigidbody.graspedRemotely || meta.rigidbody.graspingController)
+                        {
+                            continue;
+                        }
+
                         if (!meta.rigidbody.owner)
                         {
                             meta.rigidbody.TakeControl();
