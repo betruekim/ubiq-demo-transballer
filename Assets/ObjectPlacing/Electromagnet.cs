@@ -8,7 +8,7 @@ namespace PlacableObjects
 
         public Transform attractionPoint;
         public float power = 10f;
-        public const float radius = 5f;
+        public const float radius = 3f;
 
         public float onDuration = 1f;
         public float offDuration = 1f;
@@ -18,6 +18,7 @@ namespace PlacableObjects
 
         override protected void Awake()
         {
+            base.Awake();
             manager = GameObject.FindObjectOfType<Ubik.Physics.RigidbodyManager>();
         }
 
@@ -51,6 +52,12 @@ namespace PlacableObjects
                     }
                 }
             }
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(attractionPoint.position, radius);
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Ubik.Physics
         RigidbodyManager manager;
         public bool owner = true;
         public Hand graspingController;
+        public bool graspedRemotely = false;
 
         private void Awake()
         {
@@ -53,6 +54,7 @@ namespace Ubik.Physics
                     Messages.GraspUpdate graspUpdate = Messages.GraspUpdate.Deserialize(msgString);
                     // disable gravity when picked up
                     rb.useGravity = !graspUpdate.grasped;
+                    graspedRemotely = graspUpdate.grasped;
                     break;
                 case "newOwner":
                     Debug.Log("newOwner");
@@ -119,8 +121,11 @@ namespace Ubik.Physics
 
         public void TakeControl()
         {
-            owner = true;
-            ctx.Send(new Messages.NewOwner().Serialize());
+            if (!graspedRemotely)
+            {
+                owner = true;
+                ctx.Send(new Messages.NewOwner().Serialize());
+            }
         }
 
         public void SetKinematic(bool state)
