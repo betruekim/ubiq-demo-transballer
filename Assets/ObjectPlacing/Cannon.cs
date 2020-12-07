@@ -27,7 +27,7 @@ namespace PlacableObjects
         float launchedElapsed = 0f;
         private void FixedUpdate()
         {
-            if (!owner)
+            if (!owner || !placed)
             {
                 return;
             }

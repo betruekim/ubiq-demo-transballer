@@ -39,8 +39,11 @@ public class SnapTester : MonoBehaviour
                         Placable py = GameObject.Instantiate(catalogue.prefabs[y], groundPos, Quaternion.identity, parentObj.transform).GetComponent<Placable>();
                         Placable px = GameObject.Instantiate(catalogue.prefabs[x], groundPos, Quaternion.identity, parentObj.transform).GetComponent<Placable>();
 
-                        Quaternion rotation = Quaternion.Inverse(px.snaps[sx].transform.localRotation) * py.snaps[sy].transform.rotation * Quaternion.Euler(0, 180, 0);
-                        Vector3 position = py.snaps[sy].transform.position - rotation * px.snaps[sx].transform.localPosition;
+                        px.gameObject.name = "snapper";
+                        py.gameObject.name = "grounded";
+
+                        Vector3 position = Snap.GetMatchingPosition(py.snaps[sy].gameObject, px.snaps[sx].gameObject);
+                        Quaternion rotation = Snap.GetMatchingRotation(py.snaps[sy].gameObject, px.snaps[sx].gameObject);
 
                         snapDefaultPosition[index] = position;
                         snapDefaultRotation[index] = rotation;
@@ -54,56 +57,6 @@ public class SnapTester : MonoBehaviour
                 }
                 index++;
             }
-        }
-    }
-
-    private void Update()
-    {
-        // HandPlace();
-        // if (Input.GetKey(KeyCode.Space))
-        // {
-        //     for (int i = 0; i < 4; i++)
-        //     {
-        //         Snap(snapPipes[i], groundedPipes[i]);
-        //     }
-        // }
-    }
-
-    void HandPlace()
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            snapPipes[i].transform.position = snapDefaultPosition[i];
-            snapPipes[i].transform.rotation = snapDefaultRotation[i];
-        }
-    }
-
-    void Snap(GameObject snapper, GameObject grounded)
-    {
-        Placable ghost = snapper.GetComponent<Placable>();
-        // check rays from each snap
-        GameObject cachedHit = null;
-        int snapIndex = -1;
-        for (int i = 0; i < ghost.snaps.Length; i++)
-        {
-            Ray ray = new Ray(ghost.snaps[i].transform.position - ghost.snaps[i].transform.right * 0.1f, ghost.snaps[i].transform.right);
-            Debug.DrawRay(ray.origin, ray.direction, Color.red, Time.deltaTime);
-            RaycastHit[] hits = Physics.RaycastAll(ray, 0.25f, LayerMask.GetMask("Snap"));
-            foreach (RaycastHit hit in hits)
-            {
-                if (hit.collider.gameObject != ghost.snaps[i].gameObject)
-                {
-                    cachedHit = hit.transform.gameObject;
-                    snapIndex = i;
-                    break;
-                }
-            }
-        }
-        if (cachedHit)
-        {
-            Debug.Log($"{snapIndex}, {cachedHit.GetComponent<Snap>().index}");
-            ghost.transform.rotation = ghost.snaps[snapIndex].transform.localRotation * cachedHit.transform.rotation * Quaternion.Euler(0, 180, 0);
-            ghost.transform.position = cachedHit.transform.position - ghost.transform.rotation * ghost.snaps[snapIndex].transform.localPosition;
         }
     }
 }

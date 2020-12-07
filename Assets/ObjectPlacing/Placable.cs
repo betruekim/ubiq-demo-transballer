@@ -48,6 +48,9 @@ namespace PlacableObjects
                     Messages.OnPlace placeInfo = Messages.OnPlace.Deserialize(message.ToString());
                     OnPlace(placeInfo.snapIndex, placeInfo.snappedTo, placeInfo.snappedToSnapIndex);
                     break;
+                case "newOwner":
+                    owner = false;
+                    break;
                 default:
                     throw new System.Exception($"unknown message type {type}");
             }
@@ -106,6 +109,12 @@ namespace PlacableObjects
                 throw new System.Exception("called Place() on a remotely controlled placable!");
             }
             Destroy(this.gameObject);
+        }
+
+        public void TakeControl()
+        {
+            ctx.Send(new Messages.NewOwner().Serialize());
+            owner = true;
         }
 
         public virtual void Place(int snapIndex, NetworkId snappedTo, int snappedToSnapIndex)
