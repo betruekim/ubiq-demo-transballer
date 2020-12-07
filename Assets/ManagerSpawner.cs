@@ -11,7 +11,6 @@ public class ManagerSpawner : MonoBehaviour
         roomClient = GameObject.FindObjectOfType<RoomClient>();
 
         roomClient.OnJoinedRoom.AddListener(OnJoinedRoom);
-
     }
 
     void OnJoinedRoom()

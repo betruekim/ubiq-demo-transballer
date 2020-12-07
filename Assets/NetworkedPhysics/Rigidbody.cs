@@ -93,30 +93,16 @@ namespace Ubik.Physics
             }
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (graspingController != null)
             {
-                rb.velocity *= 0;
+                // rb.velocity *= 0;
                 rb.angularVelocity *= 0;
+                rb.velocity = (graspingController.transform.position - transform.position) * 20;
 
-                transform.position = graspingController.transform.position;
+                // transform.position = graspingController.transform.position;
             }
         }
-
-        // float elapsed = 0;
-
-        // private void FixedUpdate()
-        // {
-        //     if (owner)
-        //     {
-        //         elapsed += Time.fixedDeltaTime;
-        //         // if (elapsed > 0.1f)
-        //         // {
-        //         elapsed = 0;
-        //         SendUpdate();
-        //         // }
-        //     }
-        // }
     }
 }

@@ -14,9 +14,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Samples/Ubik/0.0.5/Samples/Introduction/Hello World.unity
     guid: 2de505d34345ab340bdde30d419b24eb
-  - enabled: 1
+  - enabled: 0
     path: Assets/NetworkedPhysics/Testing.unity
     guid: 4156898f1312b2e4e8ec1fcd45b97424
+  - enabled: 1
+    path: Assets/ObjectPlacing/ObjectPlacing.unity
+    guid: c8e6726a664499845a8c889b6e07e0bc
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260,
       type: 2}
