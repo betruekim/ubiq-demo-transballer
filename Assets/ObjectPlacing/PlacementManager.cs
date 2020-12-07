@@ -74,15 +74,18 @@ namespace PlacableObjects
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            for (int i = 0; i < objects.Length; i++)
             {
-                if (selectedObject < 0)
+                if (Input.GetKeyDown(KeyCode.Alpha1 + i))
                 {
-                    SelectObject(0);
-                }
-                else
-                {
-                    DeselectObject();
+                    if (selectedObject != i)
+                    {
+                        SelectObject(i);
+                    }
+                    else
+                    {
+                        DeselectObject();
+                    }
                 }
             }
             if (Input.GetMouseButtonDown(0))
@@ -144,7 +147,7 @@ namespace PlacableObjects
             if (cachedHit)
             {
                 Debug.Log($"{snapIndex}, {cachedHit.GetComponent<Snap>().index}");
-                ghostObject.transform.rotation = ghostObject.snaps[snapIndex].transform.localRotation * cachedHit.transform.rotation * Quaternion.Euler(0, 180, 0);
+                ghostObject.transform.rotation = Quaternion.Inverse(ghostObject.snaps[snapIndex].transform.localRotation) * cachedHit.transform.rotation * Quaternion.Euler(0, 180, 0);
                 ghostObject.transform.position = cachedHit.transform.position - ghostObject.transform.rotation * ghostObject.snaps[snapIndex].transform.localPosition;
             }
             ghostObject.Move();

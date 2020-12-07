@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using PlacableObjects;
+using Ubik.Samples;
 
 // had to create this to debug snapping direction and position
 // TODO: talk about this in report
 public class SnapTester : MonoBehaviour
 {
-    public GameObject pipePrefab;
+    public PrefabCatalogue catalogue;
 
     GameObject[] groundedPipes;
     GameObject[] snapPipes;
@@ -16,42 +17,56 @@ public class SnapTester : MonoBehaviour
 
     private void Awake()
     {
-        groundedPipes = new GameObject[4];
-        snapPipes = new GameObject[4];
-        snapDefaultPosition = new Vector3[4];
-        snapDefaultRotation = new Quaternion[4];
-        for (int i = 0; i < 4; i++)
+        int count = catalogue.prefabs.Count * catalogue.prefabs.Count * 4;
+        groundedPipes = new GameObject[count];
+        snapPipes = new GameObject[count];
+        snapDefaultPosition = new Vector3[count];
+        snapDefaultRotation = new Quaternion[count];
+        int index = 0;
+        for (int x = 0; x < catalogue.prefabs.Count; x++)
         {
-            groundedPipes[i] = GameObject.Instantiate(pipePrefab, Vector3.forward * (i * 4 + 2) + Vector3.up, Quaternion.identity);
-
-            Vector3 offset = Vector3.right * 1.1f;
-            Quaternion rotation = Quaternion.identity;
-            if (i % 2 == 0)
+            for (int y = 0; y < catalogue.prefabs.Count; y++)
             {
-                offset = -offset;
-            }
-            if (i >= 2)
-            {
-                rotation = Quaternion.Euler(0, 180, 0);
-            }
+                int i = 0;
+                for (int sx = 0; sx < catalogue.prefabs[x].GetComponent<Placable>().snaps.Length; sx++)
+                {
+                    for (int sy = 0; sy < catalogue.prefabs[y].GetComponent<Placable>().snaps.Length; sy++)
+                    {
+                        GameObject parentObj = new GameObject($"{x},{y}:{sx},{sy}");
 
-            snapDefaultPosition[i] = Vector3.forward * (i * 4 + 2) + Vector3.up + offset;
-            snapDefaultRotation[i] = rotation;
+                        Vector3 groundPos = Vector3.forward * (i * 4 + 2) + Vector3.up + Vector3.right * index * 4;
+                        // groundedPipes[index] = GameObject.Instantiate(catalogue.prefabs[x], groundPos, Quaternion.identity);
+                        Placable py = GameObject.Instantiate(catalogue.prefabs[y], groundPos, Quaternion.identity, parentObj.transform).GetComponent<Placable>();
+                        Placable px = GameObject.Instantiate(catalogue.prefabs[x], groundPos, Quaternion.identity, parentObj.transform).GetComponent<Placable>();
 
-            snapPipes[i] = GameObject.Instantiate(pipePrefab, snapDefaultPosition[i], snapDefaultRotation[i]);
+                        Quaternion rotation = Quaternion.Inverse(px.snaps[sx].transform.localRotation) * py.snaps[sy].transform.rotation * Quaternion.Euler(0, 180, 0);
+                        Vector3 position = py.snaps[sy].transform.position - rotation * px.snaps[sx].transform.localPosition;
+
+                        snapDefaultPosition[index] = position;
+                        snapDefaultRotation[index] = rotation;
+
+                        px.transform.position = position;
+                        px.transform.rotation = rotation;
+
+                        // snapPipes[index] = GameObject.Instantiate(catalogue.prefabs[y], snapDefaultPosition[index], snapDefaultRotation[index]);
+                        i++;
+                    }
+                }
+                index++;
+            }
         }
     }
 
     private void Update()
     {
-        HandPlace();
-        if (Input.GetKey(KeyCode.Space))
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                Snap(snapPipes[i], groundedPipes[i]);
-            }
-        }
+        // HandPlace();
+        // if (Input.GetKey(KeyCode.Space))
+        // {
+        //     for (int i = 0; i < 4; i++)
+        //     {
+        //         Snap(snapPipes[i], groundedPipes[i]);
+        //     }
+        // }
     }
 
     void HandPlace()
