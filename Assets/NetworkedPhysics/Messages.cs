@@ -157,5 +157,39 @@ namespace Ubik.Messaging
                 return new OnPlace(int.Parse(components[1]), new NetworkId(int.Parse(components[2])), int.Parse(components[3]));
             }
         }
+
+        [System.Serializable]
+        public class NewOwner : Message
+        {
+            public override string messageType => "newOwner";
+
+            public override string Serialize()
+            {
+                return "newOwner$";
+            }
+        }
+
+        [System.Serializable]
+        public class SetKinematic : Message
+        {
+            public override string messageType => "setKinematic";
+            public bool state;
+
+            public override string Serialize()
+            {
+                return $"setKinematic${state}";
+            }
+
+            public SetKinematic(bool state)
+            {
+                this.state = state;
+            }
+
+            public static SetKinematic Deserialize(string message)
+            {
+                string[] components = message.Split('$');
+                return new SetKinematic(bool.Parse(components[1]));
+            }
+        }
     }
 }

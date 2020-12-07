@@ -6,19 +6,22 @@ public class TestSpawner : MonoBehaviour
 
     public NetworkSpawner networkSpawner;
     public GameObject spawnPrefab;
+    public PlacableObjects.PlacementManager placementManager;
 
     private void Awake()
     {
         networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
+        placementManager = GameObject.FindObjectOfType<PlacableObjects.PlacementManager>();
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            GameObject newCube = networkSpawner.SpawnPersistent(spawnPrefab);
-            newCube.transform.position = Vector3.up + Random.insideUnitSphere;
-            newCube.transform.rotation = Random.rotation;
+            GameObject newBall = networkSpawner.SpawnPersistent(spawnPrefab);
+
+            newBall.transform.position = placementManager.rightHand.transform.position + placementManager.rightHand.transform.forward;
+            newBall.transform.rotation = Quaternion.Euler(0, placementManager.rightHand.transform.rotation.eulerAngles.y, 0);
         }
     }
 }

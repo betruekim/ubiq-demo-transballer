@@ -37,7 +37,7 @@ namespace Ubik.Physics
                 case "rigidbodyUpdate":
                     if (owner)
                     {
-                        throw new System.Exception("received update for locally controlled gameobject");
+                        throw new System.Exception("received rigidbody update for locally controlled gameobject");
                     }
                     Messages.RigidbodyUpdate rbUpdate = Messages.RigidbodyUpdate.Deserialize(msgString);
                     transform.position = rbUpdate.position;
@@ -53,6 +53,18 @@ namespace Ubik.Physics
                     Messages.GraspUpdate graspUpdate = Messages.GraspUpdate.Deserialize(msgString);
                     // disable gravity when picked up
                     rb.useGravity = !graspUpdate.grasped;
+                    break;
+                case "newOwner":
+                    Debug.Log("newOwner");
+                    owner = false;
+                    break;
+                case "setKinematic":
+                    if (owner)
+                    {
+                        throw new System.Exception("received setKinematic update for locally controlled gameobject");
+                    }
+                    Messages.SetKinematic setKinematic = Messages.SetKinematic.Deserialize(msgString);
+                    rb.isKinematic = setKinematic.state;
                     break;
                 default:
                     throw new System.Exception($"error, message of type {messageType} unknown");
@@ -102,6 +114,21 @@ namespace Ubik.Physics
                 rb.velocity = (graspingController.transform.position - transform.position) * 20;
 
                 // transform.position = graspingController.transform.position;
+            }
+        }
+
+        public void TakeControl()
+        {
+            owner = true;
+            ctx.Send(new Messages.NewOwner().Serialize());
+        }
+
+        public void SetKinematic(bool state)
+        {
+            if (owner)
+            {
+                rb.isKinematic = state;
+                ctx.Send(new Messages.SetKinematic(state).Serialize());
             }
         }
     }

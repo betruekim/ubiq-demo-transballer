@@ -351,7 +351,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64de5308263240445b0595022fa0e847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rightHand: {fileID: 0}
+  leftHand: {fileID: 0}
   placables: {fileID: 11400000, guid: 8badd51964d96c847a66b9c95c82824b, type: 2}
+--- !u!114 &1175207200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1175207192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c000b9e67606e544fa149b6f8e4d34ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  networkSpawner: {fileID: 0}
+  spawnPrefab: {fileID: 2061997242598594536, guid: 18ac4c37435789c459ca42629f55134d,
+    type: 3}
+  placementManager: {fileID: 0}
 --- !u!1 &1252740730 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7068762446560339093, guid: 2fb578800afc87244b5ba3a0fbbd11c0,
@@ -910,7 +928,7 @@ PrefabInstance:
         type: 3}
       propertyPath: catalogue
       value: 
-      objectReference: {fileID: 11400000, guid: 8badd51964d96c847a66b9c95c82824b,
+      objectReference: {fileID: 11400000, guid: dd9b7764623e8da488b385852348bb46,
         type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2fb578800afc87244b5ba3a0fbbd11c0, type: 3}

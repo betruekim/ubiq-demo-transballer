@@ -8,8 +8,8 @@ namespace PlacableObjects
     public class PlacementManager : MonoBehaviour
     {
         NetworkSpawner networkSpawner;
-        HandController rightHand;
-        HandController leftHand;
+        public HandController rightHand;
+        public HandController leftHand;
 
         private void Awake()
         {

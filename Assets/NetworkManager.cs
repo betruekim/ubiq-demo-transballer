@@ -2,12 +2,38 @@ using UnityEngine;
 using System.Collections.Generic;
 using Ubik.Messaging;
 using Ubik.Samples;
+using Ubik.Rooms;
 
 public class NetworkManager : MonoBehaviour, INetworkObject, INetworkComponent, ISpawnable
 {
-    NetworkId INetworkObject.Id => new NetworkId();
-
+    // by setting a fixed networkId we can have objects synced in everyone's scenes
+    NetworkId INetworkObject.Id { get; } = new NetworkId(4);
+    NetworkContext ctx;
     public static bool roomOwner = false;
+    RoomClient roomClient;
+
+    public GameObject[] levels;
+
+    private void Awake()
+    {
+        ctx = NetworkScene.Register(this);
+        roomClient = GameObject.FindObjectOfType<RoomClient>();
+        roomClient.OnRoom.AddListener(OnRoom);
+    }
+
+    void OnRoom()
+    {
+        Debug.Log("OnRoom");
+        int peerCount = 0;
+        foreach (var peer in roomClient.Peers)
+        {
+            peerCount++;
+        }
+        if (peerCount == 1)
+        {
+            roomOwner = true;
+        }
+    }
 
     void INetworkComponent.ProcessMessage(ReferenceCountedSceneGraphMessage message)
     {
@@ -24,5 +50,10 @@ public class NetworkManager : MonoBehaviour, INetworkObject, INetworkComponent, 
             roomOwner = true;
             Debug.Log("!!I am the room owner!!");
         }
+    }
+
+    public void LoadLevel(int index)
+    {
+
     }
 }

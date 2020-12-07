@@ -15,7 +15,7 @@ namespace PlacableObjects
         public List<Snap> attachedTo; // external snap nodes that we are connected to
 
         public bool owner = false;
-
+        protected bool placed = false;
 
         public virtual void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
@@ -144,7 +144,7 @@ namespace PlacableObjects
                 Attach(snaps[snapIndex], placableSnappedTo.snaps[snappedToSnapIndex]);
                 placableSnappedTo.Attach(placableSnappedTo.snaps[snappedToSnapIndex], snaps[snapIndex]);
             }
-
+            placed = true;
         }
 
         public void Attach(Snap mine, Snap other)
@@ -161,6 +161,7 @@ namespace PlacableObjects
                 col.enabled = false;
                 col.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             }
+            placed = false;
         }
     }
 }
