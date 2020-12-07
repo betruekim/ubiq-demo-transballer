@@ -17,7 +17,6 @@ public class BallSpawner : MonoBehaviour
 
     private bool timerRunning = false;
     private Transform spawnTransform;
-    private bool spawningBalls = false;
 
     private void Awake()
     {
@@ -50,7 +49,6 @@ public class BallSpawner : MonoBehaviour
                 timerRunning = false;
 
                 // Start spawning balls
-                spawningBalls = true;
                 StartCoroutine("spawnBalls");
             }
         }
@@ -72,7 +70,7 @@ public class BallSpawner : MonoBehaviour
     {
         float jitter = 0.1f;
         Vector3 offset = new Vector3(Random.Range(-jitter, jitter), 0.0f, Random.Range(-jitter, jitter));
-        GameObject spawnedBall = networkSpawner.SpawnPersistent(ball, null);
+        GameObject spawnedBall = networkSpawner.SpawnPersistent(ball);
         spawnedBall.transform.position = spawnTransform.position + offset;
 
         // Add unique name for each ball
