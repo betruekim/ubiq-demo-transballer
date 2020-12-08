@@ -35,23 +35,28 @@ public class BallSpawner : MonoBehaviour
 
     void Update()
     {
-        if (timerRunning)
+        if (Input.GetKeyDown(KeyCode.L))
         {
-            if (timeUntilSpawn > 0.0f)
-            {
-                timeUntilSpawn -= Time.deltaTime;
-                displayTime(timeUntilSpawn);
-            }
-            else
-            {
-                timeUntilSpawn = 0.0f;
-                Debug.Log("Time is up. Balls imminent.");
-                timerRunning = false;
-
-                // Start spawning balls
-                StartCoroutine("spawnBalls");
-            }
+            StartCoroutine("spawnBalls");
         }
+
+        // if (timerRunning)
+        // {
+        //     if (timeUntilSpawn > 0.0f)
+        //     {
+        //         timeUntilSpawn -= Time.deltaTime;
+        //         displayTime(timeUntilSpawn);
+        //     }
+        //     else
+        //     {
+        //         timeUntilSpawn = 0.0f;
+        //         Debug.Log("Time is up. Balls imminent.");
+        //         timerRunning = false;
+
+        //         // Start spawning balls
+        //         StartCoroutine("spawnBalls");
+        //     }
+        // }
     }
 
     IEnumerator spawnBalls()
