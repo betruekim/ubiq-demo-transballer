@@ -7,24 +7,24 @@ namespace PlacableObjects
 {
     public static class PlacableIndex
     {
-        public static Dictionary<NetworkId, Placable> placedObjects = new Dictionary<NetworkId, Placable>();
+        public static Dictionary<int, Placable> placedObjects = new Dictionary<int, Placable>();
 
         public static void AddPlacedObject(Placable placable)
         {
-            if (placedObjects.ContainsKey(placable.Id))
+            if (placedObjects.ContainsKey((int)placable.Id))
             {
                 throw new System.Exception($"placed id {placable.Id} already exists");
             }
-            placedObjects[placable.Id] = placable;
+            placedObjects[(int)placable.Id] = placable;
         }
 
         public static void RemovePlacedObject(Placable placable)
         {
-            if (!placedObjects.ContainsKey(placable.Id))
+            if (!placedObjects.ContainsKey((int)placable.Id))
             {
                 throw new System.Exception($"placed id {placable.Id} does not exist");
             }
-            placedObjects.Remove(placable.Id);
+            placedObjects.Remove((int)placable.Id);
         }
 
 

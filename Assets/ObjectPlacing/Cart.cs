@@ -10,7 +10,6 @@ namespace PlacableObjects
         // need to move this bad boy back to original position on level start
         private Snap originalSnap;
 
-
         public override bool CanBePlacedOn(Snap target)
         {
             // we can only snap a cart to a cartTrack, and we can only snap to the top snap
@@ -43,6 +42,20 @@ namespace PlacableObjects
             foreach (Snap child in target.attachedTo)
             {
                 AddConnected(set, child.placable);
+            }
+        }
+
+        List<Placable> attachedToTop = new List<Placable>();
+        public override void Attach(Snap mine, Snap other)
+        {
+            base.Attach(mine, other);
+            if (mine == snaps[1])
+            {
+                // if the thing attached was on the top snap point
+                // take control of it, make it a child of us and add it to a list?
+                other.placable.TakeControl();
+                attachedToTop.Add(other.placable);
+                other.placable.transform.SetParent(transform);
             }
         }
 
@@ -93,6 +106,13 @@ namespace PlacableObjects
                 transform.rotation = currentTrack.GetCartRot(progress);
             }
             base.Move();
+            foreach (Placable attached in attachedToTop)
+            {
+                if (attached.owner)
+                {
+                    attached.Move();
+                }
+            }
         }
     }
 }

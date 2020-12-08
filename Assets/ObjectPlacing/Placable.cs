@@ -69,7 +69,6 @@ namespace PlacableObjects
                 index++;
             }
             ctx = NetworkScene.Register(this);
-            PlacableIndex.AddPlacedObject(this);
 
             // start out as a ghost before being placed
             MakeGhost();
@@ -84,6 +83,7 @@ namespace PlacableObjects
         {
             Debug.Log($"onSpawned {Id} {local}");
             owner = local;
+            PlacableIndex.AddPlacedObject(this);
         }
 
         public virtual void Move()
@@ -94,7 +94,7 @@ namespace PlacableObjects
             }
             else
             {
-                throw new System.Exception("called Place() on a remotely controlled placable!");
+                throw new System.Exception("called Move() on a remotely controlled placable!");
             }
         }
 
@@ -160,7 +160,7 @@ namespace PlacableObjects
             placed = true;
         }
 
-        public void Attach(Snap mine, Snap other)
+        public virtual void Attach(Snap mine, Snap other)
         {
             // mine is our snap object, other is the snap object we are attaching to
             mine.GetComponent<Collider>().enabled = false;
