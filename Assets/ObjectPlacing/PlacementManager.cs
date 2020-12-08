@@ -64,6 +64,13 @@ namespace PlacableObjects
             customRotation = Quaternion.identity;
             placeDist = 1f;
             SpawnGhostObject();
+            foreach (Placable placable in PlacableIndex.placedObjects.Values)
+            {
+                foreach (Snap s in placable.snaps)
+                {
+                    s.ShowGraphic();
+                }
+            }
         }
 
         private void SpawnGhostObject()
@@ -204,6 +211,13 @@ namespace PlacableObjects
             {
                 ghostObject.Deselect();
             }
+            foreach (Placable placable in PlacableIndex.placedObjects.Values)
+            {
+                foreach (Snap s in placable.snaps)
+                {
+                    s.HideGraphic();
+                }
+            }
         }
 
         public void PlaceObject()
@@ -216,16 +230,16 @@ namespace PlacableObjects
                     if (ghostObject.CanBePlacedOn(cachedHit))
                     {
                         ghostObject.Place(snapIndex, cachedHit.placable.Id, cachedHit.index);
-                        selectedObject = -1;
                         ghostObject = null;
+                        DeselectObject();
                     }
 
                 }
                 else if (ghostObject.canBePlacedFreely)
                 {
                     ghostObject.Place();
-                    selectedObject = -1;
                     ghostObject = null;
+                    DeselectObject();
                 }
             }
         }

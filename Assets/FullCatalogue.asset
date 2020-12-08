@@ -17,7 +17,14 @@ MonoBehaviour:
   - {fileID: 1993369384910520921, guid: d58518ef39737b644986d9515b1505e3, type: 3}
   - {fileID: 1993369384910520921, guid: cc3f50d658bbd2e4c98d7ae89a1b81b5, type: 3}
   - {fileID: 8061729915130674320, guid: 74d60302696de114ea479df9636ecb42, type: 3}
+  - {fileID: 4155678056386902277, guid: c784211bacbe7704d9021a3d4e3b4bfa, type: 3}
+  - {fileID: 648671501531426046, guid: 008e24686f411e94ebbc34b1de8ef1a2, type: 3}
+  - {fileID: 5704696889927636841, guid: c0458d31b4a25184b8932e20ad6f073f, type: 3}
+  - {fileID: 7850584066820710110, guid: b001cab0569bb554fb9cfdd306d0c683, type: 3}
+  - {fileID: 7850584066820710110, guid: ef42729fc3b4e224e87d145bc359bc67, type: 3}
   - {fileID: 2061997242598594536, guid: 18ac4c37435789c459ca42629f55134d, type: 3}
   catalogues:
   - {fileID: 11400000, guid: 8badd51964d96c847a66b9c95c82824b, type: 2}
   - {fileID: 11400000, guid: 8a0453f1d05c8c7439e9cfb6241db973, type: 2}
+  snapPrefab: {fileID: 2595670745763958234, guid: 54a79cf888f739847a5f9bb3e0baad77,
+    type: 3}

@@ -152,9 +152,11 @@ namespace PlacableObjects
             {
                 col.enabled = true;
                 col.gameObject.layer = LayerMask.NameToLayer("Placable");
-                if (col.gameObject.GetComponent<Snap>())
+                Snap s = col.gameObject.GetComponent<Snap>();
+                if (s)
                 {
                     col.gameObject.layer = LayerMask.NameToLayer("Snap");
+                    s.HideGraphic();
                 }
             }
             if (snapIndex >= 0)
