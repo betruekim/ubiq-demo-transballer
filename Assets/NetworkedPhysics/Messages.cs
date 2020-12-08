@@ -159,6 +159,17 @@ namespace Ubik.Messaging
         }
 
         [System.Serializable]
+        public class OnRemove : Message
+        {
+            public override string messageType => "onRemove";
+
+            public override string Serialize()
+            {
+                return "onRemove$";
+            }
+        }
+
+        [System.Serializable]
         public class NewOwner : Message
         {
             public override string messageType => "newOwner";

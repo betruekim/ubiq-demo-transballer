@@ -72,7 +72,7 @@ GameObject:
   - component: {fileID: 1296128666522005053}
   - component: {fileID: 5420765772092526314}
   - component: {fileID: 2815285463294995119}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -162,7 +162,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3296893777242169314}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -234,6 +234,7 @@ MonoBehaviour:
   - {fileID: 4851424865109836965}
   - {fileID: 390239534490219534}
   attachedTo: []
+  originalOwner: 0
   owner: 0
   lastTrack: {fileID: 0}
   progress: 0

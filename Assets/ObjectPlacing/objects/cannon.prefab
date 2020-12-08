@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 5695814171148082371}
   - component: {fileID: 8769325498812604626}
   - component: {fileID: 6871934950038161281}
+  - component: {fileID: 4385512053421951576}
   m_Layer: 0
   m_Name: barrel
   m_TagString: Untagged
@@ -200,6 +201,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!64 &4385512053421951576
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2179672926334887855}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &3621625881036127223
 GameObject:
   m_ObjectHideFlags: 0
@@ -242,6 +257,7 @@ GameObject:
   - component: {fileID: 8307010868901848146}
   - component: {fileID: 2411652641008887851}
   - component: {fileID: 2052816232909418517}
+  - component: {fileID: 7671381270701409299}
   m_Layer: 0
   m_Name: pivotCube
   m_TagString: Untagged
@@ -310,6 +326,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &7671381270701409299
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3984713203309166593}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4688054515910669191
 GameObject:
   m_ObjectHideFlags: 0
@@ -351,6 +380,7 @@ GameObject:
   - component: {fileID: 5323071607836140371}
   - component: {fileID: 7840765575113756023}
   - component: {fileID: 2658094487251422702}
+  - component: {fileID: 1627901514308077441}
   m_Layer: 0
   m_Name: platform
   m_TagString: Untagged
@@ -419,6 +449,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!64 &1627901514308077441
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5950013805110015519}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &6849640960466164609
 GameObject:
   m_ObjectHideFlags: 0
@@ -563,11 +607,11 @@ MonoBehaviour:
   - {fileID: 8084367602951462685}
   - {fileID: 742266660363942217}
   attachedTo: []
+  originalOwner: 0
   owner: 0
   barrelPivot: {fileID: 3621625881036127223}
   launchPoint: {fileID: 8060985915032550134}
   pickup: {fileID: 4536648245004469308}
-  period: 1
   exitVelocity: 10
   barrelAngle: {x: -0.5, y: 0, z: 0, w: 0.8660254}
   launchDelay: 1

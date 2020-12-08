@@ -15,6 +15,7 @@ namespace PlacableObjects
         public List<Snap> attachedTo; // external snap nodes that we are connected to
         public virtual bool canBePlacedFreely { get; } = true;
 
+        public bool originalOwner = false;
         public bool owner = false;
         protected bool placed = false;
 
@@ -48,6 +49,10 @@ namespace PlacableObjects
                     }
                     Messages.OnPlace placeInfo = Messages.OnPlace.Deserialize(message.ToString());
                     OnPlace(placeInfo.snapIndex, placeInfo.snappedTo, placeInfo.snappedToSnapIndex);
+                    break;
+                case "onRemove":
+                    Debug.Log($"{Id} {owner} {message}");
+                    OnRemove();
                     break;
                 case "newOwner":
                     owner = false;
@@ -125,6 +130,7 @@ namespace PlacableObjects
                 ctx.Send(new Messages.OnPlace(snapIndex, snappedTo, snappedToSnapIndex).Serialize());
                 // Debug.Log(new Messages.OnPlace(snapIndex, snappedTo, snappedToSnapIndex).Serialize());
                 OnPlace(snapIndex, snappedTo, snappedToSnapIndex);
+                originalOwner = true;
             }
             else
             {
@@ -145,7 +151,7 @@ namespace PlacableObjects
             foreach (Collider col in GetComponentsInChildren<Collider>())
             {
                 col.enabled = true;
-                col.gameObject.layer = LayerMask.NameToLayer("Default");
+                col.gameObject.layer = LayerMask.NameToLayer("Placable");
                 if (col.gameObject.GetComponent<Snap>())
                 {
                     col.gameObject.layer = LayerMask.NameToLayer("Snap");
@@ -167,6 +173,17 @@ namespace PlacableObjects
             attachedTo.Add(other);
         }
 
+        public virtual void Detach(Snap mine, Snap other)
+        {
+            // mine is our snap object, other is the snap object we are attaching to
+            if (!attachedTo.Contains(other))
+            {
+                throw new System.Exception("Tried to detach a snap we are not attached to!");
+            }
+            mine.GetComponent<Collider>().enabled = true;
+            attachedTo.Remove(other);
+        }
+
         public virtual void MakeGhost()
         {
             foreach (Collider col in gameObject.GetComponentsInChildren<Collider>())
@@ -182,6 +199,42 @@ namespace PlacableObjects
             // override this on certain classes to ensure that only certain objects can be snapped
             // TODO should this exclude carts, so we can never attach something to a cart?
             return true;
+        }
+
+        public virtual void Remove()
+        {
+            if (originalOwner)
+            {
+                ctx.Send(new Messages.OnRemove().Serialize());
+                OnRemove();
+            }
+            else
+            {
+                Debug.Log("can't remove this object, you didn't place it!");
+            }
+        }
+
+        public virtual void OnRemove()
+        {
+            foreach (Snap otherSnap in attachedTo)
+            {
+                // find which snap the other object is attached to
+                foreach (Snap mySnap in otherSnap.placable.attachedTo)
+                {
+                    if (System.Array.IndexOf(snaps, mySnap) > -1)
+                    {
+                        Detach(mySnap, otherSnap);
+                        otherSnap.placable.Detach(otherSnap, mySnap);
+                    }
+                }
+            }
+            Destroy(this.gameObject);
+            // TODO give original owner back material
+        }
+
+        public virtual void OnHovered()
+        {
+
         }
     }
 }

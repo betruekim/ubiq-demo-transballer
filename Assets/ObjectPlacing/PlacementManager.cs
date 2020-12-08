@@ -149,9 +149,6 @@ namespace PlacableObjects
             {
                 if (ghostObject.CanBePlacedOn(cachedHit))
                 {
-                    // Debug.Log($"{snapIndex}, {cachedHit.index}");
-                    // ghostObject.transform.rotation = Quaternion.Inverse(ghostObject.snaps[snapIndex].transform.localRotation) * cachedHit.transform.rotation * Quaternion.Euler(0, 180, 0);
-                    // ghostObject.transform.position = cachedHit.transform.position - ghostObject.transform.rotation * ghostObject.snaps[snapIndex].transform.localPosition;
                     ghostObject.transform.rotation = Snap.GetMatchingRotation(cachedHit, ghostObject.snaps[snapIndex]);
                     ghostObject.transform.position = Snap.GetMatchingPosition(cachedHit, ghostObject.snaps[snapIndex]);
                 }
@@ -165,6 +162,22 @@ namespace PlacableObjects
             if (ghostObject)
             {
                 MoveGhostToSnapPos();
+            }
+
+            Ray ray = new Ray(rightHand.transform.position, rightHand.transform.forward);
+            Debug.DrawRay(ray.origin, ray.direction, Color.red, Time.deltaTime);
+            RaycastHit hit;
+            if (Physics.Raycast(ray.origin, ray.direction, out hit, 2f, 1 << LayerMask.NameToLayer("Placable")))
+            {
+                Placable placableHovered = hit.collider.gameObject.GetComponentInParent<Placable>();
+                if (placableHovered)
+                {
+                    placableHovered.OnHovered();
+                }
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    placableHovered.Remove();
+                }
             }
         }
 
