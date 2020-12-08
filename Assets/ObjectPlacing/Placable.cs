@@ -236,5 +236,10 @@ namespace PlacableObjects
         {
 
         }
+
+        public virtual void OffHovered()
+        {
+
+        }
     }
 }

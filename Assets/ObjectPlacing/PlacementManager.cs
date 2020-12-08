@@ -156,6 +156,8 @@ namespace PlacableObjects
             ghostObject.Move();
         }
 
+        Placable hovered = null;
+
         private void FixedUpdate()
         {
             cachedHit = null;
@@ -167,16 +169,29 @@ namespace PlacableObjects
             Ray ray = new Ray(rightHand.transform.position, rightHand.transform.forward);
             Debug.DrawRay(ray.origin, ray.direction, Color.red, Time.deltaTime);
             RaycastHit hit;
-            if (Physics.Raycast(ray.origin, ray.direction, out hit, 2f, 1 << LayerMask.NameToLayer("Placable")))
+            if (Physics.Raycast(ray.origin, ray.direction, out hit, 100f, 1 << LayerMask.NameToLayer("Placable")))
             {
                 Placable placableHovered = hit.collider.gameObject.GetComponentInParent<Placable>();
-                if (placableHovered)
+                if (placableHovered != hovered)
                 {
+                    if (hovered)
+                    {
+                        hovered.OffHovered();
+                    }
                     placableHovered.OnHovered();
+                    hovered = placableHovered;
                 }
                 if (Input.GetKeyDown(KeyCode.R))
                 {
                     placableHovered.Remove();
+                }
+            }
+            else
+            {
+                if (hovered)
+                {
+                    hovered.OffHovered();
+                    hovered = null;
                 }
             }
         }
