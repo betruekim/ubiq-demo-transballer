@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Ubik.Messaging;
@@ -13,6 +13,7 @@ namespace PlacableObjects
 
         public Snap[] snaps;
         public List<Snap> attachedTo; // external snap nodes that we are connected to
+        public virtual bool canBePlacedFreely { get; } = true;
 
         public bool owner = false;
         protected bool placed = false;
@@ -133,7 +134,10 @@ namespace PlacableObjects
 
         public void Place()
         {
-            Place(-1, null, -1);
+            if (canBePlacedFreely)
+            {
+                Place(-1, null, -1);
+            }
         }
 
         protected virtual void OnPlace(int snapIndex, NetworkId snappedTo, int snappedToSnapIndex)
@@ -171,6 +175,13 @@ namespace PlacableObjects
                 col.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             }
             placed = false;
+        }
+
+        public virtual bool CanBePlacedOn(Snap target)
+        {
+            // override this on certain classes to ensure that only certain objects can be snapped
+            // TODO should this exclude carts, so we can never attach something to a cart?
+            return true;
         }
     }
 }

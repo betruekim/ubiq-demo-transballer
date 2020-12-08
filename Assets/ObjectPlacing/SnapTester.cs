@@ -42,8 +42,8 @@ public class SnapTester : MonoBehaviour
                         px.gameObject.name = "snapper";
                         py.gameObject.name = "grounded";
 
-                        Vector3 position = Snap.GetMatchingPosition(py.snaps[sy].gameObject, px.snaps[sx].gameObject);
-                        Quaternion rotation = Snap.GetMatchingRotation(py.snaps[sy].gameObject, px.snaps[sx].gameObject);
+                        Vector3 position = Snap.GetMatchingPosition(py.snaps[sy], px.snaps[sx]);
+                        Quaternion rotation = Snap.GetMatchingRotation(py.snaps[sy], px.snaps[sx]);
 
                         snapDefaultPosition[index] = position;
                         snapDefaultRotation[index] = rotation;

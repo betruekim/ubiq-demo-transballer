@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Ubik.Samples;
@@ -103,7 +104,7 @@ namespace PlacableObjects
             }
         }
 
-        private GameObject cachedHit; // the thing we hit using snap raycasts
+        private Snap cachedHit; // the thing we hit using snap raycasts
         private int snapIndex = -1; // the index of the snap object on ghostObject
         const float maxRaycastDist = 2f;
 
@@ -124,14 +125,14 @@ namespace PlacableObjects
             // check rays from each snap
             for (int i = 0; i < ghostObject.snaps.Length; i++)
             {
-                Ray ray = new Ray(ghostObject.snaps[i].transform.position - ghostObject.snaps[i].transform.right * 0.1f, ghostObject.snaps[i].transform.right);
+                Ray ray = new Ray(ghostObject.snaps[i].transform.position - ghostObject.snaps[i].transform.forward * 0.1f, ghostObject.snaps[i].transform.forward);
                 Debug.DrawRay(ray.origin, ray.direction, Color.red, Time.deltaTime);
-                RaycastHit[] hits = Physics.RaycastAll(ray, 0.25f, LayerMask.GetMask("Snap"));
+                RaycastHit[] hits = Physics.RaycastAll(ray, 1f, LayerMask.GetMask("Snap"));
                 foreach (RaycastHit hit in hits)
                 {
                     if (hit.collider.gameObject != ghostObject.snaps[i].gameObject)
                     {
-                        cachedHit = hit.transform.gameObject;
+                        cachedHit = hit.transform.gameObject.GetComponent<Snap>();
                         snapIndex = i;
                         return;
                     }
@@ -146,9 +147,14 @@ namespace PlacableObjects
             DoRaycast();
             if (cachedHit)
             {
-                Debug.Log($"{snapIndex}, {cachedHit.GetComponent<Snap>().index}");
-                ghostObject.transform.rotation = Quaternion.Inverse(ghostObject.snaps[snapIndex].transform.localRotation) * cachedHit.transform.rotation * Quaternion.Euler(0, 180, 0);
-                ghostObject.transform.position = cachedHit.transform.position - ghostObject.transform.rotation * ghostObject.snaps[snapIndex].transform.localPosition;
+                if (ghostObject.CanBePlacedOn(cachedHit))
+                {
+                    // Debug.Log($"{snapIndex}, {cachedHit.index}");
+                    // ghostObject.transform.rotation = Quaternion.Inverse(ghostObject.snaps[snapIndex].transform.localRotation) * cachedHit.transform.rotation * Quaternion.Euler(0, 180, 0);
+                    // ghostObject.transform.position = cachedHit.transform.position - ghostObject.transform.rotation * ghostObject.snaps[snapIndex].transform.localPosition;
+                    ghostObject.transform.rotation = Snap.GetMatchingRotation(cachedHit, ghostObject.snaps[snapIndex]);
+                    ghostObject.transform.position = Snap.GetMatchingPosition(cachedHit, ghostObject.snaps[snapIndex]);
+                }
             }
             ghostObject.Move();
         }
@@ -179,17 +185,22 @@ namespace PlacableObjects
                 Debug.Log("placing the ting");
                 if (cachedHit)
                 {
-                    Snap snappedTo = cachedHit.GetComponent<Snap>();
-                    ghostObject.Place(snapIndex, snappedTo.placable.Id, snappedTo.index);
+                    if (ghostObject.CanBePlacedOn(cachedHit))
+                    {
+                        ghostObject.Place(snapIndex, cachedHit.placable.Id, cachedHit.index);
+                        selectedObject = -1;
+                        ghostObject = null;
+                    }
+
                 }
-                else
+                else if (ghostObject.canBePlacedFreely)
                 {
                     ghostObject.Place();
+                    selectedObject = -1;
+                    ghostObject = null;
                 }
-                selectedObject = -1;
-                ghostObject = null;
             }
         }
-
     }
+
 }
