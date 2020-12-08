@@ -16,8 +16,8 @@ TagManager:
   - 
   - Ball
   - Snap
-  - 
-  - 
+  - TrackPoint
+  - TrackCollider
   - 
   - 
   - 

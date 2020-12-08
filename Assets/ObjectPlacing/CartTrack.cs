@@ -1,0 +1,89 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using Ubik.Messaging;
+using UnityEngine;
+
+namespace PlacableObjects
+{
+    public class CartTrack : Placable
+    {
+        public override bool CanBePlacedOn(Snap target)
+        {
+            // we can only snap a cart to a cartTrack, and we can only snap to the top snap
+            return target.index != 2 && System.Object.ReferenceEquals(target.placable.GetType(), typeof(PlacableObjects.CartTrack));
+        }
+
+        protected override void OnPlace(int snapIndex, NetworkId snappedTo, int snappedToSnapIndex)
+        {
+            base.OnPlace(snapIndex, snappedTo, snappedToSnapIndex);
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                if (transform.GetChild(i).name.StartsWith("trackCollider"))
+                {
+                    transform.GetChild(i).gameObject.layer = LayerMask.NameToLayer("TrackCollider");
+                }
+            }
+        }
+
+        public List<Transform> trackPoints;
+        float frac = 1f;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            trackPoints = new List<Transform>();
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                if (transform.GetChild(i).gameObject.layer == LayerMask.NameToLayer("TrackPoint"))
+                {
+                    trackPoints.Add(transform.GetChild(i));
+                }
+            }
+            frac = 1f / (float)trackPoints.Count;
+        }
+
+        private (int, int, float) GetStint(float progress)
+        {
+            float partitions = trackPoints.Count - 1;
+
+            if (progress >= 1)
+            {
+                return (trackPoints.Count - 2, (int)partitions, 1.1f);
+            }
+            else if (progress <= 0)
+            {
+                return (0, 1, -0.1f);
+            }
+
+            int start = Mathf.FloorToInt(progress * partitions);
+            int end = start + 1;
+            float stint = (progress - ((float)start / partitions)) * partitions;
+
+            return (start, end, stint);
+        }
+
+        private Vector3 GetCartPos(int start, int end, float stint)
+        {
+            return Vector3.Lerp(trackPoints[start].position, trackPoints[end].position, stint);
+        }
+
+        private Quaternion GetCartRot(int start, int end, float stint)
+        {
+            return Quaternion.Lerp(trackPoints[start].rotation, trackPoints[end].rotation, stint);
+        }
+
+        public Vector3 GetCartPos(float progress)
+        {
+            var (start, end, stint) = GetStint(progress);
+            return GetCartPos(start, end, stint) + GetCartRot(start, end, stint) * Vector3.up * 0.1f;
+        }
+
+        public Quaternion GetCartRot(float progress)
+        {
+            var (start, end, stint) = GetStint(progress);
+            return GetCartRot(start, end, stint);
+        }
+    }
+
+}
+
