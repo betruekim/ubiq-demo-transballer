@@ -25,8 +25,7 @@ namespace PlacableObjects
             }
             if (snapIndex > -1)
             {
-
-                Debug.Log(PlacableIndex.placedObjects[snappedTo]);
+                // ^ is XOR operator
                 if (snapIndex == snappedToSnapIndex ^ PlacableIndex.placedObjects[snappedTo].GetComponent<CartTrack>().reversed)
                 {
                     trackPoints.Reverse();
