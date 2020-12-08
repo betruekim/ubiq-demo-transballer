@@ -23,9 +23,24 @@ namespace PlacableObjects
                     transform.GetChild(i).gameObject.layer = LayerMask.NameToLayer("TrackCollider");
                 }
             }
+            if (snapIndex > -1)
+            {
+
+                Debug.Log(PlacableIndex.placedObjects[snappedTo]);
+                if (snapIndex == snappedToSnapIndex ^ PlacableIndex.placedObjects[snappedTo].GetComponent<CartTrack>().reversed)
+                {
+                    trackPoints.Reverse();
+                    reversed = true;
+                    foreach (Transform trackPoint in trackPoints)
+                    {
+                        trackPoint.localRotation = trackPoint.localRotation * Quaternion.AngleAxis(180, trackPoint.up);
+                    }
+                }
+            }
         }
 
         public List<Transform> trackPoints;
+        public bool reversed = false;
         float frac = 1f;
 
         protected override void Awake()
@@ -82,6 +97,23 @@ namespace PlacableObjects
         {
             var (start, end, stint) = GetStint(progress);
             return GetCartRot(start, end, stint);
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.green;
+            foreach (var point in trackPoints)
+            {
+                Vector3 pos = point.transform.position;
+                Vector3 dir = point.transform.forward * 0.4f;
+                float arrowHeadAngle = 20f;
+                float arrowHeadLength = 0.2f;
+                Gizmos.DrawRay(pos, dir);
+                Vector3 right = Quaternion.LookRotation(dir) * Quaternion.Euler(0, 180 + arrowHeadAngle, 0) * new Vector3(0, 0, 1);
+                Vector3 left = Quaternion.LookRotation(dir) * Quaternion.Euler(0, 180 - arrowHeadAngle, 0) * new Vector3(0, 0, 1);
+                Gizmos.DrawRay(pos + dir, right * arrowHeadLength);
+                Gizmos.DrawRay(pos + dir, left * arrowHeadLength);
+            }
         }
     }
 
