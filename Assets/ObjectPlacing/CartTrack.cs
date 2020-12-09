@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using Ubik.Messaging;
 using UnityEngine;
 
-namespace PlacableObjects
+namespace Transballer.PlaceableObjects
 {
-    public class CartTrack : Placable
+    public class CartTrack : Placeable
     {
         public override int materialCost => 10;
         public override bool CanBePlacedOn(Snap target)
         {
             // we can only snap a cart to a cartTrack, and we can only snap to the top snap
-            return target.index != 2 && System.Object.ReferenceEquals(target.placable.GetType(), typeof(PlacableObjects.CartTrack));
+            return target.index != 2 && System.Object.ReferenceEquals(target.placeable.GetType(), typeof(Transballer.PlaceableObjects.CartTrack));
         }
 
         protected override void OnPlace(int snapIndex, NetworkId snappedTo, int snappedToSnapIndex)
@@ -27,7 +27,7 @@ namespace PlacableObjects
             if (snapIndex > -1)
             {
                 // ^ is XOR operator
-                if (snapIndex == snappedToSnapIndex ^ PlacableIndex.placedObjects[snappedTo].GetComponent<CartTrack>().reversed)
+                if (snapIndex == snappedToSnapIndex ^ PlaceableIndex.placedObjects[snappedTo].GetComponent<CartTrack>().reversed)
                 {
                     trackPoints.Reverse();
                     reversed = true;

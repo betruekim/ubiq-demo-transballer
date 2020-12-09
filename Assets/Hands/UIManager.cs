@@ -4,14 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using Ubik.XR;
 using Ubik.Samples;
-using PlacableObjects;
+using Transballer.PlaceableObjects;
 
 public class UIManager : MonoBehaviour
 {
 
     public GameObject buildMenu, otherMenu, rightGun, leftGun;
     public GameObject spawnableButtonPrefab;
-    public PrefabCatalogue placables;
+    public PrefabCatalogue placeables;
     HandController leftHand;
     HandController rightHand;
     PlacementManager placementManager;
@@ -24,7 +24,7 @@ public class UIManager : MonoBehaviour
         leftHand = playerObject.transform.Find("Left Hand").gameObject.GetComponent<HandController>();
         rightHand = playerObject.transform.Find("Right Hand").gameObject.GetComponent<HandController>();
         placementManager = GameObject.FindObjectOfType<PlacementManager>();
-        placables = placementManager.placables;
+        placeables = placementManager.placeables;
         mainCamera = Camera.main.transform;
 
         InitUI();
@@ -34,10 +34,10 @@ public class UIManager : MonoBehaviour
     {
         GridLayoutGroup buttonsContainer = buildMenu.GetComponentInChildren<GridLayoutGroup>();
         int i = 0;
-        foreach (GameObject placable in placables.prefabs)
+        foreach (GameObject placeable in placeables.prefabs)
         {
             GameObject button = GameObject.Instantiate(spawnableButtonPrefab, buttonsContainer.transform);
-            button.GetComponentInChildren<Text>().text = $"{placable.name} {placable.GetComponent<Placable>().materialCost}";
+            button.GetComponentInChildren<Text>().text = $"{placeable.name} {placeable.GetComponent<Placeable>().materialCost}";
             int localIndex = i;
             button.GetComponent<Button>().onClick.AddListener(delegate { placementManager.SelectObject(localIndex); });
             i++;

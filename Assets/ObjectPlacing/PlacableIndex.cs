@@ -3,28 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using Ubik.Messaging;
 
-namespace PlacableObjects
+namespace Transballer.PlaceableObjects
 {
-    public static class PlacableIndex
+    public static class PlaceableIndex
     {
-        public static Dictionary<int, Placable> placedObjects = new Dictionary<int, Placable>();
+        public static Dictionary<int, Placeable> placedObjects = new Dictionary<int, Placeable>();
 
-        public static void AddPlacedObject(Placable placable)
+        public static void AddPlacedObject(Placeable placeable)
         {
-            if (placedObjects.ContainsKey((int)placable.Id))
+            if (placedObjects.ContainsKey((int)placeable.Id))
             {
-                throw new System.Exception($"placed id {placable.Id} already exists");
+                throw new System.Exception($"placed id {placeable.Id} already exists");
             }
-            placedObjects[(int)placable.Id] = placable;
+            placedObjects[(int)placeable.Id] = placeable;
         }
 
-        public static void RemovePlacedObject(Placable placable)
+        public static void RemovePlacedObject(Placeable placeable)
         {
-            if (!placedObjects.ContainsKey((int)placable.Id))
+            if (!placedObjects.ContainsKey((int)placeable.Id))
             {
-                throw new System.Exception($"placed id {placable.Id} does not exist");
+                throw new System.Exception($"placed id {placeable.Id} does not exist");
             }
-            placedObjects.Remove((int)placable.Id);
+            placedObjects.Remove((int)placeable.Id);
         }
 
 

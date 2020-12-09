@@ -1,12 +1,12 @@
 using UnityEngine;
 
-namespace PlacableObjects
+namespace Transballer.PlaceableObjects
 {
-    public class Electromagnet : Placable
+    public class Electromagnet : Placeable
     {
         public override int materialCost => 10;
         public override bool canBePlacedFreely => false;
-        Ubik.Physics.RigidbodyManager manager;
+        Transballer.NetworkedPhysics.RigidbodyManager manager;
 
         public Transform attractionPoint;
         public float power = 10f;
@@ -21,7 +21,7 @@ namespace PlacableObjects
         override protected void Awake()
         {
             base.Awake();
-            manager = GameObject.FindObjectOfType<Ubik.Physics.RigidbodyManager>();
+            manager = GameObject.FindObjectOfType<Transballer.NetworkedPhysics.RigidbodyManager>();
         }
 
         private void FixedUpdate()

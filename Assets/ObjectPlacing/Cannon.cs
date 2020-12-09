@@ -4,9 +4,9 @@ using UnityEngine;
 using Ubik.XR;
 using Ubik.Messaging;
 
-namespace PlacableObjects
+namespace Transballer.PlaceableObjects
 {
-    public class Cannon : Placable
+    public class Cannon : Placeable
     {
         public override int materialCost => 10;
         public override bool canBePlacedFreely => false;
@@ -19,7 +19,7 @@ namespace PlacableObjects
         public Quaternion barrelAngle = Quaternion.Euler(-60, 0, 0);
         public float launchDelay = 1f;
 
-        Ubik.Physics.Rigidbody currentBall = null;
+        Transballer.NetworkedPhysics.NetworkedRigidbody currentBall = null;
 
         LineRenderer arcRenderer;
 
@@ -45,7 +45,7 @@ namespace PlacableObjects
                 Collider[] balls = Physics.OverlapBox(pickup.transform.position, pickup.transform.lossyScale / 2, pickup.transform.rotation, ballMask);
                 foreach (var col in balls)
                 {
-                    Ubik.Physics.Rigidbody ball = col.gameObject.GetComponent<Ubik.Physics.Rigidbody>();
+                    Transballer.NetworkedPhysics.NetworkedRigidbody ball = col.gameObject.GetComponent<Transballer.NetworkedPhysics.NetworkedRigidbody>();
 
                     if (ball.graspedRemotely || ball.graspingController)
                     {
@@ -121,22 +121,21 @@ namespace PlacableObjects
         void HingeGrasped(Hand controller)
         {
             hingeGraspingController = controller;
-            Debug.Log("grasped");
         }
 
         void HingeReleased(Hand controller)
         {
             hingeGraspingController = null;
-            ctx.Send(new Ubik.Messaging.Messages.MoveCannonAngle(launchPoint.parent.parent.rotation).Serialize());
+            ctx.Send(new Transballer.Messages.MoveCannonAngle(launchPoint.parent.parent.rotation).Serialize());
         }
 
         public override void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
-            string messageType = Ubik.Messaging.Messages.GetType(message.ToString());
+            string messageType = Transballer.Messages.GetType(message.ToString());
             switch (messageType)
             {
                 case "moveCannonAngle":
-                    launchPoint.parent.parent.rotation = Ubik.Messaging.Messages.MoveCannonAngle.Deserialize(message.ToString()).angle;
+                    launchPoint.parent.parent.rotation = Transballer.Messages.MoveCannonAngle.Deserialize(message.ToString()).angle;
                     break;
                 default:
                     base.ProcessMessage(message);

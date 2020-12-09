@@ -108,12 +108,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 2061997242598594536}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9975f8a7242593047b402995e6dfb44b, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bca55e529e249f4d8edb214249ab92c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 2061997242598594535}
+  rb: {fileID: 0}
   owner: 1
   graspingController: {fileID: 0}
+  graspedRemotely: 0
 --- !u!135 &8780813849112908960
 SphereCollider:
   m_ObjectHideFlags: 0

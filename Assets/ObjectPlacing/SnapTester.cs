@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using PlacableObjects;
+using Transballer.PlaceableObjects;
 using Ubik.Samples;
 
 // had to create this to debug snapping direction and position
@@ -28,16 +28,16 @@ public class SnapTester : MonoBehaviour
             for (int y = 0; y < catalogue.prefabs.Count; y++)
             {
                 int i = 0;
-                for (int sx = 0; sx < catalogue.prefabs[x].GetComponent<Placable>().snaps.Length; sx++)
+                for (int sx = 0; sx < catalogue.prefabs[x].GetComponent<Placeable>().snaps.Length; sx++)
                 {
-                    for (int sy = 0; sy < catalogue.prefabs[y].GetComponent<Placable>().snaps.Length; sy++)
+                    for (int sy = 0; sy < catalogue.prefabs[y].GetComponent<Placeable>().snaps.Length; sy++)
                     {
                         GameObject parentObj = new GameObject($"{x},{y}:{sx},{sy}");
 
                         Vector3 groundPos = Vector3.forward * (i * 4 + 2) + Vector3.up + Vector3.right * index * 4;
                         // groundedPipes[index] = GameObject.Instantiate(catalogue.prefabs[x], groundPos, Quaternion.identity);
-                        Placable py = GameObject.Instantiate(catalogue.prefabs[y], groundPos, Quaternion.identity, parentObj.transform).GetComponent<Placable>();
-                        Placable px = GameObject.Instantiate(catalogue.prefabs[x], groundPos, Quaternion.identity, parentObj.transform).GetComponent<Placable>();
+                        Placeable py = GameObject.Instantiate(catalogue.prefabs[y], groundPos, Quaternion.identity, parentObj.transform).GetComponent<Placeable>();
+                        Placeable px = GameObject.Instantiate(catalogue.prefabs[x], groundPos, Quaternion.identity, parentObj.transform).GetComponent<Placeable>();
 
                         px.gameObject.name = "snapper";
                         py.gameObject.name = "grounded";

@@ -4,7 +4,7 @@ using UnityEngine;
 using Ubik.Samples;
 using Ubik.XR;
 
-namespace PlacableObjects
+namespace Transballer.PlaceableObjects
 {
     public class PlacementManager : MonoBehaviour
     {
@@ -58,10 +58,10 @@ namespace PlacableObjects
             onMaterialChange?.Invoke(maxMaterial, maxMaterial);
         }
 
-        public PrefabCatalogue placables;
-        GameObject[] objects { get => placables.prefabs.ToArray(); }
+        public PrefabCatalogue placeables;
+        GameObject[] objects { get => placeables.prefabs.ToArray(); }
         public int selectedObject { get; private set; } = -1;
-        Placable ghostObject = null;
+        Placeable ghostObject = null;
         float placeDist = 1f;
         const float minPlaceDist = 0.2f;
         const float maxPlaceDist = 5f;
@@ -83,9 +83,9 @@ namespace PlacableObjects
             customRotation = Quaternion.identity;
             placeDist = 1f;
             SpawnGhostObject();
-            foreach (Placable placable in PlacableIndex.placedObjects.Values)
+            foreach (Placeable placeable in PlaceableIndex.placedObjects.Values)
             {
-                foreach (Snap s in placable.snaps)
+                foreach (Snap s in placeable.snaps)
                 {
                     if (ghostObject.CanBePlacedOn(s))
                     {
@@ -98,7 +98,7 @@ namespace PlacableObjects
         private void SpawnGhostObject()
         {
             Debug.Log("SpawnGhostObject");
-            ghostObject = networkSpawner.Spawn(objects[selectedObject]).GetComponent<Placable>();
+            ghostObject = networkSpawner.Spawn(objects[selectedObject]).GetComponent<Placeable>();
             MoveGhostToHandPos();
         }
 
@@ -187,7 +187,7 @@ namespace PlacableObjects
             ghostObject.Move();
         }
 
-        Placable hovered = null;
+        Placeable hovered = null;
 
         private void FixedUpdate()
         {
@@ -218,21 +218,21 @@ namespace PlacableObjects
             Ray ray = new Ray(rightHand.transform.position, rightHand.transform.forward);
             Debug.DrawRay(ray.origin, ray.direction, Color.red, Time.deltaTime);
             RaycastHit hit;
-            if (Physics.Raycast(ray.origin, ray.direction, out hit, 100f, 1 << LayerMask.NameToLayer("Placable")))
+            if (Physics.Raycast(ray.origin, ray.direction, out hit, 100f, 1 << LayerMask.NameToLayer("Placeable")))
             {
-                Placable placableHovered = hit.collider.gameObject.GetComponentInParent<Placable>();
-                if (placableHovered != hovered)
+                Placeable placeableHovered = hit.collider.gameObject.GetComponentInParent<Placeable>();
+                if (placeableHovered != hovered)
                 {
                     if (hovered)
                     {
                         hovered.OffHovered();
                     }
-                    placableHovered.OnHovered();
-                    hovered = placableHovered;
+                    placeableHovered.OnHovered();
+                    hovered = placeableHovered;
                 }
                 if (Input.GetKeyDown(KeyCode.R))
                 {
-                    RemoveObject(placableHovered);
+                    RemoveObject(placeableHovered);
                 }
             }
             else
@@ -253,9 +253,9 @@ namespace PlacableObjects
             {
                 ghostObject.Deselect();
             }
-            foreach (Placable placable in PlacableIndex.placedObjects.Values)
+            foreach (Placeable placeable in PlaceableIndex.placedObjects.Values)
             {
-                foreach (Snap s in placable.snaps)
+                foreach (Snap s in placeable.snaps)
                 {
                     s.HideGraphic();
                 }
@@ -271,7 +271,7 @@ namespace PlacableObjects
                 {
                     if (cachedHit)
                     {
-                        ghostObject.Place(snapIndex, cachedHit.placable.Id, cachedHit.index);
+                        ghostObject.Place(snapIndex, cachedHit.placeable.Id, cachedHit.index);
                     }
                     else
                     {
@@ -286,12 +286,12 @@ namespace PlacableObjects
 
         }
 
-        public void RemoveObject(Placable placable)
+        public void RemoveObject(Placeable placeable)
         {
-            if (placable.originalOwner)
+            if (placeable.originalOwner)
             {
-                placable.Remove();
-                material += placable.materialCost;
+                placeable.Remove();
+                material += placeable.materialCost;
                 onMaterialChange?.Invoke(material, maxMaterial);
             }
         }

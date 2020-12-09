@@ -1,10 +1,10 @@
 using UnityEngine;
 
-namespace PlacableObjects
+namespace Transballer.PlaceableObjects
 {
     public class Snap : MonoBehaviour
     {
-        public Placable placable;
+        public Placeable placeable;
         public int index;
         public Vector3 flipDir = Vector3.up;
 

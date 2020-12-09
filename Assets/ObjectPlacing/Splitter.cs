@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace PlacableObjects
+namespace Transballer.PlaceableObjects
 {
-    public class Splitter : Placable
+    public class Splitter : Placeable
     {
         public override int materialCost => 10;
         public BoxCollider splitCollider;
@@ -21,7 +21,7 @@ namespace PlacableObjects
             Collider[] balls = Physics.OverlapBox(splitCollider.transform.position, splitCollider.size / 2, splitCollider.transform.rotation, ballMask);
             foreach (Collider col in balls)
             {
-                Ubik.Physics.Rigidbody ball = col.gameObject.GetComponent<Ubik.Physics.Rigidbody>();
+                Transballer.NetworkedPhysics.NetworkedRigidbody ball = col.gameObject.GetComponent<Transballer.NetworkedPhysics.NetworkedRigidbody>();
                 if (ball.graspedRemotely || ball.graspingController)
                 {
                     continue;

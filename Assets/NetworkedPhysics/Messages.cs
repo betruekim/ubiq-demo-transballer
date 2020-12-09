@@ -1,6 +1,7 @@
 using UnityEngine;
+using Ubik.Messaging;
 
-namespace Ubik.Messaging
+namespace Transballer
 {
     public class Messages
     {
