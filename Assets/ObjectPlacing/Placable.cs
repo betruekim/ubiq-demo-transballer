@@ -9,7 +9,7 @@ namespace PlacableObjects
     public abstract class Placable : MonoBehaviour, INetworkComponent, INetworkObject, ISpawnable
     {
         public NetworkId Id { get; } = new NetworkId();
-        NetworkContext ctx;
+        protected NetworkContext ctx;
 
         public Snap[] snaps;
         public List<Snap> attachedTo; // external snap nodes that we are connected to

@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Ubik.XR;
+using Ubik.Messaging;
 
 namespace PlacableObjects
 {
@@ -66,7 +68,7 @@ namespace PlacableObjects
                 if (launchedElapsed > launchDelay)
                 {
                     // launch ball
-                    currentBall.transform.position = launchPoint.transform.position;
+                    currentBall.transform.position = launchPoint.transform.position + launchPoint.transform.up;
                     currentBall.transform.rotation = launchPoint.transform.rotation;
                     currentBall.SetKinematic(false);
                     currentBall.rb.velocity = launchPoint.transform.up * exitVelocity;
@@ -81,7 +83,7 @@ namespace PlacableObjects
             base.Move();
             if (currentBall)
             {
-                currentBall.transform.position = launchPoint.transform.position;
+                currentBall.transform.position = launchPoint.transform.position + launchPoint.transform.up;
             }
         }
 
@@ -111,6 +113,56 @@ namespace PlacableObjects
                     // s = ut + 0.5at^2
                     arcRenderer.SetPosition(i, launchPoint.transform.position + launchPoint.transform.up * exitVelocity * t + 0.5f * Physics.gravity * t * t);
                 }
+            }
+        }
+
+        Hand hingeGraspingController = null;
+
+        void HingeGrasped(Hand controller)
+        {
+            hingeGraspingController = controller;
+            Debug.Log("grasped");
+        }
+
+        void HingeReleased(Hand controller)
+        {
+            hingeGraspingController = null;
+            ctx.Send(new Ubik.Messaging.Messages.MoveCannonAngle(launchPoint.parent.parent.rotation).Serialize());
+        }
+
+        public override void ProcessMessage(ReferenceCountedSceneGraphMessage message)
+        {
+            string messageType = Ubik.Messaging.Messages.GetType(message.ToString());
+            switch (messageType)
+            {
+                case "moveCannonAngle":
+                    launchPoint.parent.parent.rotation = Ubik.Messaging.Messages.MoveCannonAngle.Deserialize(message.ToString()).angle;
+                    break;
+                default:
+                    base.ProcessMessage(message);
+                    break;
+            }
+
+        }
+
+        private void OnEnable()
+        {
+            launchPoint.GetComponent<RemoteGraspable>().OnGrasp += HingeGrasped;
+            launchPoint.GetComponent<RemoteGraspable>().OnRelease += HingeReleased;
+        }
+
+        private void OnDisable()
+        {
+            launchPoint.GetComponent<RemoteGraspable>().OnGrasp -= HingeGrasped;
+            launchPoint.GetComponent<RemoteGraspable>().OnRelease -= HingeReleased;
+        }
+
+        private void Update()
+        {
+            if (hingeGraspingController)
+            {
+                Vector3 dir = (hingeGraspingController.transform.position - launchPoint.parent.parent.position).normalized;
+                launchPoint.parent.parent.rotation = Quaternion.LookRotation(transform.right, dir);
             }
         }
     }
