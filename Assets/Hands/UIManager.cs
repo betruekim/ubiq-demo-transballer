@@ -9,13 +9,14 @@ using PlacableObjects;
 public class UIManager : MonoBehaviour
 {
 
-    public GameObject rightHandMenu, leftHandMenu, rightGun, leftGun;
+    public GameObject buildMenu, otherMenu, rightGun, leftGun;
     public GameObject spawnableButtonPrefab;
     public PrefabCatalogue placables;
     HandController leftHand;
     HandController rightHand;
     PlacementManager placementManager;
     Text material;
+    Transform mainCamera;
 
     void Start()
     {
@@ -24,13 +25,14 @@ public class UIManager : MonoBehaviour
         rightHand = playerObject.transform.Find("Right Hand").gameObject.GetComponent<HandController>();
         placementManager = GameObject.FindObjectOfType<PlacementManager>();
         placables = placementManager.placables;
+        mainCamera = Camera.main.transform;
 
         InitUI();
     }
 
     void InitUI()
     {
-        GridLayoutGroup buttonsContainer = rightHandMenu.GetComponentInChildren<GridLayoutGroup>();
+        GridLayoutGroup buttonsContainer = buildMenu.GetComponentInChildren<GridLayoutGroup>();
         int i = 0;
         foreach (GameObject placable in placables.prefabs)
         {
@@ -40,7 +42,7 @@ public class UIManager : MonoBehaviour
             button.GetComponent<Button>().onClick.AddListener(delegate { placementManager.SelectObject(localIndex); });
             i++;
         }
-        material = rightHandMenu.transform.Find("Canvas").Find("spawnablesMenu").Find("material").GetComponent<Text>();
+        material = buildMenu.transform.Find("Canvas").Find("spawnablesMenu").Find("material").GetComponent<Text>();
         placementManager.onMaterialChange += UpdateMaterial;
     }
 
@@ -49,18 +51,26 @@ public class UIManager : MonoBehaviour
         material.text = $"{newMaterial}/{newMaxMaterial}";
     }
 
+
+    bool HandWithinRange(HandController hand, float yMin, float yMax, float zMin, float zMax)
+    {
+        float y = hand.transform.localRotation.eulerAngles.y - mainCamera.localRotation.eulerAngles.y;
+        y = (y + 360) % 360;
+        float z = hand.transform.localRotation.eulerAngles.z;
+        return y > yMin && y < yMax && z > zMin && z < zMax;
+    }
+
     void Update()
     {
         //0 70 -140
-        bool rightRotation = true;
-        Debug.Log(rightHand.transform.eulerAngles);
-        rightRotation = rightRotation && rightHand.transform.localRotation.eulerAngles.y < 360 - 30 && rightHand.transform.localRotation.eulerAngles.y > 360 - 120;
-        rightRotation = rightRotation && rightHand.transform.localRotation.eulerAngles.z > 60 && rightHand.transform.localRotation.eulerAngles.z < 150;
-        rightHandMenu.SetActive(rightEquipped && rightRotation);
+        // otherMenu.SetActive(rightEquipped && HandWithinRange(rightHand, 360 - 120, 360 - 30, 60, 150));
+        // buildMenu.SetActive(rightEquipped && HandWithinRange(leftHand, 30, 120, 360 - 150, 360 - 60));
     }
 
     [SerializeField]
     bool rightEquipped = false;
+    [SerializeField]
+    bool leftEquipped = false;
 
     public void HolsterTrigger(bool rightHolster, HandController hand)
     {
@@ -69,6 +79,12 @@ public class UIManager : MonoBehaviour
         {
             rightEquipped = !rightEquipped;
             rightGun.SetActive(rightEquipped);
+            buildMenu.SetActive(rightEquipped);
+        }
+        else
+        {
+            leftEquipped = !leftEquipped;
+            leftGun.SetActive(leftEquipped);
         }
     }
 }

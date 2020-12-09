@@ -50,13 +50,16 @@ namespace PlacableObjects
         public override void Attach(Snap mine, Snap other)
         {
             base.Attach(mine, other);
-            if (mine == snaps[1])
+            if (snaps.Length == 2)
             {
-                // if the thing attached was on the top snap point
-                // take control of it, make it a child of us and add it to a list?
-                other.placable.TakeControl();
-                attachedToTop.Add(other.placable);
-                other.placable.transform.SetParent(transform);
+                if (mine == snaps[1])
+                {
+                    // if the thing attached was on the top snap point
+                    // take control of it, make it a child of us and add it to a list?
+                    other.placable.TakeControl();
+                    attachedToTop.Add(other.placable);
+                    other.placable.transform.SetParent(transform);
+                }
             }
         }
 

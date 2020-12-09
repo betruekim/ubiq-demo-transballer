@@ -32,6 +32,10 @@ namespace PlacableObjects
                     {
                         controller.TriggerPress.AddListener((bool pressed) => { if (pressed) { PlaceObject(); } });
                     }
+                    if (controller.GripPress != null)
+                    {
+                        controller.GripPress.AddListener((bool pressed) => { if (pressed) { DeselectObject(); } });
+                    }
                     // if (controller.PrimaryButtonPress != null)
                     // {
                     //     controller.PrimaryButtonPress.AddListener((bool pressed) => { if (pressed) { if (selectedObject >= 0) { DeselectObject(); } else { SelectObject(0); } } });
@@ -118,14 +122,15 @@ namespace PlacableObjects
             {
                 PlaceObject();
             }
-            if (rightHand.GripState)
-            {
-                placeDist += leftHand.Joystick.y * Time.deltaTime;
-                placeDist = Mathf.Clamp(placeDist, minPlaceDist, maxPlaceDist);
-            }
             if (leftHand.GripState)
             {
-                customRotation *= Quaternion.Euler(0, leftHand.Joystick.x, leftHand.Joystick.y);
+                placeDist += rightHand.Joystick.y * Time.deltaTime;
+                placeDist = Mathf.Clamp(placeDist, minPlaceDist, maxPlaceDist);
+                customRotation *= Quaternion.Euler(0, leftHand.Joystick.x, 0);
+            }
+            else if (leftHand.TriggerState)
+            {
+                customRotation *= Quaternion.Euler(0, 0, leftHand.Joystick.y);
             }
         }
 
@@ -259,6 +264,7 @@ namespace PlacableObjects
 
         public void PlaceObject()
         {
+            // TODO: check if we are aiming at a canvas
             if (selectedObject >= 0 && ghostObject && canBePlaced)
             {
                 if (ghostObject.materialCost <= material)
