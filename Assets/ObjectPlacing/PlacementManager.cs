@@ -227,7 +227,7 @@ namespace PlacableObjects
                 }
                 if (Input.GetKeyDown(KeyCode.R))
                 {
-                    placableHovered.Remove();
+                    RemoveObject(placableHovered);
                 }
             }
             else
@@ -278,6 +278,16 @@ namespace PlacableObjects
                 }
             }
 
+        }
+
+        public void RemoveObject(Placable placable)
+        {
+            if (placable.originalOwner)
+            {
+                placable.Remove();
+                material += placable.materialCost;
+                onMaterialChange?.Invoke(material, maxMaterial);
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ namespace PlacableObjects
     public class Cannon : Placable
     {
         public override int materialCost => 10;
+        public override bool canBePlacedFreely => false;
 
         public GameObject barrelPivot;
         public Transform launchPoint;

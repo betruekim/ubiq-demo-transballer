@@ -240,20 +240,22 @@ namespace PlacableObjects
 
         public virtual void OnRemove()
         {
-            foreach (Snap otherSnap in attachedTo)
+            for (int i = 0; i < attachedTo.Count; i++)
             {
-                // find which snap the other object is attached to
-                foreach (Snap mySnap in otherSnap.placable.attachedTo)
+                Snap otherSnap = attachedTo[i];
+                for (int j = 0; j < otherSnap.placable.attachedTo.Count; j++)
                 {
+                    Snap mySnap = otherSnap.placable.attachedTo[j];
                     if (System.Array.IndexOf(snaps, mySnap) > -1)
                     {
                         Detach(mySnap, otherSnap);
                         otherSnap.placable.Detach(otherSnap, mySnap);
+                        i = 0;
+                        j = 0;
                     }
                 }
             }
             Destroy(this.gameObject);
-            // TODO give original owner back material
         }
 
         public virtual void OnHovered()

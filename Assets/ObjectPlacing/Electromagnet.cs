@@ -5,6 +5,7 @@ namespace PlacableObjects
     public class Electromagnet : Placable
     {
         public override int materialCost => 10;
+        public override bool canBePlacedFreely => false;
         Ubik.Physics.RigidbodyManager manager;
 
         public Transform attractionPoint;
