@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using Ubik.XR;
 using Ubik.Samples;
 using Transballer.PlaceableObjects;
@@ -17,6 +18,7 @@ public class UIManager : MonoBehaviour
     PlacementManager placementManager;
     Text material;
     Transform mainCamera;
+    public Sprite removeIcon;
 
     void Start()
     {
@@ -46,9 +48,15 @@ public class UIManager : MonoBehaviour
             GameObject button = GameObject.Instantiate(spawnableButtonPrefab, buttonsContainer.transform);
             button.GetComponentInChildren<Text>().text = $"{placeable.name} {placeable.GetComponent<Placeable>().materialCost}";
             int localIndex = i;
-            button.GetComponent<Button>().onClick.AddListener(delegate { placementManager.SelectObject(localIndex); });
+            button.GetComponent<Button>().onClick.AddListener(delegate { placementManager.SelectObject(localIndex); EventSystem.current.SetSelectedGameObject(null); });
             i++;
         }
+
+        GameObject removeButton = GameObject.Instantiate(spawnableButtonPrefab, buttonsContainer.transform);
+        removeButton.GetComponentInChildren<Text>().text = $"remove";
+        removeButton.GetComponentsInChildren<Image>()[1].sprite = removeIcon;
+        removeButton.GetComponent<Button>().onClick.AddListener(delegate { placementManager.SelectRemover(); EventSystem.current.SetSelectedGameObject(null); });
+
         material = buildMenu.transform.Find("Canvas").Find("spawnablesMenu").Find("material").GetComponent<Text>();
         placementManager.onMaterialChange += UpdateMaterial;
     }
@@ -87,6 +95,10 @@ public class UIManager : MonoBehaviour
             rightEquipped = !rightEquipped;
             rightGun.SetActive(rightEquipped);
             buildMenu.SetActive(rightEquipped);
+            if (!rightEquipped)
+            {
+                placementManager.DeselectObject();
+            }
         }
         else
         {

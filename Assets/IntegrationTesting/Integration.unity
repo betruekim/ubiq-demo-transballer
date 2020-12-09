@@ -904,6 +904,7 @@ MonoBehaviour:
   leftHand: {fileID: 0}
   maxMaterial: 0
   material: 0
+  useSnaps: 1
   placeables: {fileID: 11400000, guid: 8badd51964d96c847a66b9c95c82824b, type: 2}
 --- !u!114 &657013990
 MonoBehaviour:
@@ -924,6 +925,7 @@ MonoBehaviour:
   spawnableButtonPrefab: {fileID: 8572614828137404149, guid: bff8f7b91ca9d2f43adb6309c774b264,
     type: 3}
   placeables: {fileID: 11400000, guid: 8badd51964d96c847a66b9c95c82824b, type: 2}
+  removeIcon: {fileID: 21300000, guid: a1e32bf0c76d6114f851df6cb532d73f, type: 3}
   rightEquipped: 0
   leftEquipped: 0
 --- !u!114 &657013991

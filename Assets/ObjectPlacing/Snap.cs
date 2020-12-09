@@ -10,7 +10,8 @@ namespace Transballer.PlaceableObjects
 
         public static Quaternion GetMatchingRotation(Snap grounded, Snap snapper)
         {
-            Quaternion inverseOfOther = Quaternion.AngleAxis(180, grounded.transform.rotation * grounded.flipDir) * grounded.transform.rotation;
+            // Quaternion inverseOfOther = Quaternion.AngleAxis(180, grounded.transform.rotation * grounded.flipDir) * grounded.transform.rotation;
+            Quaternion inverseOfOther = Quaternion.LookRotation(-grounded.transform.forward, grounded.transform.up);
             return inverseOfOther * Quaternion.Inverse(snapper.transform.localRotation);
         }
 

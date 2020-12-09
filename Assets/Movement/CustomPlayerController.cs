@@ -13,6 +13,26 @@ public class CustomPlayerController : PlayerController
     private Vector3 velocity;
     private Vector3 userLocalPosition;
 
+    private void Start()
+    {
+        foreach (var item in GetComponentsInChildren<TeleportRay>())
+        {
+            if (item.transform.parent.name == "Right Hand")
+            {
+                item.OnTeleport.AddListener(OnTeleport);
+            }
+        }
+    }
+
+    new public void OnTeleport(Vector3 position)
+    {
+        userLocalPosition = transform.InverseTransformPoint(headCamera.transform.position);
+        userLocalPosition.y = 0;
+
+        var movement = position - transform.TransformPoint(userLocalPosition);  // move so the foot position is over the new teleport location
+        transform.position += movement;
+    }
+
     private void FixedUpdate()
     {
         // Update the foot position. This is done by pulling the feet using a rubber band.
