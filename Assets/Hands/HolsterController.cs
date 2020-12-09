@@ -10,7 +10,7 @@ public class HolsterController : MonoBehaviour
 
     private void Awake()
     {
-        manager = gameObject.GetComponentInParent<UIManager>();
+        manager = GameObject.FindObjectOfType<UIManager>();
         mainCamera = Camera.main.gameObject;
     }
 

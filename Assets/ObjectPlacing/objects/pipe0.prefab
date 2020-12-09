@@ -11,7 +11,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -2124705421725058983, guid: a5360f4cc02108a4cb62849317a1ba5d, type: 3}
 --- !u!1 &3189652704474183781
@@ -72,7 +72,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9ba171ab71c8fe44b726e96e5fe31ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placable: {fileID: 6649201174035122535}
+  placeable: {fileID: 0}
   index: 1
   flipDir: {x: 0, y: 1, z: 0}
 --- !u!1 &3732105514027827871
@@ -312,7 +312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9ba171ab71c8fe44b726e96e5fe31ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placable: {fileID: 6649201174035122535}
+  placeable: {fileID: 0}
   index: 0
   flipDir: {x: 0, y: 1, z: 0}
 --- !u!1 &7970251681771275840

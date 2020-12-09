@@ -23,6 +23,8 @@ public class UIManager : MonoBehaviour
         GameObject playerObject = GameObject.FindObjectOfType<PlayerController>().gameObject;
         leftHand = playerObject.transform.Find("Left Hand").gameObject.GetComponent<HandController>();
         rightHand = playerObject.transform.Find("Right Hand").gameObject.GetComponent<HandController>();
+        leftHand.gameObject.layer = LayerMask.NameToLayer("Hands");
+        rightHand.gameObject.layer = LayerMask.NameToLayer("Hands");
         placementManager = GameObject.FindObjectOfType<PlacementManager>();
         placeables = placementManager.placeables;
         mainCamera = Camera.main.transform;
@@ -32,6 +34,11 @@ public class UIManager : MonoBehaviour
 
     void InitUI()
     {
+        leftGun = leftHand.transform.Find("deag").gameObject;
+        rightGun = rightHand.transform.Find("deag").gameObject;
+        buildMenu = leftHand.transform.Find("buildMenu").gameObject;
+        otherMenu = null;
+
         GridLayoutGroup buttonsContainer = buildMenu.GetComponentInChildren<GridLayoutGroup>();
         int i = 0;
         foreach (GameObject placeable in placeables.prefabs)
