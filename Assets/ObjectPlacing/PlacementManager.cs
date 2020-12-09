@@ -12,6 +12,12 @@ namespace PlacableObjects
         public HandController rightHand;
         public HandController leftHand;
 
+        public int maxMaterial;
+        public int material;
+
+        public delegate void MaterialUpdate(int newMaterial, int newMaxMaterial);
+        public event MaterialUpdate onMaterialChange;
+
         private void Awake()
         {
             networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
@@ -40,6 +46,14 @@ namespace PlacableObjects
             }
         }
 
+        public void SetMaxMaterial(int maxMaterial)
+        {
+            this.maxMaterial = maxMaterial;
+            material = maxMaterial;
+            // ? is syntactic sugar for 'run this only if the object is not null'
+            onMaterialChange?.Invoke(maxMaterial, maxMaterial);
+        }
+
         public PrefabCatalogue placables;
         GameObject[] objects { get => placables.prefabs.ToArray(); }
         public int selectedObject { get; private set; } = -1;
@@ -51,6 +65,7 @@ namespace PlacableObjects
 
         public void SelectObject(int index)
         {
+            SetMaxMaterial(400); // TODO REMOVE THIS
             if (index < 0 || index >= objects.Length)
             {
                 throw new System.Exception($"index {index} less than zero or greater than objects length ${objects.Length}");
@@ -68,7 +83,10 @@ namespace PlacableObjects
             {
                 foreach (Snap s in placable.snaps)
                 {
-                    s.ShowGraphic();
+                    if (ghostObject.CanBePlacedOn(s))
+                    {
+                        s.ShowGraphic();
+                    }
                 }
             }
         }
@@ -114,6 +132,7 @@ namespace PlacableObjects
         private Snap cachedHit; // the thing we hit using snap raycasts
         private int snapIndex = -1; // the index of the snap object on ghostObject
         const float maxRaycastDist = 2f;
+        bool canBePlaced = false;
 
         private void MoveGhostToHandPos()
         {
@@ -171,6 +190,24 @@ namespace PlacableObjects
             if (ghostObject)
             {
                 MoveGhostToSnapPos();
+                // compute canBePlaced
+                canBePlaced = ghostObject.materialCost <= material;
+                if (cachedHit)
+                {
+                    canBePlaced = canBePlaced && ghostObject.CanBePlacedOn(cachedHit);
+                }
+                else
+                {
+                    canBePlaced = canBePlaced && ghostObject.canBePlacedFreely;
+                }
+                if (canBePlaced)
+                {
+                    ghostObject.PlaceGood();
+                }
+                else
+                {
+                    ghostObject.PlaceBad();
+                }
             }
 
             Ray ray = new Ray(rightHand.transform.position, rightHand.transform.forward);
@@ -222,27 +259,25 @@ namespace PlacableObjects
 
         public void PlaceObject()
         {
-            if (selectedObject >= 0)
+            if (selectedObject >= 0 && ghostObject && canBePlaced)
             {
-                Debug.Log("placing the ting");
-                if (cachedHit)
+                if (ghostObject.materialCost <= material)
                 {
-                    if (ghostObject.CanBePlacedOn(cachedHit))
+                    if (cachedHit)
                     {
                         ghostObject.Place(snapIndex, cachedHit.placable.Id, cachedHit.index);
-                        ghostObject = null;
-                        DeselectObject();
                     }
-
-                }
-                else if (ghostObject.canBePlacedFreely)
-                {
-                    ghostObject.Place();
+                    else
+                    {
+                        ghostObject.Place();
+                    }
+                    material -= ghostObject.materialCost;
+                    onMaterialChange?.Invoke(material, maxMaterial);
                     ghostObject = null;
                     DeselectObject();
                 }
             }
+
         }
     }
-
 }

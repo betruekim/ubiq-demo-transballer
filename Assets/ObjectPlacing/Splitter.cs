@@ -4,6 +4,7 @@ namespace PlacableObjects
 {
     public class Splitter : Placable
     {
+        public override int materialCost => 10;
         public BoxCollider splitCollider;
         public Transform[] splits;
 

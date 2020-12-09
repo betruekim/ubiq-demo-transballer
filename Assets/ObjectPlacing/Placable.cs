@@ -14,6 +14,7 @@ namespace PlacableObjects
         public Snap[] snaps;
         public List<Snap> attachedTo; // external snap nodes that we are connected to
         public virtual bool canBePlacedFreely { get; } = true;
+        public abstract int materialCost { get; }
 
         public bool originalOwner = false;
         public bool owner = false;
@@ -131,6 +132,11 @@ namespace PlacableObjects
                 // Debug.Log(new Messages.OnPlace(snapIndex, snappedTo, snappedToSnapIndex).Serialize());
                 OnPlace(snapIndex, snappedTo, snappedToSnapIndex);
                 originalOwner = true;
+
+                foreach (MeshRenderer mr in transform.Find("model").GetComponentsInChildren<MeshRenderer>())
+                {
+                    mr.material.color = Color.white;
+                }
             }
             else
             {
@@ -194,6 +200,22 @@ namespace PlacableObjects
                 col.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             }
             placed = false;
+        }
+
+        public void PlaceGood()
+        {
+            foreach (MeshRenderer mr in transform.Find("model").GetComponentsInChildren<MeshRenderer>())
+            {
+                mr.material.color = Color.green;
+            }
+        }
+
+        public void PlaceBad()
+        {
+            foreach (MeshRenderer mr in transform.Find("model").GetComponentsInChildren<MeshRenderer>())
+            {
+                mr.material.color = Color.red;
+            }
         }
 
         public virtual bool CanBePlacedOn(Snap target)

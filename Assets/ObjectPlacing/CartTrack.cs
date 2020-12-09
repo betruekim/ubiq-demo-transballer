@@ -7,6 +7,7 @@ namespace PlacableObjects
 {
     public class CartTrack : Placable
     {
+        public override int materialCost => 10;
         public override bool CanBePlacedOn(Snap target)
         {
             // we can only snap a cart to a cartTrack, and we can only snap to the top snap

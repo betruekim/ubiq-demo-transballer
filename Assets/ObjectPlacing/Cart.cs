@@ -6,6 +6,7 @@ namespace PlacableObjects
 {
     public class Cart : Placable
     {
+        public override int materialCost => 10;
         public override bool canBePlacedFreely => false;
         // need to move this bad boy back to original position on level start
         private Snap originalSnap;
