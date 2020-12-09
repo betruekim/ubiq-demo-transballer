@@ -54,8 +54,8 @@ public class UIManager : MonoBehaviour
         //0 70 -140
         bool rightRotation = true;
         Debug.Log(rightHand.transform.eulerAngles);
-        rightRotation = rightRotation && rightHand.transform.rotation.eulerAngles.y < 360 - 30 && rightHand.transform.rotation.eulerAngles.y > 360 - 120;
-        rightRotation = rightRotation && rightHand.transform.rotation.eulerAngles.z > 60 && rightHand.transform.rotation.eulerAngles.z < 150;
+        rightRotation = rightRotation && rightHand.transform.localRotation.eulerAngles.y < 360 - 30 && rightHand.transform.localRotation.eulerAngles.y > 360 - 120;
+        rightRotation = rightRotation && rightHand.transform.localRotation.eulerAngles.z > 60 && rightHand.transform.localRotation.eulerAngles.z < 150;
         rightHandMenu.SetActive(rightEquipped && rightRotation);
     }
 

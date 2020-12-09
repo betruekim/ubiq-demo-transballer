@@ -32,10 +32,10 @@ namespace PlacableObjects
                     {
                         controller.TriggerPress.AddListener((bool pressed) => { if (pressed) { PlaceObject(); } });
                     }
-                    if (controller.PrimaryButtonPress != null)
-                    {
-                        controller.PrimaryButtonPress.AddListener((bool pressed) => { if (pressed) { if (selectedObject >= 0) { DeselectObject(); } else { SelectObject(0); } } });
-                    }
+                    // if (controller.PrimaryButtonPress != null)
+                    // {
+                    //     controller.PrimaryButtonPress.AddListener((bool pressed) => { if (pressed) { if (selectedObject >= 0) { DeselectObject(); } else { SelectObject(0); } } });
+                    // }
                 }
                 else
                 if (controller.gameObject.name == "Left Hand")
