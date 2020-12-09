@@ -202,19 +202,11 @@ namespace PlacableObjects
             placed = false;
         }
 
-        public void PlaceGood()
+        public void SetMeshColors(Color color)
         {
             foreach (MeshRenderer mr in transform.Find("model").GetComponentsInChildren<MeshRenderer>())
             {
-                mr.material.color = Color.green;
-            }
-        }
-
-        public void PlaceBad()
-        {
-            foreach (MeshRenderer mr in transform.Find("model").GetComponentsInChildren<MeshRenderer>())
-            {
-                mr.material.color = Color.red;
+                mr.material.color = color;
             }
         }
 

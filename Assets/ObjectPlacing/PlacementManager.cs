@@ -202,11 +202,11 @@ namespace PlacableObjects
                 }
                 if (canBePlaced)
                 {
-                    ghostObject.PlaceGood();
+                    ghostObject.SetMeshColors(Color.green);
                 }
                 else
                 {
-                    ghostObject.PlaceBad();
+                    ghostObject.SetMeshColors(Color.red);
                 }
             }
 
