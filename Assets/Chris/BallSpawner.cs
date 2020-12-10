@@ -3,25 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Ubik.Samples;
+using Ubik.Messaging;
+using Ubik.Physics;
 
-public class BallSpawner : MonoBehaviour
+public class BallSpawner : MonoBehaviour, INetworkObject, INetworkComponent
 {
+    public NetworkId Id { get; } = new NetworkId(11);
+    NetworkContext ctx;
+
+    public GameObject level;
     public NetworkSpawner networkSpawner;
+    public RigidbodyManager rigidbodyManager;
     public GameObject timerText;
     public float timeUntilSpawn;
     public int ballsToSpawn;
     public GameObject ball;
     public GameObject spawnPoint;
-    public Level level;
     public float spawnRate;
+    private LevelManager levelManager;
 
-    private bool timerRunning = false;
+    public bool timerRunning = false;
     private Transform spawnTransform;
 
     private void Awake()
     {
         networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
-        level = Resources.Load<Level>("Levels/ExampleLevel");
+        levelManager = level.GetComponent<LevelManager>();
+        ctx = NetworkScene.Register(this);
     }
 
     void Start()
@@ -29,34 +37,38 @@ public class BallSpawner : MonoBehaviour
         GameObject empty = new GameObject();
         spawnTransform = empty.transform;
         spawnTransform.position = spawnPoint.transform.position;
-
-        timerRunning = true;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.L))
+        if (timerRunning)
         {
-            StartCoroutine("spawnBalls");
+            if (timeUntilSpawn > 0.0f)
+            {
+                timeUntilSpawn -= Time.deltaTime;
+
+                int seconds;
+                if (timeUntilSpawn < 0.0f)
+                {
+                    seconds = 0;
+                }
+                else
+                {
+                    seconds = Mathf.FloorToInt(timeUntilSpawn);
+                }
+                ctx.Send(new SpawnerTime(seconds).Serialize());
+                displayTime(seconds);
+            }
+            else
+            {
+                timeUntilSpawn = 0.0f;
+                Debug.Log("Time is up. Balls imminent.");
+                timerRunning = false;
+
+                // Start spawning balls
+                StartCoroutine("spawnBalls");
+            }
         }
-
-        // if (timerRunning)
-        // {
-        //     if (timeUntilSpawn > 0.0f)
-        //     {
-        //         timeUntilSpawn -= Time.deltaTime;
-        //         displayTime(timeUntilSpawn);
-        //     }
-        //     else
-        //     {
-        //         timeUntilSpawn = 0.0f;
-        //         Debug.Log("Time is up. Balls imminent.");
-        //         timerRunning = false;
-
-        //         // Start spawning balls
-        //         StartCoroutine("spawnBalls");
-        //     }
-        // }
     }
 
     IEnumerator spawnBalls()
@@ -75,25 +87,55 @@ public class BallSpawner : MonoBehaviour
     {
         float jitter = 0.1f;
         Vector3 offset = new Vector3(Random.Range(-jitter, jitter), 0.0f, Random.Range(-jitter, jitter));
-        GameObject spawnedBall = networkSpawner.SpawnPersistent(ball);
+        GameObject spawnedBall = networkSpawner.Spawn(ball);
         spawnedBall.transform.position = spawnTransform.position + offset;
 
         // Add unique name for each ball
         spawnedBall.name = spawnedBall.name + ballNumber.ToString();
+
+        // Add to the ball list
+        levelManager.ballList.Add(spawnedBall);
     }
 
-    private void displayTime(float timeUntilSpawn)
+    private void displayTime(int seconds)
     {
-        int seconds;
-        if (timeUntilSpawn < 0.0f)
-        {
-            seconds = 0;
-        }
-        else
-        {
-            seconds = Mathf.FloorToInt(timeUntilSpawn);
-        }
-
         transform.Find("Timer").GetComponent<TextMesh>().text = string.Format("{0}", seconds);
     }
+
+    public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
+    {
+        string msgString = message.ToString();
+        string messageType = Messages.GetType(msgString);
+
+        if (messageType == "spawnerTime")
+        {
+            displayTime(SpawnerTime.Deserialize(msgString).time);
+        }
+    }
+}
+
+[System.Serializable]
+public class SpawnerTime : Messages.Message
+{
+    public override string messageType => "spawnerTime";
+
+    public int time;
+
+    public SpawnerTime(int time)
+    {
+        this.time = time;
+    }
+
+    public override string Serialize()
+    {
+        return "spawnerTime$" + time.ToString() + "$";
+    }
+
+    public static SpawnerTime Deserialize(string message)
+    {
+        string[] components = message.Split('$');
+
+        return new SpawnerTime(int.Parse(components[1]));
+    }
+
 }

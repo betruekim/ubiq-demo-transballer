@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Ubik.Messaging;
 
 namespace Ubik.Physics
 {
@@ -42,6 +43,24 @@ namespace Ubik.Physics
             {
                 rigidbody.SendUpdate();
 
+            }
+        }
+
+        public void Deregister(Rigidbody rigidbody, bool owner)
+        {
+            NetRBMetadata[] array = rigidbodies.ToArray();
+            for (int i = 0; i != array.Length; i++)
+            {
+                if (Object.ReferenceEquals(array[i].rigidbody, rigidbody))
+                {
+                    rigidbodies.Remove(array[i]);
+
+                    // Send signal to ball's peers to self destruct
+                    if (owner)
+                    {
+                        rigidbody.ctx.Send(new Messages.SelfDestruct().Serialize());
+                    }
+                }
             }
         }
 

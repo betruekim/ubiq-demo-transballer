@@ -15,7 +15,7 @@ namespace Ubik.Physics
         public UnityEngine.Rigidbody rb;
         public float velSquareMag { get { return rb.velocity.sqrMagnitude; } }
 
-        NetworkContext ctx;
+        public NetworkContext ctx;
         RigidbodyManager manager;
         public bool owner = true;
         public Hand graspingController;
@@ -28,7 +28,7 @@ namespace Ubik.Physics
             rb = GetComponent<UnityEngine.Rigidbody>();
         }
 
-        public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
+        public virtual void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
             string msgString = message.ToString();
             string messageType = Messages.GetType(msgString);
@@ -67,6 +67,10 @@ namespace Ubik.Physics
                     }
                     Messages.SetKinematic setKinematic = Messages.SetKinematic.Deserialize(msgString);
                     rb.isKinematic = setKinematic.state;
+                    break;
+                case "selfDestruct":
+                    manager.Deregister(transform.gameObject.GetComponent<Rigidbody>(), false);
+                    GameObject.Destroy(transform.gameObject);
                     break;
                 default:
                     throw new System.Exception($"error, message of type {messageType} unknown");

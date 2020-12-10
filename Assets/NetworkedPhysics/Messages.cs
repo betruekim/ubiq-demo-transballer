@@ -170,6 +170,17 @@ namespace Ubik.Messaging
         }
 
         [System.Serializable]
+        public class SelfDestruct : Message
+        {
+            public override string messageType => "selfDestruct";
+
+            public override string Serialize()
+            {
+                return "selfDestruct$";
+            }
+        }
+
+        [System.Serializable]
         public class NewOwner : Message
         {
             public override string messageType => "newOwner";

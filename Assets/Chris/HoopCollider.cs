@@ -10,6 +10,7 @@ public class HoopCollider : MonoBehaviour
 
     private Hoop hoopRef;
     private List<string> gate1;
+    private LevelManager levelManager;
 
     void Start()
     {
@@ -39,7 +40,7 @@ public class HoopCollider : MonoBehaviour
 
                     if (hoopRef.ballsToGo == 0)
                     {
-                        GameObject.Destroy(hoop);
+                        hoopRef.level.GetComponent<LevelManager>().levelComplete();
                     }
                 }
             }
