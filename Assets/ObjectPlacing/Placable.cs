@@ -4,12 +4,12 @@ using UnityEngine;
 using Ubik.Messaging;
 using Ubik.Samples;
 
-namespace PlacableObjects
+namespace Transballer.PlaceableObjects
 {
-    public abstract class Placable : MonoBehaviour, INetworkComponent, INetworkObject, ISpawnable
+    public abstract class Placeable : MonoBehaviour, INetworkComponent, INetworkObject, ISpawnable
     {
         public NetworkId Id { get; } = new NetworkId();
-        NetworkContext ctx;
+        protected NetworkContext ctx;
 
         public Snap[] snaps;
         public List<Snap> attachedTo; // external snap nodes that we are connected to
@@ -23,22 +23,22 @@ namespace PlacableObjects
         public virtual void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
             // Debug.Log($"{Id} {owner} {message}");
-            string type = Messages.GetType(message.ToString());
+            string type = Transballer.Messages.GetType(message.ToString());
             switch (type)
             {
                 case "positionUpdate":
                     if (owner)
                     {
-                        throw new System.Exception("Received position update for locally controlled placable");
+                        throw new System.Exception("Received position update for locally controlled placeable");
                     }
-                    Messages.PositionUpdate update = Messages.PositionUpdate.Deserialize(message.ToString());
+                    Transballer.Messages.PositionUpdate update = Transballer.Messages.PositionUpdate.Deserialize(message.ToString());
                     transform.position = update.position;
                     transform.rotation = update.rotation;
                     break;
                 case "onDestroy":
                     if (owner)
                     {
-                        throw new System.Exception("Received destroy update for locally controlled placable");
+                        throw new System.Exception("Received destroy update for locally controlled placeable");
                     }
                     Destroy(this.gameObject);
                     break;
@@ -46,9 +46,9 @@ namespace PlacableObjects
                     Debug.Log($"{Id} {owner} {message}");
                     if (owner)
                     {
-                        throw new System.Exception("Received onPlace update for locally controlled placable");
+                        throw new System.Exception("Received onPlace update for locally controlled placeable");
                     }
-                    Messages.OnPlace placeInfo = Messages.OnPlace.Deserialize(message.ToString());
+                    Transballer.Messages.OnPlace placeInfo = Transballer.Messages.OnPlace.Deserialize(message.ToString());
                     OnPlace(placeInfo.snapIndex, placeInfo.snappedTo, placeInfo.snappedToSnapIndex);
                     break;
                 case "onRemove":
@@ -70,7 +70,7 @@ namespace PlacableObjects
             int index = 0;
             foreach (Snap snap in snaps)
             {
-                snap.placable = this;
+                snap.placeable = this;
                 snap.index = index;
                 index++;
             }
@@ -82,25 +82,25 @@ namespace PlacableObjects
 
         private void OnDestroy()
         {
-            PlacableIndex.RemovePlacedObject(this);
+            PlaceableIndex.RemovePlacedObject(this);
         }
 
         public virtual void OnSpawned(bool local)
         {
             Debug.Log($"onSpawned {Id} {local}");
             owner = local;
-            PlacableIndex.AddPlacedObject(this);
+            PlaceableIndex.AddPlacedObject(this);
         }
 
         public virtual void Move()
         {
             if (owner)
             {
-                ctx.Send(new Messages.PositionUpdate(transform.position, transform.rotation).Serialize());
+                ctx.Send(new Transballer.Messages.PositionUpdate(transform.position, transform.rotation).Serialize());
             }
             else
             {
-                throw new System.Exception("called Move() on a remotely controlled placable!");
+                throw new System.Exception("called Move() on a remotely controlled placeable!");
             }
         }
 
@@ -109,18 +109,18 @@ namespace PlacableObjects
             // destroy this object
             if (owner)
             {
-                ctx.Send(new Messages.OnDestroy().Serialize());
+                ctx.Send(new Transballer.Messages.OnDestroy().Serialize());
             }
             else
             {
-                throw new System.Exception("called Place() on a remotely controlled placable!");
+                throw new System.Exception("called Place() on a remotely controlled placeable!");
             }
             Destroy(this.gameObject);
         }
 
         public void TakeControl()
         {
-            ctx.Send(new Messages.NewOwner().Serialize());
+            ctx.Send(new Transballer.Messages.NewOwner().Serialize());
             owner = true;
         }
 
@@ -128,8 +128,8 @@ namespace PlacableObjects
         {
             if (owner)
             {
-                ctx.Send(new Messages.OnPlace(snapIndex, snappedTo, snappedToSnapIndex).Serialize());
-                // Debug.Log(new Messages.OnPlace(snapIndex, snappedTo, snappedToSnapIndex).Serialize());
+                ctx.Send(new Transballer.Messages.OnPlace(snapIndex, snappedTo, snappedToSnapIndex).Serialize());
+                // Debug.Log(new Transballer.Messages.OnPlace(snapIndex, snappedTo, snappedToSnapIndex).Serialize());
                 OnPlace(snapIndex, snappedTo, snappedToSnapIndex);
                 originalOwner = true;
 
@@ -140,7 +140,7 @@ namespace PlacableObjects
             }
             else
             {
-                throw new System.Exception("called Place() on a remotely controlled placable!");
+                throw new System.Exception("called Place() on a remotely controlled placeable!");
             }
         }
 
@@ -157,7 +157,7 @@ namespace PlacableObjects
             foreach (Collider col in GetComponentsInChildren<Collider>())
             {
                 col.enabled = true;
-                col.gameObject.layer = LayerMask.NameToLayer("Placable");
+                col.gameObject.layer = LayerMask.NameToLayer("Placeable");
                 Snap s = col.gameObject.GetComponent<Snap>();
                 if (s)
                 {
@@ -167,9 +167,9 @@ namespace PlacableObjects
             }
             if (snapIndex >= 0)
             {
-                Placable placableSnappedTo = PlacableIndex.placedObjects[snappedTo];
-                Attach(snaps[snapIndex], placableSnappedTo.snaps[snappedToSnapIndex]);
-                placableSnappedTo.Attach(placableSnappedTo.snaps[snappedToSnapIndex], snaps[snapIndex]);
+                Placeable placeableSnappedTo = PlaceableIndex.placedObjects[snappedTo];
+                Attach(snaps[snapIndex], placeableSnappedTo.snaps[snappedToSnapIndex]);
+                placeableSnappedTo.Attach(placeableSnappedTo.snaps[snappedToSnapIndex], snaps[snapIndex]);
             }
             placed = true;
         }
@@ -202,19 +202,11 @@ namespace PlacableObjects
             placed = false;
         }
 
-        public void PlaceGood()
+        public void SetMeshColors(Color color)
         {
             foreach (MeshRenderer mr in transform.Find("model").GetComponentsInChildren<MeshRenderer>())
             {
-                mr.material.color = Color.green;
-            }
-        }
-
-        public void PlaceBad()
-        {
-            foreach (MeshRenderer mr in transform.Find("model").GetComponentsInChildren<MeshRenderer>())
-            {
-                mr.material.color = Color.red;
+                mr.material.color = color;
             }
         }
 
@@ -229,7 +221,7 @@ namespace PlacableObjects
         {
             if (originalOwner)
             {
-                ctx.Send(new Messages.OnRemove().Serialize());
+                ctx.Send(new Transballer.Messages.OnRemove().Serialize());
                 OnRemove();
             }
             else
@@ -240,20 +232,22 @@ namespace PlacableObjects
 
         public virtual void OnRemove()
         {
-            foreach (Snap otherSnap in attachedTo)
+            for (int i = 0; i < attachedTo.Count; i++)
             {
-                // find which snap the other object is attached to
-                foreach (Snap mySnap in otherSnap.placable.attachedTo)
+                Snap otherSnap = attachedTo[i];
+                for (int j = 0; j < otherSnap.placeable.attachedTo.Count; j++)
                 {
+                    Snap mySnap = otherSnap.placeable.attachedTo[j];
                     if (System.Array.IndexOf(snaps, mySnap) > -1)
                     {
                         Detach(mySnap, otherSnap);
-                        otherSnap.placable.Detach(otherSnap, mySnap);
+                        otherSnap.placeable.Detach(otherSnap, mySnap);
+                        i = 0;
+                        j = 0;
                     }
                 }
             }
             Destroy(this.gameObject);
-            // TODO give original owner back material
         }
 
         public virtual void OnHovered()

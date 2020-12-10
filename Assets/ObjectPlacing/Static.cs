@@ -1,9 +1,9 @@
 using Ubik.Messaging;
 using UnityEngine;
 
-namespace PlacableObjects
+namespace Transballer.PlaceableObjects
 {
-    public class Static : Placable
+    public class Static : Placeable
     {
         public override int materialCost => 10; // TODO, split every static object up to have different materialCost
     }

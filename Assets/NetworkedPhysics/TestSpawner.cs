@@ -6,12 +6,12 @@ public class TestSpawner : MonoBehaviour
 
     public NetworkSpawner networkSpawner;
     public GameObject spawnPrefab;
-    public PlacableObjects.PlacementManager placementManager;
+    public Transballer.PlaceableObjects.PlacementManager placementManager;
 
     private void Awake()
     {
         networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
-        placementManager = GameObject.FindObjectOfType<PlacableObjects.PlacementManager>();
+        placementManager = GameObject.FindObjectOfType<Transballer.PlaceableObjects.PlacementManager>();
     }
 
     private void Update()

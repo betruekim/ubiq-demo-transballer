@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Ubik.Messaging;
 
-namespace Ubik.Physics
+namespace Transballer.NetworkedPhysics
 {
     // singleton class that manages which rigidbodies get updated each frame
     public class RigidbodyManager : MonoBehaviour
@@ -13,11 +13,11 @@ namespace Ubik.Physics
         [System.Serializable]
         public class NetRBMetadata
         {
-            public Rigidbody rigidbody;
+            public NetworkedRigidbody rigidbody;
             public float elapsed;
             public int priority;
 
-            public NetRBMetadata(Rigidbody rb)
+            public NetRBMetadata(NetworkedRigidbody rb)
             {
                 this.rigidbody = rb;
                 this.elapsed = 0;
@@ -27,7 +27,7 @@ namespace Ubik.Physics
 
         public List<NetRBMetadata> rigidbodies = new List<NetRBMetadata>();
 
-        public void Register(Rigidbody rigidbody)
+        public void Register(NetworkedRigidbody rigidbody)
         {
             foreach (var meta in rigidbodies)
             {

@@ -6,9 +6,9 @@ using Ubik.Samples;
 using Ubik.XR;
 
 
-namespace Ubik.Physics
+namespace Transballer.NetworkedPhysics
 {
-    public class Rigidbody : MonoBehaviour, INetworkObject, INetworkComponent, ISpawnable, IGraspable
+    public class NetworkedRigidbody : MonoBehaviour, INetworkObject, INetworkComponent, ISpawnable, IGraspable
     {
         public NetworkId Id { get; } = new NetworkId();
 

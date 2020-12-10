@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Ubik.Samples;
 using Ubik.XR;
 
-namespace PlacableObjects
+namespace Transballer.PlaceableObjects
 {
     public class PlacementManager : MonoBehaviour
     {
@@ -18,12 +17,15 @@ namespace PlacableObjects
         public delegate void MaterialUpdate(int newMaterial, int newMaxMaterial);
         public event MaterialUpdate onMaterialChange;
 
-        private void Awake()
+        public bool useSnaps = true;
+
+        private void Start()
         {
             networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
             HandController[] handControllers = GameObject.FindObjectsOfType<HandController>();
             foreach (var controller in handControllers)
             {
+                Debug.Log(controller.PrimaryButtonPress);
                 if (controller.gameObject.name == "Right Hand")
                 // if (controller.Right)
                 {
@@ -32,16 +34,49 @@ namespace PlacableObjects
                     {
                         controller.TriggerPress.AddListener((bool pressed) => { if (pressed) { PlaceObject(); } });
                     }
-                    if (controller.PrimaryButtonPress != null)
+                    if (controller.GripPress != null)
                     {
-                        controller.PrimaryButtonPress.AddListener((bool pressed) => { if (pressed) { if (selectedObject >= 0) { DeselectObject(); } else { SelectObject(0); } } });
+                        controller.GripPress.AddListener((bool pressed) => { if (pressed) { DeselectObject(); } });
                     }
+                    // if (controller.PrimaryButtonPress != null)
+                    // {
+                    //     controller.PrimaryButtonPress.AddListener((bool pressed) => { if (pressed) { if (selectedObject >= 0) { DeselectObject(); } else { SelectObject(0); } } });
+                    // }
                 }
                 else
                 if (controller.gameObject.name == "Left Hand")
                 // if (controller.Left)
                 {
                     leftHand = controller;
+                    if (controller.PrimaryButtonPress != null)
+                    {
+                        controller.PrimaryButtonPress.AddListener((bool pressed) => { if (pressed) { SwitchSnaps(); } });
+                    }
+                }
+            }
+        }
+
+        private void SwitchSnaps()
+        {
+            useSnaps = !useSnaps;
+            if (ghostObject)
+            {
+                foreach (Placeable placeable in PlaceableIndex.placedObjects.Values)
+                {
+                    foreach (Snap s in placeable.snaps)
+                    {
+                        if (useSnaps)
+                        {
+                            if (ghostObject.CanBePlacedOn(s))
+                            {
+                                s.ShowGraphic();
+                            }
+                        }
+                        else
+                        {
+                            s.HideGraphic();
+                        }
+                    }
                 }
             }
         }
@@ -54,17 +89,19 @@ namespace PlacableObjects
             onMaterialChange?.Invoke(maxMaterial, maxMaterial);
         }
 
-        public PrefabCatalogue placables;
-        GameObject[] objects { get => placables.prefabs.ToArray(); }
+        public PrefabCatalogue placeables;
+        GameObject[] objects { get => placeables.prefabs.ToArray(); }
         public int selectedObject { get; private set; } = -1;
-        Placable ghostObject = null;
+        Placeable ghostObject = null;
         float placeDist = 1f;
         const float minPlaceDist = 0.2f;
         const float maxPlaceDist = 5f;
         Quaternion customRotation = Quaternion.identity;
+        bool removing = false;
 
         public void SelectObject(int index)
         {
+            Debug.Log(Environment.StackTrace);
             SetMaxMaterial(400); // TODO REMOVE THIS
             if (index < 0 || index >= objects.Length)
             {
@@ -76,61 +113,101 @@ namespace PlacableObjects
                 DeselectObject();
             }
             selectedObject = index;
+            removing = false;
             customRotation = Quaternion.identity;
             placeDist = 1f;
             SpawnGhostObject();
-            foreach (Placable placable in PlacableIndex.placedObjects.Values)
+            if (useSnaps)
             {
-                foreach (Snap s in placable.snaps)
+                foreach (Placeable placeable in PlaceableIndex.placedObjects.Values)
                 {
-                    if (ghostObject.CanBePlacedOn(s))
+                    foreach (Snap s in placeable.snaps)
                     {
-                        s.ShowGraphic();
+                        if (ghostObject.CanBePlacedOn(s))
+                        {
+                            s.ShowGraphic();
+                        }
                     }
                 }
             }
+        }
+
+        public void SelectRemover()
+        {
+            DeselectObject();
+            removing = true;
         }
 
         private void SpawnGhostObject()
         {
             Debug.Log("SpawnGhostObject");
-            ghostObject = networkSpawner.Spawn(objects[selectedObject]).GetComponent<Placable>();
+            ghostObject = networkSpawner.Spawn(objects[selectedObject]).GetComponent<Placeable>();
             MoveGhostToHandPos();
         }
 
         private void Update()
         {
-            for (int i = 0; i < objects.Length; i++)
+            // for (int i = 0; i < objects.Length; i++)
+            // {
+            //     if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+            //     {
+            //         if (selectedObject != i)
+            //         {
+            //             SelectObject(i);
+            //         }
+            //         else
+            //         {
+            //             DeselectObject();
+            //         }
+            //     }
+            // }
+            // if (Input.GetMouseButtonDown(0))
+            // {
+            //     PlaceObject();
+            // }
+
+            // deadzone testing, TODO make this a player-selected option
+            if (leftHand.Joystick.sqrMagnitude > 0.1f)
             {
-                if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+                if (leftHand.GripState)
                 {
-                    if (selectedObject != i)
+                    if (hitElapsed > 0.3f)
                     {
-                        SelectObject(i);
+                        Debug.Log("snap angle changing");
+                        // if we have been snapped to something for longer than a second
+                        snapAngle += leftHand.Joystick.y;
                     }
                     else
                     {
-                        DeselectObject();
+                        if (Mathf.Abs(leftHand.Joystick.x) > Mathf.Abs(leftHand.Joystick.y))
+                        {
+                            customRotation *= Quaternion.Euler(0, leftHand.Joystick.x, 0);
+                        }
+                        else
+                        {
+                            placeDist += leftHand.Joystick.y * Time.deltaTime;
+                            placeDist = Mathf.Clamp(placeDist, minPlaceDist, maxPlaceDist);
+                        }
+                    }
+                }
+                else if (leftHand.TriggerState)
+                {
+                    if (Mathf.Abs(leftHand.Joystick.x) > Mathf.Abs(leftHand.Joystick.y))
+                    {
+                        customRotation *= Quaternion.Euler(leftHand.Joystick.x, 0, 0);
+                    }
+                    else
+                    {
+                        customRotation *= Quaternion.Euler(0, 0, leftHand.Joystick.y);
                     }
                 }
             }
-            if (Input.GetMouseButtonDown(0))
-            {
-                PlaceObject();
-            }
-            if (rightHand.GripState)
-            {
-                placeDist += leftHand.Joystick.y * Time.deltaTime;
-                placeDist = Mathf.Clamp(placeDist, minPlaceDist, maxPlaceDist);
-            }
-            if (leftHand.GripState)
-            {
-                customRotation *= Quaternion.Euler(0, leftHand.Joystick.x, leftHand.Joystick.y);
-            }
         }
 
-        private Snap cachedHit; // the thing we hit using snap raycasts
+        private Snap snapHit; // the thing we hit using snap raycasts
         private int snapIndex = -1; // the index of the snap object on ghostObject
+        private float hitElapsed;
+        private float snapAngle;
         const float maxRaycastDist = 2f;
         bool canBePlaced = false;
 
@@ -142,10 +219,10 @@ namespace PlacableObjects
 
         private void DoRaycast()
         {
-            if (cachedHit)
-            {
-                return;
-            }
+            // if (snapHit)
+            // {
+            //     return;
+            // }
             // first move the object to where it would be just using hands
             MoveGhostToHandPos();
             // check rays from each snap
@@ -158,43 +235,64 @@ namespace PlacableObjects
                 {
                     if (hit.collider.gameObject != ghostObject.snaps[i].gameObject)
                     {
-                        cachedHit = hit.transform.gameObject.GetComponent<Snap>();
-                        snapIndex = i;
+                        Snap newHit = hit.transform.gameObject.GetComponent<Snap>();
+                        if (snapHit != newHit)
+                        {
+                            snapHit = newHit;
+                            snapIndex = i;
+                            hitElapsed = 0;
+                            snapAngle = 0;
+                        }
+                        else
+                        {
+                            hitElapsed += Time.fixedDeltaTime;
+                        }
                         return;
                     }
                 }
             }
-            cachedHit = null;
+            snapHit = null;
             snapIndex = -1;
+            hitElapsed = 0;
+            snapAngle = 0;
         }
 
         private void MoveGhostToSnapPos()
         {
             DoRaycast();
-            if (cachedHit)
+            if (snapHit)
             {
-                if (ghostObject.CanBePlacedOn(cachedHit))
+                if (ghostObject.CanBePlacedOn(snapHit))
                 {
-                    ghostObject.transform.rotation = Snap.GetMatchingRotation(cachedHit, ghostObject.snaps[snapIndex]);
-                    ghostObject.transform.position = Snap.GetMatchingPosition(cachedHit, ghostObject.snaps[snapIndex]);
+                    ghostObject.transform.rotation = Snap.GetMatchingRotation(snapHit, ghostObject.snaps[snapIndex]);
+                    ghostObject.transform.position = Snap.GetMatchingPosition(snapHit, ghostObject.snaps[snapIndex]);
+                    Snap.SetExtraRotation(snapHit, ghostObject.snaps[snapIndex], snapAngle);
                 }
             }
             ghostObject.Move();
         }
 
-        Placable hovered = null;
+        Placeable hovered = null;
 
         private void FixedUpdate()
         {
-            cachedHit = null;
+            // don't need to cache anymore since we raycast once
+            // snapHit = null;
             if (ghostObject)
             {
-                MoveGhostToSnapPos();
+                if (useSnaps)
+                {
+                    MoveGhostToSnapPos();
+                }
+                else
+                {
+                    MoveGhostToHandPos();
+                }
                 // compute canBePlaced
                 canBePlaced = ghostObject.materialCost <= material;
-                if (cachedHit)
+                if (snapHit)
                 {
-                    canBePlaced = canBePlaced && ghostObject.CanBePlacedOn(cachedHit);
+                    canBePlaced = canBePlaced && ghostObject.CanBePlacedOn(snapHit);
                 }
                 else
                 {
@@ -202,32 +300,32 @@ namespace PlacableObjects
                 }
                 if (canBePlaced)
                 {
-                    ghostObject.PlaceGood();
+                    ghostObject.SetMeshColors(Color.green);
                 }
                 else
                 {
-                    ghostObject.PlaceBad();
+                    ghostObject.SetMeshColors(Color.red);
                 }
             }
 
             Ray ray = new Ray(rightHand.transform.position, rightHand.transform.forward);
             Debug.DrawRay(ray.origin, ray.direction, Color.red, Time.deltaTime);
             RaycastHit hit;
-            if (Physics.Raycast(ray.origin, ray.direction, out hit, 100f, 1 << LayerMask.NameToLayer("Placable")))
+            if (Physics.Raycast(ray.origin, ray.direction, out hit, 100f, 1 << LayerMask.NameToLayer("Placeable")))
             {
-                Placable placableHovered = hit.collider.gameObject.GetComponentInParent<Placable>();
-                if (placableHovered != hovered)
+                Placeable placeableHovered = hit.collider.gameObject.GetComponentInParent<Placeable>();
+                if (placeableHovered != hovered)
                 {
                     if (hovered)
                     {
                         hovered.OffHovered();
                     }
-                    placableHovered.OnHovered();
-                    hovered = placableHovered;
+                    placeableHovered.OnHovered();
+                    hovered = placeableHovered;
                 }
                 if (Input.GetKeyDown(KeyCode.R))
                 {
-                    placableHovered.Remove();
+                    RemoveObject(placeableHovered);
                 }
             }
             else
@@ -248,9 +346,9 @@ namespace PlacableObjects
             {
                 ghostObject.Deselect();
             }
-            foreach (Placable placable in PlacableIndex.placedObjects.Values)
+            foreach (Placeable placeable in PlaceableIndex.placedObjects.Values)
             {
-                foreach (Snap s in placable.snaps)
+                foreach (Snap s in placeable.snaps)
                 {
                     s.HideGraphic();
                 }
@@ -259,13 +357,14 @@ namespace PlacableObjects
 
         public void PlaceObject()
         {
+            // TODO: check if we are aiming at a canvas
             if (selectedObject >= 0 && ghostObject && canBePlaced)
             {
                 if (ghostObject.materialCost <= material)
                 {
-                    if (cachedHit)
+                    if (snapHit)
                     {
-                        ghostObject.Place(snapIndex, cachedHit.placable.Id, cachedHit.index);
+                        ghostObject.Place(snapIndex, snapHit.placeable.Id, snapHit.index);
                     }
                     else
                     {
@@ -277,7 +376,21 @@ namespace PlacableObjects
                     DeselectObject();
                 }
             }
+            else if (removing)
+            {
+                RemoveObject(hovered);
+            }
 
+        }
+
+        public void RemoveObject(Placeable placeable)
+        {
+            if (placeable.originalOwner)
+            {
+                placeable.Remove();
+                material += placeable.materialCost;
+                onMaterialChange?.Invoke(material, maxMaterial);
+            }
         }
     }
 }

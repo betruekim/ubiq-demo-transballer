@@ -2,9 +2,9 @@ using UnityEngine;
 using Ubik.Messaging;
 using System.Collections.Generic;
 
-namespace PlacableObjects
+namespace Transballer.PlaceableObjects
 {
-    public class Cart : Placable
+    public class Cart : Placeable
     {
         public override int materialCost => 10;
         public override bool canBePlacedFreely => false;
@@ -14,17 +14,17 @@ namespace PlacableObjects
         public override bool CanBePlacedOn(Snap target)
         {
             // we can only snap a cart to a cartTrack, and we can only snap to the top snap
-            return target.index == 2 && System.Object.ReferenceEquals(target.placable.GetType(), typeof(PlacableObjects.CartTrack));
+            return target.index == 2 && System.Object.ReferenceEquals(target.placeable.GetType(), typeof(Transballer.PlaceableObjects.CartTrack));
         }
 
         override public void Place(int snapIndex, NetworkId snappedTo, int snappedToSnapIndex)
         {
             base.Place(snapIndex, snappedTo, snappedToSnapIndex);  // base checks for ownership so we dont need to
-            originalSnap = PlacableIndex.placedObjects[snappedTo].snaps[snappedToSnapIndex];
+            originalSnap = PlaceableIndex.placedObjects[snappedTo].snaps[snappedToSnapIndex];
             // not sure if we need to claim ownership of all connected tracks?
-            HashSet<Placable> connectedObjects = new HashSet<Placable>();
+            HashSet<Placeable> connectedObjects = new HashSet<Placeable>();
             AddConnected(connectedObjects, this);
-            foreach (Placable connected in connectedObjects)
+            foreach (Placeable connected in connectedObjects)
             {
                 if (!connected.owner)
                 {
@@ -33,7 +33,7 @@ namespace PlacableObjects
             }
         }
 
-        private void AddConnected(HashSet<Placable> set, Placable target)
+        private void AddConnected(HashSet<Placeable> set, Placeable target)
         {
             if (set.Contains(target))
             {
@@ -42,21 +42,24 @@ namespace PlacableObjects
             set.Add(target);
             foreach (Snap child in target.attachedTo)
             {
-                AddConnected(set, child.placable);
+                AddConnected(set, child.placeable);
             }
         }
 
-        List<Placable> attachedToTop = new List<Placable>();
+        List<Placeable> attachedToTop = new List<Placeable>();
         public override void Attach(Snap mine, Snap other)
         {
             base.Attach(mine, other);
-            if (mine == snaps[1])
+            if (snaps.Length == 2)
             {
-                // if the thing attached was on the top snap point
-                // take control of it, make it a child of us and add it to a list?
-                other.placable.TakeControl();
-                attachedToTop.Add(other.placable);
-                other.placable.transform.SetParent(transform);
+                if (mine == snaps[1])
+                {
+                    // if the thing attached was on the top snap point
+                    // take control of it, make it a child of us and add it to a list?
+                    other.placeable.TakeControl();
+                    attachedToTop.Add(other.placeable);
+                    other.placeable.transform.SetParent(transform);
+                }
             }
         }
 
@@ -107,7 +110,7 @@ namespace PlacableObjects
                 transform.rotation = currentTrack.GetCartRot(progress);
             }
             base.Move();
-            foreach (Placable attached in attachedToTop)
+            foreach (Placeable attached in attachedToTop)
             {
                 if (attached.owner)
                 {

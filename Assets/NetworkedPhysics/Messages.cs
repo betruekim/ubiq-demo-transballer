@@ -1,6 +1,7 @@
 using UnityEngine;
+using Ubik.Messaging;
 
-namespace Ubik.Messaging
+namespace Transballer
 {
     public class Messages
     {
@@ -211,6 +212,30 @@ namespace Ubik.Messaging
             {
                 string[] components = message.Split('$');
                 return new SetKinematic(bool.Parse(components[1]));
+            }
+        }
+
+        [System.Serializable]
+        public class MoveCannonAngle : Message
+        {
+            public override string messageType => "moveCannonAngle";
+
+            public Quaternion angle;
+
+            public override string Serialize()
+            {
+                return $"moveCannonAngle${JsonUtility.ToJson(angle)}";
+            }
+
+            public MoveCannonAngle(Quaternion angle)
+            {
+                this.angle = angle;
+            }
+
+            public static MoveCannonAngle Deserialize(string message)
+            {
+                string[] components = message.Split('$');
+                return new MoveCannonAngle(JsonUtility.FromJson<Quaternion>(components[1]));
             }
         }
     }
