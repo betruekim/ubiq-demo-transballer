@@ -269,7 +269,6 @@ namespace Transballer.PlaceableObjects
                     Snap.SetExtraRotation(snapHit, ghostObject.snaps[snapIndex], snapAngle);
                 }
             }
-            ghostObject.Move();
         }
 
         Placeable hovered = null;
@@ -288,6 +287,7 @@ namespace Transballer.PlaceableObjects
                 {
                     MoveGhostToHandPos();
                 }
+                ghostObject.Move();
                 // compute canBePlaced
                 canBePlaced = ghostObject.materialCost <= material;
                 if (snapHit)
