@@ -6,42 +6,22 @@ using Ubik.Samples;
 
 namespace Transballer.PlaceableObjects
 {
-    public abstract class Placeable : MonoBehaviour, INetworkComponent, INetworkObject, ISpawnable
+    public abstract class Placeable : NetworkedPhysics.NetworkedObject
     {
-        public NetworkId Id { get; } = new NetworkId();
-        protected NetworkContext ctx;
-
         public Snap[] snaps;
         public List<Snap> attachedTo; // external snap nodes that we are connected to
         public virtual bool canBePlacedFreely { get; } = true;
         public abstract int materialCost { get; }
 
         public bool originalOwner = false;
-        public bool owner = false;
         protected bool placed = false;
 
-        public virtual void ProcessMessage(ReferenceCountedSceneGraphMessage message)
+        override public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
             // Debug.Log($"{Id} {owner} {message}");
             string type = Transballer.Messages.GetType(message.ToString());
             switch (type)
             {
-                case "positionUpdate":
-                    if (owner)
-                    {
-                        throw new System.Exception("Received position update for locally controlled placeable");
-                    }
-                    Transballer.Messages.PositionUpdate update = Transballer.Messages.PositionUpdate.Deserialize(message.ToString());
-                    transform.position = update.position;
-                    transform.rotation = update.rotation;
-                    break;
-                case "onDestroy":
-                    if (owner)
-                    {
-                        throw new System.Exception("Received destroy update for locally controlled placeable");
-                    }
-                    Destroy(this.gameObject);
-                    break;
                 case "onPlace":
                     Debug.Log($"{Id} {owner} {message}");
                     if (owner)
@@ -51,20 +31,15 @@ namespace Transballer.PlaceableObjects
                     Transballer.Messages.OnPlace placeInfo = Transballer.Messages.OnPlace.Deserialize(message.ToString());
                     OnPlace(placeInfo.snapIndex, placeInfo.snappedTo, placeInfo.snappedToSnapIndex);
                     break;
-                case "onRemove":
-                    Debug.Log($"{Id} {owner} {message}");
-                    OnRemove();
-                    break;
-                case "newOwner":
-                    owner = false;
-                    break;
                 default:
-                    throw new System.Exception($"unknown message type {type}");
+                    base.ProcessMessage(message);
+                    break;
             }
         }
 
-        protected virtual void Awake()
+        override protected void Awake()
         {
+            base.Awake();
             attachedTo = new List<Snap>();
             snaps = GetComponentsInChildren<Snap>();
             int index = 0;
@@ -74,54 +49,16 @@ namespace Transballer.PlaceableObjects
                 snap.index = index;
                 index++;
             }
-            ctx = NetworkScene.Register(this);
 
             // start out as a ghost before being placed
             MakeGhost();
         }
 
-        private void OnDestroy()
+        override public void OnSpawned(bool local)
         {
-            PlaceableIndex.RemovePlacedObject(this);
-        }
-
-        public virtual void OnSpawned(bool local)
-        {
-            Debug.Log($"onSpawned {Id} {local}");
-            owner = local;
+            base.OnSpawned(local);
+            // Debug.Log($"onSpawned {Id} {local}");
             PlaceableIndex.AddPlacedObject(this);
-        }
-
-        public virtual void Move()
-        {
-            if (owner)
-            {
-                ctx.Send(new Transballer.Messages.PositionUpdate(transform.position, transform.rotation).Serialize());
-            }
-            else
-            {
-                throw new System.Exception("called Move() on a remotely controlled placeable!");
-            }
-        }
-
-        public virtual void Deselect()
-        {
-            // destroy this object
-            if (owner)
-            {
-                ctx.Send(new Transballer.Messages.OnDestroy().Serialize());
-            }
-            else
-            {
-                throw new System.Exception("called Place() on a remotely controlled placeable!");
-            }
-            Destroy(this.gameObject);
-        }
-
-        public void TakeControl()
-        {
-            ctx.Send(new Transballer.Messages.NewOwner().Serialize());
-            owner = true;
         }
 
         public virtual void Place(int snapIndex, NetworkId snappedTo, int snappedToSnapIndex)
@@ -129,14 +66,9 @@ namespace Transballer.PlaceableObjects
             if (owner)
             {
                 ctx.Send(new Transballer.Messages.OnPlace(snapIndex, snappedTo, snappedToSnapIndex).Serialize());
-                // Debug.Log(new Transballer.Messages.OnPlace(snapIndex, snappedTo, snappedToSnapIndex).Serialize());
                 OnPlace(snapIndex, snappedTo, snappedToSnapIndex);
                 originalOwner = true;
-
-                foreach (MeshRenderer mr in transform.Find("model").GetComponentsInChildren<MeshRenderer>())
-                {
-                    mr.material.color = Color.white;
-                }
+                SetMeshColors(Color.white);
             }
             else
             {
@@ -217,12 +149,11 @@ namespace Transballer.PlaceableObjects
             return true;
         }
 
-        public virtual void Remove()
+        override public void Remove()
         {
             if (originalOwner)
             {
-                ctx.Send(new Transballer.Messages.OnRemove().Serialize());
-                OnRemove();
+                base.Remove();
             }
             else
             {
@@ -230,8 +161,9 @@ namespace Transballer.PlaceableObjects
             }
         }
 
-        public virtual void OnRemove()
+        override protected void OnRemove()
         {
+            PlaceableIndex.RemovePlacedObject(this);
             for (int i = 0; i < attachedTo.Count; i++)
             {
                 Snap otherSnap = attachedTo[i];
@@ -247,7 +179,7 @@ namespace Transballer.PlaceableObjects
                     }
                 }
             }
-            Destroy(this.gameObject);
+            base.OnRemove();
         }
 
         public virtual void OnHovered()

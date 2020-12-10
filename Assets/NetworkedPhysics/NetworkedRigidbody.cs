@@ -8,27 +8,30 @@ using Ubik.XR;
 
 namespace Transballer.NetworkedPhysics
 {
-    public class NetworkedRigidbody : MonoBehaviour, INetworkObject, INetworkComponent, ISpawnable, IGraspable
+    public class NetworkedRigidbody : NetworkedObject, IGraspable
     {
-        public NetworkId Id { get; } = new NetworkId();
-
         public UnityEngine.Rigidbody rb;
+        RigidbodyManager manager;
+
         public float velSquareMag { get { return rb.velocity.sqrMagnitude; } }
 
-        public NetworkContext ctx;
-        RigidbodyManager manager;
-        public bool owner = true;
         public Hand graspingController;
         public bool graspedRemotely = false;
 
-        private void Awake()
+        override protected void Awake()
         {
-            ctx = NetworkScene.Register(this);
+            base.Awake();
             manager = GameObject.FindObjectOfType<RigidbodyManager>();
             rb = GetComponent<UnityEngine.Rigidbody>();
         }
 
-        public virtual void ProcessMessage(ReferenceCountedSceneGraphMessage message)
+        override public void OnSpawned(bool local)
+        {
+            base.OnSpawned(local);
+            manager.Register(this);
+        }
+
+        override public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
             string msgString = message.ToString();
             string messageType = Messages.GetType(msgString);
@@ -36,62 +39,65 @@ namespace Transballer.NetworkedPhysics
             switch (messageType)
             {
                 case "rigidbodyUpdate":
-                    if (owner)
-                    {
-                        throw new System.Exception("received rigidbody update for locally controlled gameobject");
-                    }
                     Messages.RigidbodyUpdate rbUpdate = Messages.RigidbodyUpdate.Deserialize(msgString);
-                    transform.position = rbUpdate.position;
-                    transform.rotation = rbUpdate.rotation;
-                    rb.velocity = rbUpdate.linearVelocity;
-                    rb.angularVelocity = rbUpdate.angularVelocity;
+                    OnRbUpdate(rbUpdate);
                     break;
                 case "graspUpdate":
-                    // Debug.Log("received onGrasp notification, turning off owner");
-                    Debug.Log(msgString);
-                    owner = false;
-                    graspingController = null;
                     Messages.GraspUpdate graspUpdate = Messages.GraspUpdate.Deserialize(msgString);
-                    // disable gravity when picked up
-                    rb.useGravity = !graspUpdate.grasped;
-                    graspedRemotely = graspUpdate.grasped;
-                    break;
-                case "newOwner":
-                    Debug.Log("newOwner");
-                    owner = false;
+                    OnGraspOrRelease(graspUpdate.grasped);
                     break;
                 case "setKinematic":
-                    if (owner)
-                    {
-                        throw new System.Exception("received setKinematic update for locally controlled gameobject");
-                    }
                     Messages.SetKinematic setKinematic = Messages.SetKinematic.Deserialize(msgString);
-                    rb.isKinematic = setKinematic.state;
-                    break;
-                case "selfDestruct":
-                    manager.Deregister(transform.gameObject.GetComponent<NetworkedRigidbody>(), false);
-                    GameObject.Destroy(transform.gameObject);
+                    OnSetKinematic(setKinematic.state);
                     break;
                 default:
-                    throw new System.Exception($"error, message of type {messageType} unknown");
+                    base.ProcessMessage(message);
+                    break;
             }
+        }
+
+        override public void TakeControl()
+        {
+            if (!graspedRemotely)
+            {
+                owner = true;
+                ctx.Send(new Messages.NewOwner().Serialize());
+            }
+        }
+
+        public override void Remove()
+        {
+            manager.Unregister(this);
+            base.Remove();
+        }
+
+        override protected void OnRemove()
+        {
+            manager.Unregister(this);
+            base.OnRemove();
         }
 
         public void SendUpdate()
         {
+            // sends position and rigidbody update
+            base.Move();
             if (owner)
             {
-                ctx.Send(new Messages.RigidbodyUpdate(transform, rb).Serialize());
+                ctx.Send(new Messages.RigidbodyUpdate(rb).Serialize());
             }
         }
 
-        public void OnSpawned(bool local)
+        protected virtual void OnRbUpdate(Messages.RigidbodyUpdate update)
         {
-            owner = local;
-            manager.Register(this);
+            if (owner)
+            {
+                throw new System.Exception("received rigidbody update for locally controlled gameobject");
+            }
+            rb.velocity = update.linearVelocity;
+            rb.angularVelocity = update.angularVelocity;
         }
 
-        public void Grasp(Hand controller)
+        public virtual void Grasp(Hand controller)
         {
             // this client has grasped this object
             // become locally controlled and disable gravity
@@ -111,25 +117,13 @@ namespace Transballer.NetworkedPhysics
             }
         }
 
-        private void FixedUpdate()
+        protected virtual void OnGraspOrRelease(bool grasped)
         {
-            if (graspingController != null)
-            {
-                // rb.velocity *= 0;
-                rb.angularVelocity *= 0;
-                rb.velocity = (graspingController.transform.position - transform.position) * 20;
-
-                // transform.position = graspingController.transform.position;
-            }
-        }
-
-        public void TakeControl()
-        {
-            if (!graspedRemotely)
-            {
-                owner = true;
-                ctx.Send(new Messages.NewOwner().Serialize());
-            }
+            owner = false;
+            graspingController = null;
+            // disable gravity when picked up
+            rb.useGravity = !grasped;
+            graspedRemotely = grasped;
         }
 
         public void SetKinematic(bool state)
@@ -138,6 +132,24 @@ namespace Transballer.NetworkedPhysics
             {
                 rb.isKinematic = state;
                 ctx.Send(new Messages.SetKinematic(state).Serialize());
+            }
+        }
+
+        protected virtual void OnSetKinematic(bool state)
+        {
+            if (owner)
+            {
+                throw new System.Exception("received setKinematic update for locally controlled gameobject");
+            }
+            rb.isKinematic = state;
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            if (graspingController != null)
+            {
+                rb.angularVelocity *= 0;
+                rb.velocity = (graspingController.transform.position - transform.position) * 20;
             }
         }
     }

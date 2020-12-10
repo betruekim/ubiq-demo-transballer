@@ -42,11 +42,10 @@ namespace Transballer.NetworkedPhysics
             if (rigidbody.owner)
             {
                 rigidbody.SendUpdate();
-
             }
         }
 
-        public void Deregister(NetworkedRigidbody rigidbody, bool owner)
+        public void Unregister(NetworkedRigidbody rigidbody)
         {
             NetRBMetadata[] array = rigidbodies.ToArray();
             for (int i = 0; i != array.Length; i++)
@@ -54,12 +53,6 @@ namespace Transballer.NetworkedPhysics
                 if (Object.ReferenceEquals(array[i].rigidbody, rigidbody))
                 {
                     rigidbodies.Remove(array[i]);
-
-                    // Send signal to ball's peers to self destruct
-                    if (owner)
-                    {
-                        rigidbody.ctx.Send(new Messages.SelfDestruct().Serialize());
-                    }
                 }
             }
         }

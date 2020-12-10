@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hoop : MonoBehaviour
+namespace Transballer.Levels
 {
-    public GameObject ballDisplay;
-    public GameObject level;
+    public class Hoop : MonoBehaviour
+    {
+        public GameObject ballDisplay;
+        public GameObject level;
 
-    public bool collider1Hit;
-    public bool collider2Hit;
+        public bool collider1Hit;
+        public bool collider2Hit;
 
-    public int ballsToGo;
-    public List<string> gate1 = new List<string>();
+        public int ballsToGo;
+        public List<string> gate1 = new List<string>();
 
+    }
 }

@@ -4,114 +4,115 @@ using UnityEngine;
 using Transballer.NetworkedPhysics;
 using Ubik.Messaging;
 
-public class LevelManager : MonoBehaviour, INetworkObject, INetworkComponent
+namespace Transballer.Levels
 {
-    public NetworkId Id { get; } = new NetworkId(15);
-    NetworkContext ctx;
-    public List<GameObject> ballList;
-
-    private RigidbodyManager rigidbodyManager;
-    public GameObject levelSelect;
-    public GameObject ui;
-
-    void Awake()
+    public class LevelManager : MonoBehaviour, INetworkObject, INetworkComponent
     {
-        rigidbodyManager = GameObject.FindObjectOfType<RigidbodyManager>();
-        ctx = NetworkScene.Register(this);
-    }
+        public NetworkId Id { get; } = new NetworkId(15);
+        NetworkContext ctx;
+        public List<Ball> ballList;
 
-    public void levelComplete()
-    {
-        if (NetworkManager.roomOwner)
+        public GameObject levelSelect;
+        public GameObject ui;
+
+        void Awake()
         {
-            levelCompleteOwner();
+            ctx = NetworkScene.Register(this);
+        }
+
+        public void levelComplete()
+        {
+            if (NetworkManager.roomOwner)
+            {
+                levelCompleteOwner();
+            }
+        }
+
+        public void levelCompleteOwner()
+        {
+            destroyBallsOwner();
+
+            // send signal
+            ctx.Send(new ManagerMessage().Serialize());
+
+            // Reenable the level select and ui
+            levelSelect.SetActive(true);
+            ui.SetActive(true);
+
+            movePlayer();
+
+            GameObject.Destroy(transform.gameObject);
+        }
+
+        public void levelCompletePeer()
+        {
+            // destroyBallsPeer();
+
+            // Reenable the level select and ui
+            levelSelect.SetActive(true);
+            ui.SetActive(true);
+
+            movePlayer();
+
+            GameObject.Destroy(transform.gameObject);
+        }
+
+        public void destroyBallsOwner()
+        {
+            foreach (var ball in ballList)
+            {
+                // remove will remove balls from other people's scenes as well, so we probably don't need destroyBallsPeer
+                ball.Remove();
+            }
+        }
+
+        public void destroyBallsPeer()
+        {
+            GameObject sceneManager = GameObject.Find("Scene Manager");
+            int childs = sceneManager.transform.childCount;
+            for (int i = childs - 1; i > 0; i--)
+            {
+                GameObject.Destroy(sceneManager.transform.GetChild(i).gameObject);
+            }
+        }
+
+        public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
+        {
+            string msgString = message.ToString();
+            string messageType = Transballer.Messages.GetType(msgString);
+
+            if (messageType == "managerMessage")
+            {
+                Debug.Log("Message received from manager");
+                levelCompletePeer();
+            }
+        }
+
+        private void movePlayer()
+        {
+            GameObject playerPosition = GameObject.Find("PlayerPosition");
+            GameObject player = GameObject.Find("Player");
+            player.transform.position = playerPosition.transform.position;
+            player.transform.rotation = playerPosition.transform.rotation;
         }
     }
 
-    public void levelCompleteOwner()
+    [System.Serializable]
+    public class ManagerMessage : Transballer.Messages.Message
     {
-        destroyBallsOwner();
+        public override string messageType => "managerMessage";
 
-        // send signal
-        ctx.Send(new ManagerMessage().Serialize());
-
-        // Reenable the level select and ui
-        levelSelect.SetActive(true);
-        ui.SetActive(true);
-
-        movePlayer();
-
-        GameObject.Destroy(transform.gameObject);
-    }
-
-    public void levelCompletePeer()
-    {
-        // destroyBallsPeer();
-
-        // Reenable the level select and ui
-        levelSelect.SetActive(true);
-        ui.SetActive(true);
-
-        movePlayer();
-
-        GameObject.Destroy(transform.gameObject);
-    }
-
-    public void destroyBallsOwner()
-    {
-        foreach (var ball in ballList)
+        public override string Serialize()
         {
-            rigidbodyManager.Deregister(ball.GetComponent<Ball>(), true);
-            GameObject.Destroy(ball);
+            return "managerMessage$";
         }
-    }
 
-    public void destroyBallsPeer()
-    {
-        GameObject sceneManager = GameObject.Find("Scene Manager");
-        int childs = sceneManager.transform.childCount;
-        for (int i = childs - 1; i > 0; i--)
+        public static ManagerMessage Deserialize(string message)
         {
-            GameObject.Destroy(sceneManager.transform.GetChild(i).gameObject);
+            // string[] components = message.Split('$');
+
+            return new ManagerMessage();
         }
+
     }
-
-    public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
-    {
-        string msgString = message.ToString();
-        string messageType = Transballer.Messages.GetType(msgString);
-
-        if (messageType == "managerMessage")
-        {
-            Debug.Log("Message received from manager");
-            levelCompletePeer();
-        }
-    }
-
-    private void movePlayer()
-    {
-        GameObject playerPosition = GameObject.Find("PlayerPosition");
-        GameObject player = GameObject.Find("Player");
-        player.transform.position = playerPosition.transform.position;
-        player.transform.rotation = playerPosition.transform.rotation;
-    }
-}
-
-[System.Serializable]
-public class ManagerMessage : Transballer.Messages.Message
-{
-    public override string messageType => "managerMessage";
-
-    public override string Serialize()
-    {
-        return "managerMessage$";
-    }
-
-    public static ManagerMessage Deserialize(string message)
-    {
-        // string[] components = message.Split('$');
-
-        return new ManagerMessage();
-    }
-
 }

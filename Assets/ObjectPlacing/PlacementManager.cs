@@ -344,7 +344,7 @@ namespace Transballer.PlaceableObjects
             selectedObject = -1;
             if (ghostObject)
             {
-                ghostObject.Deselect();
+                ghostObject.Remove();
             }
             foreach (Placeable placeable in PlaceableIndex.placedObjects.Values)
             {
