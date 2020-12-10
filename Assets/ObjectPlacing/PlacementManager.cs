@@ -376,7 +376,7 @@ namespace Transballer.PlaceableObjects
                     DeselectObject();
                 }
             }
-            else if (removing)
+            else if (removing && hovered)
             {
                 RemoveObject(hovered);
             }

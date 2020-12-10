@@ -85,10 +85,6 @@ namespace Transballer.PlaceableObjects
 
         protected virtual void OnPlace(int snapIndex, NetworkId snappedTo, int snappedToSnapIndex)
         {
-            if (owner)
-            {
-                throw new System.Exception("Received onPlace update for locally controlled placeable");
-            }
             foreach (Collider col in GetComponentsInChildren<Collider>())
             {
                 col.enabled = true;
