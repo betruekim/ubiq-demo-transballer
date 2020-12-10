@@ -10,6 +10,7 @@ namespace Transballer.NetworkedPhysics
         public NetworkId Id { get; } = new NetworkId();
         protected NetworkContext ctx;
         public bool owner = true;
+        public bool debug = false;
 
         protected virtual void Awake()
         {

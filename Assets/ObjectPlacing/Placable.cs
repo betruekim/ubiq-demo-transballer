@@ -18,16 +18,15 @@ namespace Transballer.PlaceableObjects
 
         override public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
-            // Debug.Log($"{Id} {owner} {message}");
+            if (debug)
+            {
+                Debug.Log($"{Id} {owner} {message}");
+            }
             string type = Transballer.Messages.GetType(message.ToString());
             switch (type)
             {
                 case "onPlace":
                     Debug.Log($"{Id} {owner} {message}");
-                    if (owner)
-                    {
-                        throw new System.Exception("Received onPlace update for locally controlled placeable");
-                    }
                     Transballer.Messages.OnPlace placeInfo = Transballer.Messages.OnPlace.Deserialize(message.ToString());
                     OnPlace(placeInfo.snapIndex, placeInfo.snappedTo, placeInfo.snappedToSnapIndex);
                     break;
@@ -86,6 +85,10 @@ namespace Transballer.PlaceableObjects
 
         protected virtual void OnPlace(int snapIndex, NetworkId snappedTo, int snappedToSnapIndex)
         {
+            if (owner)
+            {
+                throw new System.Exception("Received onPlace update for locally controlled placeable");
+            }
             foreach (Collider col in GetComponentsInChildren<Collider>())
             {
                 col.enabled = true;
@@ -151,7 +154,7 @@ namespace Transballer.PlaceableObjects
 
         override public void Remove()
         {
-            if (originalOwner)
+            if (originalOwner || !placed)
             {
                 base.Remove();
             }
