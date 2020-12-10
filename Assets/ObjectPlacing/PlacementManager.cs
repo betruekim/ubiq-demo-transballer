@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Ubik.Samples;
 using Ubik.XR;
@@ -135,6 +134,7 @@ namespace Transballer.PlaceableObjects
 
         public void SelectRemover()
         {
+            DeselectObject();
             removing = true;
         }
 
@@ -165,20 +165,49 @@ namespace Transballer.PlaceableObjects
             // {
             //     PlaceObject();
             // }
-            if (leftHand.GripState)
+
+            // deadzone testing, TODO make this a player-selected option
+            if (leftHand.Joystick.sqrMagnitude > 0.1f)
             {
-                placeDist += rightHand.Joystick.y * Time.deltaTime;
-                placeDist = Mathf.Clamp(placeDist, minPlaceDist, maxPlaceDist);
-                customRotation *= Quaternion.Euler(0, leftHand.Joystick.x, 0);
-            }
-            else if (leftHand.TriggerState)
-            {
-                customRotation *= Quaternion.Euler(0, 0, leftHand.Joystick.y);
+                if (leftHand.GripState)
+                {
+                    if (hitElapsed > 0.3f)
+                    {
+                        Debug.Log("snap angle changing");
+                        // if we have been snapped to something for longer than a second
+                        snapAngle += leftHand.Joystick.y;
+                    }
+                    else
+                    {
+                        if (Mathf.Abs(leftHand.Joystick.x) > Mathf.Abs(leftHand.Joystick.y))
+                        {
+                            customRotation *= Quaternion.Euler(0, leftHand.Joystick.x, 0);
+                        }
+                        else
+                        {
+                            placeDist += leftHand.Joystick.y * Time.deltaTime;
+                            placeDist = Mathf.Clamp(placeDist, minPlaceDist, maxPlaceDist);
+                        }
+                    }
+                }
+                else if (leftHand.TriggerState)
+                {
+                    if (Mathf.Abs(leftHand.Joystick.x) > Mathf.Abs(leftHand.Joystick.y))
+                    {
+                        customRotation *= Quaternion.Euler(leftHand.Joystick.x, 0, 0);
+                    }
+                    else
+                    {
+                        customRotation *= Quaternion.Euler(0, 0, leftHand.Joystick.y);
+                    }
+                }
             }
         }
 
-        private Snap cachedHit; // the thing we hit using snap raycasts
+        private Snap snapHit; // the thing we hit using snap raycasts
         private int snapIndex = -1; // the index of the snap object on ghostObject
+        private float hitElapsed;
+        private float snapAngle;
         const float maxRaycastDist = 2f;
         bool canBePlaced = false;
 
@@ -190,10 +219,10 @@ namespace Transballer.PlaceableObjects
 
         private void DoRaycast()
         {
-            if (cachedHit)
-            {
-                return;
-            }
+            // if (snapHit)
+            // {
+            //     return;
+            // }
             // first move the object to where it would be just using hands
             MoveGhostToHandPos();
             // check rays from each snap
@@ -206,25 +235,38 @@ namespace Transballer.PlaceableObjects
                 {
                     if (hit.collider.gameObject != ghostObject.snaps[i].gameObject)
                     {
-                        cachedHit = hit.transform.gameObject.GetComponent<Snap>();
-                        snapIndex = i;
+                        Snap newHit = hit.transform.gameObject.GetComponent<Snap>();
+                        if (snapHit != newHit)
+                        {
+                            snapHit = newHit;
+                            snapIndex = i;
+                            hitElapsed = 0;
+                            snapAngle = 0;
+                        }
+                        else
+                        {
+                            hitElapsed += Time.fixedDeltaTime;
+                        }
                         return;
                     }
                 }
             }
-            cachedHit = null;
+            snapHit = null;
             snapIndex = -1;
+            hitElapsed = 0;
+            snapAngle = 0;
         }
 
         private void MoveGhostToSnapPos()
         {
             DoRaycast();
-            if (cachedHit)
+            if (snapHit)
             {
-                if (ghostObject.CanBePlacedOn(cachedHit))
+                if (ghostObject.CanBePlacedOn(snapHit))
                 {
-                    ghostObject.transform.rotation = Snap.GetMatchingRotation(cachedHit, ghostObject.snaps[snapIndex]);
-                    ghostObject.transform.position = Snap.GetMatchingPosition(cachedHit, ghostObject.snaps[snapIndex]);
+                    ghostObject.transform.rotation = Snap.GetMatchingRotation(snapHit, ghostObject.snaps[snapIndex]);
+                    ghostObject.transform.position = Snap.GetMatchingPosition(snapHit, ghostObject.snaps[snapIndex]);
+                    Snap.SetExtraRotation(snapHit, ghostObject.snaps[snapIndex], snapAngle);
                 }
             }
             ghostObject.Move();
@@ -234,7 +276,8 @@ namespace Transballer.PlaceableObjects
 
         private void FixedUpdate()
         {
-            cachedHit = null;
+            // don't need to cache anymore since we raycast once
+            // snapHit = null;
             if (ghostObject)
             {
                 if (useSnaps)
@@ -247,9 +290,9 @@ namespace Transballer.PlaceableObjects
                 }
                 // compute canBePlaced
                 canBePlaced = ghostObject.materialCost <= material;
-                if (cachedHit)
+                if (snapHit)
                 {
-                    canBePlaced = canBePlaced && ghostObject.CanBePlacedOn(cachedHit);
+                    canBePlaced = canBePlaced && ghostObject.CanBePlacedOn(snapHit);
                 }
                 else
                 {
@@ -319,9 +362,9 @@ namespace Transballer.PlaceableObjects
             {
                 if (ghostObject.materialCost <= material)
                 {
-                    if (cachedHit)
+                    if (snapHit)
                     {
-                        ghostObject.Place(snapIndex, cachedHit.placeable.Id, cachedHit.index);
+                        ghostObject.Place(snapIndex, snapHit.placeable.Id, snapHit.index);
                     }
                     else
                     {

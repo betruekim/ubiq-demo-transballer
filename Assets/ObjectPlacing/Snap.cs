@@ -1,4 +1,6 @@
 using UnityEngine;
+using System;
+using System.Reflection;
 
 namespace Transballer.PlaceableObjects
 {
@@ -18,6 +20,14 @@ namespace Transballer.PlaceableObjects
         public static Vector3 GetMatchingPosition(Snap grounded, Snap snapper)
         {
             return grounded.transform.position - GetMatchingRotation(grounded, snapper) * snapper.transform.localPosition;
+        }
+
+        public static void SetExtraRotation(Snap grounded, Snap snapper, float angle)
+        {
+            // this has to be run after moving the snapper using GetMatchingPos and GetMatchingRot
+            // since RotateAround is an internal function, we have to use Reflection to access it
+            var rotateAround = typeof(Transform).GetMethod("RotateAround", new Type[] { typeof(Vector3), typeof(Vector3), typeof(float) });
+            rotateAround.Invoke(snapper.placeable.transform, new object[] { snapper.transform.position, snapper.transform.forward, angle });
         }
 
         GameObject snapGraphic;
