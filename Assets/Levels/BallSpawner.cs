@@ -13,75 +13,38 @@ namespace Transballer.Levels
         public NetworkId Id { get; } = new NetworkId(11);
         NetworkContext ctx;
 
-        public GameObject level;
         public NetworkSpawner networkSpawner;
         public RigidbodyManager rigidbodyManager;
-        public GameObject timerText;
-        public float timeUntilSpawn;
-        public int ballsToSpawn;
+
         public GameObject ball;
         public GameObject spawnPoint;
-        public float spawnRate;
         private LevelManager levelManager;
-
-        public bool timerRunning = false;
-        private Transform spawnTransform;
 
         private void Awake()
         {
             networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
-            levelManager = level.GetComponent<LevelManager>();
+            levelManager = GameObject.FindObjectOfType<LevelManager>();
             ctx = NetworkScene.Register(this);
         }
 
-        void Start()
+        public void SpawnBalls()
         {
-            GameObject empty = new GameObject();
-            spawnTransform = empty.transform;
-            spawnTransform.position = spawnPoint.transform.position;
-        }
-
-        void Update()
-        {
-            if (timerRunning)
+            float waitTime = 0;
+            foreach (var burst in levelManager.level.emission)
             {
-                if (timeUntilSpawn > 0.0f)
-                {
-                    timeUntilSpawn -= Time.deltaTime;
-
-                    int seconds;
-                    if (timeUntilSpawn < 0.0f)
-                    {
-                        seconds = 0;
-                    }
-                    else
-                    {
-                        seconds = Mathf.FloorToInt(timeUntilSpawn);
-                    }
-                    ctx.Send(new SpawnerTime(seconds).Serialize());
-                    displayTime(seconds);
-                }
-                else
-                {
-                    timeUntilSpawn = 0.0f;
-                    Debug.Log("Time is up. Balls imminent.");
-                    timerRunning = false;
-
-                    // Start spawning balls
-                    StartCoroutine("spawnBalls");
-                }
+                StartCoroutine(SpawnBalls(burst.count, burst.duration, waitTime));
+                waitTime += burst.duration;
             }
         }
 
-        IEnumerator spawnBalls()
+        private IEnumerator SpawnBalls(int count, float duration, float delay)
         {
-            while (ballsToSpawn != 0)
+            yield return new WaitForSeconds(delay);
+            for (int i = 0; i < count; i++)
             {
-                spawnBall(ballsToSpawn);
-                ballsToSpawn -= 1;
-                yield return new WaitForSeconds(1.0f / spawnRate);
+                spawnBall(i);
+                yield return new WaitForSeconds(duration / (float)count);
             }
-
             yield break;
         }
 
@@ -90,7 +53,7 @@ namespace Transballer.Levels
             float jitter = 0.1f;
             Vector3 offset = new Vector3(Random.Range(-jitter, jitter), 0.0f, Random.Range(-jitter, jitter));
             GameObject spawnedBall = networkSpawner.Spawn(ball);
-            spawnedBall.transform.position = spawnTransform.position + offset;
+            spawnedBall.transform.position = spawnPoint.transform.position + offset;
 
             // Add unique name for each ball
             spawnedBall.name = spawnedBall.name + ballNumber.ToString();
@@ -99,10 +62,10 @@ namespace Transballer.Levels
             levelManager.ballList.Add(spawnedBall.GetComponent<Ball>());
         }
 
-        private void displayTime(int seconds)
-        {
-            transform.Find("Timer").GetComponent<TextMesh>().text = string.Format("{0}", seconds);
-        }
+        // private void displayTime(int seconds)
+        // {
+        //     transform.Find("Timer").GetComponent<TextMesh>().text = string.Format("{0}", seconds);
+        // }
 
         public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
@@ -111,7 +74,7 @@ namespace Transballer.Levels
 
             if (messageType == "spawnerTime")
             {
-                displayTime(SpawnerTime.Deserialize(msgString).time);
+                // displayTime(SpawnerTime.Deserialize(msgString).time);
             }
         }
     }

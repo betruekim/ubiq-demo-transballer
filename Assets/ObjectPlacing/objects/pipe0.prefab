@@ -7,7 +7,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1229472660153464431}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: e8eddb03de96b104fa48f094764e545d, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
@@ -122,12 +122,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b98a8b886be88346847dc5cbd964e85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: 0
+  debug: 0
   snaps:
   - {fileID: 4966590507991861661}
   - {fileID: 3255223878762743154}
   attachedTo: []
   originalOwner: 0
-  owner: 0
 --- !u!1 &4717571826256580141
 GameObject:
   m_ObjectHideFlags: 0
@@ -653,6 +654,11 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: a5360f4cc02108a4cb62849317a1ba5d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1b91ed87f23ff6145bda974705ed776b, type: 2}
     - target: {fileID: 919132149155446097, guid: a5360f4cc02108a4cb62849317a1ba5d,
         type: 3}
       propertyPath: m_Name

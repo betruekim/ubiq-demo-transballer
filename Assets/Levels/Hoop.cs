@@ -7,7 +7,6 @@ namespace Transballer.Levels
     public class Hoop : MonoBehaviour
     {
         public GameObject ballDisplay;
-        public GameObject level;
 
         public bool collider1Hit;
         public bool collider2Hit;

@@ -13,5 +13,4 @@ MonoBehaviour:
   m_Name: BallCatalogue
   m_EditorClassIdentifier: 
   prefabs:
-  - {fileID: 2061997242598594536, guid: 18ac4c37435789c459ca42629f55134d, type: 3}
   - {fileID: 2061997242598594536, guid: 4aa9fbe924f54764db17f84ac47b524e, type: 3}

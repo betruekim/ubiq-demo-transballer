@@ -11,14 +11,13 @@ namespace Transballer.Levels
         public NetworkId Id { get; } = new NetworkId(10);
         NetworkContext ctx;
 
-        public GameObject levelLoader;
-
         private LevelLoader loaderScript;
+        public int levelIndex = 0;
 
         void Awake()
         {
             ctx = NetworkScene.Register(this);
-            loaderScript = levelLoader.GetComponent<LevelLoader>();
+            loaderScript = GameObject.FindObjectOfType<LevelLoader>();
         }
 
         void OnTriggerEnter(Collider other)
@@ -28,7 +27,7 @@ namespace Transballer.Levels
             if (other.gameObject.name == "Right Hand" && NetworkManager.roomOwner)
             {
                 // Load in the level
-                loaderScript.loadLevelOwner();
+                loaderScript.loadLevelOwner(levelIndex);
 
                 // Send out message to peers
                 ctx.Send(new OnLoad().Serialize());

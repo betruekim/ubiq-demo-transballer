@@ -8,7 +8,7 @@ namespace Transballer.Levels
     public class LevelLoader : MonoBehaviour
     {
         public NetworkSpawner networkSpawner;
-        public GameObject levelPrefab;
+        public PrefabCatalogue levels;
         public GameObject levelSelect;
 
         private bool waitingForLoad = false;
@@ -26,7 +26,7 @@ namespace Transballer.Levels
             }
         }
 
-        public void loadLevelOwner()
+        public void loadLevelOwner(int levelIndex)
         {
             // Disable level selector
             levelSelect.SetActive(false);
@@ -36,18 +36,11 @@ namespace Transballer.Levels
             ui.SetActive(false);
 
             // Load in the prefab
-            GameObject spawnedLevel = networkSpawner.Spawn(levelPrefab);
+            GameObject spawnedLevel = networkSpawner.Spawn(levels.prefabs[levelIndex]);
 
             // Give the spawned level references so it can reenable at the end
             spawnedLevel.GetComponent<LevelManager>().levelSelect = levelSelect;
             spawnedLevel.GetComponent<LevelManager>().ui = ui;
-
-            // Find the ball spawner(s) in the level and start their timers
-            GameObject[] spawners = GameObject.FindGameObjectsWithTag("Spawner");
-            foreach (var spawner in spawners)
-            {
-                spawner.GetComponent<BallSpawner>().timerRunning = true;
-            }
 
             // Move the player
             movePlayer();

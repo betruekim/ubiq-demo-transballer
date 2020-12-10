@@ -24,7 +24,7 @@ namespace Transballer.Levels
         void OnTriggerEnter(Collider collision)
         {
             // Check if object name is ball 
-            if (collision.gameObject.name.Contains("Ball(Clone)"))
+            if (collision.gameObject.layer == LayerMask.NameToLayer("Ball"))
             {
                 Hoop hoopRef = hoop.GetComponent<Hoop>();
                 if (colliderNumber == 1)
@@ -42,7 +42,7 @@ namespace Transballer.Levels
 
                         if (hoopRef.ballsToGo == 0)
                         {
-                            hoopRef.level.GetComponent<LevelManager>().levelComplete();
+                            GameObject.FindObjectOfType<LevelManager>().levelComplete();
                         }
                     }
                 }

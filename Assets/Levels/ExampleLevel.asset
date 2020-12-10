@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 776e94d8f8d1663498d6092bfc6393d2, type: 3}
   m_Name: ExampleLevel
   m_EditorClassIdentifier: 
-  prefab: {fileID: 0}
-  allowedMaterial: 10
+  prefab: {fileID: 5256857805543010051, guid: 6a9eaaa0c698f604f9468bdcf209ba74, type: 3}
+  allowedMaterial: 500
   emission:
-  - count: 0
-    duration: 0
-  - count: 0
-    duration: 0
+  - count: 30
+    duration: 30

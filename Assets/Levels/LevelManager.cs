@@ -15,6 +15,8 @@ namespace Transballer.Levels
         public GameObject levelSelect;
         public GameObject ui;
 
+        public Level level;
+
         void Awake()
         {
             ctx = NetworkScene.Register(this);
