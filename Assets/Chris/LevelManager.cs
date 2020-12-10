@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ubik.Physics;
+using Transballer.NetworkedPhysics;
 using Ubik.Messaging;
 
 public class LevelManager : MonoBehaviour, INetworkObject, INetworkComponent
@@ -61,7 +61,7 @@ public class LevelManager : MonoBehaviour, INetworkObject, INetworkComponent
     {
         foreach (var ball in ballList)
         {
-            rigidbodyManager.Deregister(ball.GetComponent<Ubik.Physics.Rigidbody>(), true);
+            rigidbodyManager.Deregister(ball.GetComponent<Ball>(), true);
             GameObject.Destroy(ball);
         }
     }
@@ -79,7 +79,7 @@ public class LevelManager : MonoBehaviour, INetworkObject, INetworkComponent
     public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
     {
         string msgString = message.ToString();
-        string messageType = Messages.GetType(msgString);
+        string messageType = Transballer.Messages.GetType(msgString);
 
         if (messageType == "managerMessage")
         {
@@ -98,7 +98,7 @@ public class LevelManager : MonoBehaviour, INetworkObject, INetworkComponent
 }
 
 [System.Serializable]
-public class ManagerMessage : Messages.Message
+public class ManagerMessage : Transballer.Messages.Message
 {
     public override string messageType => "managerMessage";
 

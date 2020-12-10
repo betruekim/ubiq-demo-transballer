@@ -35,7 +35,7 @@ public class LevelDoor : MonoBehaviour, INetworkObject, INetworkComponent
     public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
     {
         string msgString = message.ToString();
-        string messageType = Messages.GetType(msgString);
+        string messageType = Transballer.Messages.GetType(msgString);
 
         if (messageType == "levelLoad")
         {
@@ -49,7 +49,7 @@ public class LevelDoor : MonoBehaviour, INetworkObject, INetworkComponent
 
 
 [System.Serializable]
-public class OnLoad : Messages.Message
+public class OnLoad : Transballer.Messages.Message
 {
     public override string messageType => "levelLoad";
 

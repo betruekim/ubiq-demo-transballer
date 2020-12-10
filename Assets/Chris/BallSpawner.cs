@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Ubik.Samples;
 using Ubik.Messaging;
-using Ubik.Physics;
+using Transballer.NetworkedPhysics;
 
 public class BallSpawner : MonoBehaviour, INetworkObject, INetworkComponent
 {
@@ -105,7 +105,7 @@ public class BallSpawner : MonoBehaviour, INetworkObject, INetworkComponent
     public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
     {
         string msgString = message.ToString();
-        string messageType = Messages.GetType(msgString);
+        string messageType = Transballer.Messages.GetType(msgString);
 
         if (messageType == "spawnerTime")
         {
@@ -115,7 +115,7 @@ public class BallSpawner : MonoBehaviour, INetworkObject, INetworkComponent
 }
 
 [System.Serializable]
-public class SpawnerTime : Messages.Message
+public class SpawnerTime : Transballer.Messages.Message
 {
     public override string messageType => "spawnerTime";
 

@@ -69,7 +69,7 @@ namespace Transballer.NetworkedPhysics
                     rb.isKinematic = setKinematic.state;
                     break;
                 case "selfDestruct":
-                    manager.Deregister(transform.gameObject.GetComponent<Rigidbody>(), false);
+                    manager.Deregister(transform.gameObject.GetComponent<NetworkedRigidbody>(), false);
                     GameObject.Destroy(transform.gameObject);
                     break;
                 default:

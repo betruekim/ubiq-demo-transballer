@@ -46,7 +46,7 @@ namespace Transballer.NetworkedPhysics
             }
         }
 
-        public void Deregister(Rigidbody rigidbody, bool owner)
+        public void Deregister(NetworkedRigidbody rigidbody, bool owner)
         {
             NetRBMetadata[] array = rigidbodies.ToArray();
             for (int i = 0; i != array.Length; i++)

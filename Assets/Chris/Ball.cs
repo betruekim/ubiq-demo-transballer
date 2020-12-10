@@ -2,7 +2,7 @@ using UnityEngine;
 using Ubik.Messaging;
 using Random = System.Random;
 
-public class Ball : Ubik.Physics.Rigidbody
+public class Ball : Transballer.NetworkedPhysics.NetworkedRigidbody
 {
     [SerializeField] public Renderer ball;
     private Color[] colours = new Color[] { Color.green, Color.blue, Color.cyan, Color.green, Color.magenta, Color.red, Color.yellow };
@@ -28,7 +28,7 @@ public class Ball : Ubik.Physics.Rigidbody
     public override void ProcessMessage(ReferenceCountedSceneGraphMessage message)
     {
         string msgString = message.ToString();
-        string messageType = Messages.GetType(msgString);
+        string messageType = Transballer.Messages.GetType(msgString);
         Debug.Log(msgString);
 
         switch (messageType)
@@ -54,7 +54,7 @@ public class Ball : Ubik.Physics.Rigidbody
 
 
 [System.Serializable]
-public class ColourMessage : Messages.Message
+public class ColourMessage : Transballer.Messages.Message
 {
     public override string messageType => "colourMessage";
 
