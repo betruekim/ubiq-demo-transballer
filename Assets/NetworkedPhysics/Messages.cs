@@ -5,7 +5,6 @@ namespace Transballer
 {
     public class Messages
     {
-
         [System.Serializable]
         public abstract class Message
         {
@@ -20,21 +19,62 @@ namespace Transballer
         }
 
         [System.Serializable]
-        public class RigidbodyUpdate : Message
+        public class PositionUpdate : Message
         {
-            public override string messageType => "rigidbodyUpdate";
+            public override string messageType => "positionUpdate";
 
             public Vector3 position;
             public Quaternion rotation;
 
+            public PositionUpdate(Vector3 position, Quaternion rotation)
+            {
+                this.position = position;
+                this.rotation = rotation;
+            }
+
+            public override string Serialize()
+            {
+                return $"{this.messageType}${JsonUtility.ToJson(this.position)}${JsonUtility.ToJson(this.rotation)}";
+            }
+
+            public static PositionUpdate Deserialize(string message)
+            {
+                string[] components = message.Split('$');
+                return new PositionUpdate(JsonUtility.FromJson<Vector3>(components[1]), JsonUtility.FromJson<Quaternion>(components[2])); ;
+            }
+        }
+
+        [System.Serializable]
+        public class Remove : Message
+        {
+            public override string messageType => "remove";
+
+            public override string Serialize()
+            {
+                return "remove$";
+            }
+        }
+
+        [System.Serializable]
+        public class NewOwner : Message
+        {
+            public override string messageType => "newOwner";
+
+            public override string Serialize()
+            {
+                return "newOwner$";
+            }
+        }
+
+        [System.Serializable]
+        public class RigidbodyUpdate : Message
+        {
+            public override string messageType => "rigidbodyUpdate";
             public Vector3 linearVelocity;
             public Vector3 angularVelocity;
 
-            public RigidbodyUpdate(Transform transform, UnityEngine.Rigidbody rigidbody)
+            public RigidbodyUpdate(UnityEngine.Rigidbody rigidbody)
             {
-                this.position = transform.position;
-                this.rotation = transform.rotation;
-
                 this.linearVelocity = rigidbody.velocity;
                 this.angularVelocity = rigidbody.angularVelocity;
             }
@@ -47,7 +87,7 @@ namespace Transballer
             public override string Serialize()
             {
 
-                string message = $"{this.messageType}${JsonUtility.ToJson(this.position)}${JsonUtility.ToJson(this.rotation)}${JsonUtility.ToJson(this.linearVelocity)}${JsonUtility.ToJson(this.angularVelocity)}";
+                string message = $"{this.messageType}${JsonUtility.ToJson(this.linearVelocity)}${JsonUtility.ToJson(this.angularVelocity)}";
 
                 return message;
             }
@@ -56,10 +96,8 @@ namespace Transballer
             {
                 string[] components = message.Split('$');
                 RigidbodyUpdate update = new RigidbodyUpdate();
-                update.position = JsonUtility.FromJson<Vector3>(components[1]);
-                update.rotation = JsonUtility.FromJson<Quaternion>(components[2]);
-                update.linearVelocity = JsonUtility.FromJson<Vector3>(components[3]);
-                update.angularVelocity = JsonUtility.FromJson<Vector3>(components[4]);
+                update.linearVelocity = JsonUtility.FromJson<Vector3>(components[1]);
+                update.angularVelocity = JsonUtility.FromJson<Vector3>(components[2]);
                 return update;
             }
         }
@@ -88,39 +126,25 @@ namespace Transballer
         }
 
         [System.Serializable]
-        public class OnDestroy : Message
+        public class SetKinematic : Message
         {
-            public override string messageType => "onDestroy";
+            public override string messageType => "setKinematic";
+            public bool state;
 
             public override string Serialize()
             {
-                return "onDestroy$";
+                return $"setKinematic${state}";
             }
-        }
 
-        [System.Serializable]
-        public class PositionUpdate : Message
-        {
-            public override string messageType => "positionUpdate";
-
-            public Vector3 position;
-            public Quaternion rotation;
-
-            public PositionUpdate(Vector3 position, Quaternion rotation)
+            public SetKinematic(bool state)
             {
-                this.position = position;
-                this.rotation = rotation;
+                this.state = state;
             }
 
-            public override string Serialize()
-            {
-                return $"{this.messageType}${JsonUtility.ToJson(this.position)}${JsonUtility.ToJson(this.rotation)}";
-            }
-
-            public static PositionUpdate Deserialize(string message)
+            public static SetKinematic Deserialize(string message)
             {
                 string[] components = message.Split('$');
-                return new PositionUpdate(JsonUtility.FromJson<Vector3>(components[1]), JsonUtility.FromJson<Quaternion>(components[2])); ;
+                return new SetKinematic(bool.Parse(components[1]));
             }
         }
 
@@ -156,51 +180,6 @@ namespace Transballer
             {
                 string[] components = message.Split('$');
                 return new OnPlace(int.Parse(components[1]), new NetworkId(int.Parse(components[2])), int.Parse(components[3]));
-            }
-        }
-
-        [System.Serializable]
-        public class OnRemove : Message
-        {
-            public override string messageType => "onRemove";
-
-            public override string Serialize()
-            {
-                return "onRemove$";
-            }
-        }
-
-        [System.Serializable]
-        public class NewOwner : Message
-        {
-            public override string messageType => "newOwner";
-
-            public override string Serialize()
-            {
-                return "newOwner$";
-            }
-        }
-
-        [System.Serializable]
-        public class SetKinematic : Message
-        {
-            public override string messageType => "setKinematic";
-            public bool state;
-
-            public override string Serialize()
-            {
-                return $"setKinematic${state}";
-            }
-
-            public SetKinematic(bool state)
-            {
-                this.state = state;
-            }
-
-            public static SetKinematic Deserialize(string message)
-            {
-                string[] components = message.Split('$');
-                return new SetKinematic(bool.Parse(components[1]));
             }
         }
 

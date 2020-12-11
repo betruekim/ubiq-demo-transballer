@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Ubik.Messaging;
 
 namespace Transballer.NetworkedPhysics
 {
@@ -41,7 +42,18 @@ namespace Transballer.NetworkedPhysics
             if (rigidbody.owner)
             {
                 rigidbody.SendUpdate();
+            }
+        }
 
+        public void Unregister(NetworkedRigidbody rigidbody)
+        {
+            NetRBMetadata[] array = rigidbodies.ToArray();
+            for (int i = 0; i != array.Length; i++)
+            {
+                if (Object.ReferenceEquals(array[i].rigidbody, rigidbody))
+                {
+                    rigidbodies.Remove(array[i]);
+                }
             }
         }
 

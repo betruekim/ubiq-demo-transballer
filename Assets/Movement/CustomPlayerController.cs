@@ -45,21 +45,12 @@ public class CustomPlayerController : PlayerController
         userLocalPosition.z += (headProjectionXZ.z - userLocalPosition.z) * Time.deltaTime * cameraRubberBand.Evaluate(Mathf.Abs(headProjectionXZ.z - userLocalPosition.z));
         userLocalPosition.y = 0;
 
-        bool triggersHeld = false;
         foreach (var item in handControllers)
         {
-            triggersHeld |= item.TriggerState;
-            triggersHeld |= item.GripState;
-        }
-
-        if (!triggersHeld)
-        {
-            foreach (var item in handControllers)
+            // only snap with right controller
+            if (item.JoystickSwipe.Trigger && item.Right)
             {
-                if (item.JoystickSwipe.Trigger)
-                {
-                    transform.RotateAround(headCamera.transform.position, Vector3.up, 45f * Mathf.Sign(item.JoystickSwipe.Value));
-                }
+                transform.RotateAround(headCamera.transform.position, Vector3.up, 45f * Mathf.Sign(item.JoystickSwipe.Value));
             }
         }
     }
