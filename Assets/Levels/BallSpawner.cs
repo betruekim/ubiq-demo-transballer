@@ -8,11 +8,8 @@ using Transballer.NetworkedPhysics;
 
 namespace Transballer.Levels
 {
-    public class BallSpawner : MonoBehaviour, INetworkObject, INetworkComponent
+    public class BallSpawner : MonoBehaviour
     {
-        public NetworkId Id { get; } = new NetworkId(11);
-        NetworkContext ctx;
-
         public NetworkSpawner networkSpawner;
 
         public GameObject ball;
@@ -23,7 +20,6 @@ namespace Transballer.Levels
         {
             networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
             levelManager = GameObject.FindObjectOfType<LevelManager>();
-            ctx = NetworkScene.Register(this);
         }
 
         public void SpawnBalls()
@@ -65,42 +61,5 @@ namespace Transballer.Levels
         // {
         //     transform.Find("Timer").GetComponent<TextMesh>().text = string.Format("{0}", seconds);
         // }
-
-        public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
-        {
-            string msgString = message.ToString();
-            string messageType = Transballer.Messages.GetType(msgString);
-
-            if (messageType == "spawnerTime")
-            {
-                // displayTime(SpawnerTime.Deserialize(msgString).time);
-            }
-        }
-    }
-
-    [System.Serializable]
-    public class SpawnerTime : Transballer.Messages.Message
-    {
-        public override string messageType => "spawnerTime";
-
-        public int time;
-
-        public SpawnerTime(int time)
-        {
-            this.time = time;
-        }
-
-        public override string Serialize()
-        {
-            return "spawnerTime$" + time.ToString() + "$";
-        }
-
-        public static SpawnerTime Deserialize(string message)
-        {
-            string[] components = message.Split('$');
-
-            return new SpawnerTime(int.Parse(components[1]));
-        }
-
     }
 }
