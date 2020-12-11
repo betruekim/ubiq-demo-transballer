@@ -765,7 +765,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af96e7978475f704490254ff9fae08c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ballDisplay: {fileID: 7357889891767851673}
+  ballDisplay: {fileID: 919132149155446097, guid: 66a484c82365d884d9ecffaefc3ff858,
+    type: 3}
   collider1Hit: 0
   collider2Hit: 0
   collider3Hit: 0
