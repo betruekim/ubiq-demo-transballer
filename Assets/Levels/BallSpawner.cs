@@ -14,7 +14,6 @@ namespace Transballer.Levels
         NetworkContext ctx;
 
         public NetworkSpawner networkSpawner;
-        public RigidbodyManager rigidbodyManager;
 
         public GameObject ball;
         public GameObject spawnPoint;
