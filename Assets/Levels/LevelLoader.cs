@@ -62,7 +62,6 @@ namespace Transballer.Levels
 
                 // Give the spawned level references so it can reenable at the end
                 // Hold on while until spawns in? Hacky workaround
-                while (GameObject.FindObjectOfType<LevelManager>() == null) { }
                 GameObject.FindObjectOfType<LevelManager>().levelSelect = levelSelect;
                 GameObject.FindObjectOfType<LevelManager>().ui = ui;
 
