@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
 
     GameObject buildMenu, gun;
     LineRenderer gunLine;
+    ParticleSystem gunParticles;
     Transform barrelExit;
     public GameObject spawnableButtonPrefab;
     GameObject[] buttons;
@@ -45,6 +46,7 @@ public class UIManager : MonoBehaviour
         gun = rightHand.transform.Find("deag").gameObject;
         gunLine = gun.GetComponent<LineRenderer>();
         gunLine.positionCount = 0;
+        gunParticles = gun.GetComponentInChildren<ParticleSystem>();
         barrelExit = gun.transform.Find("suppressorPos_3");
         buildMenu = leftHand.transform.Find("buildMenu").gameObject;
 
@@ -178,6 +180,9 @@ public class UIManager : MonoBehaviour
             gunLine.SetPosition(1, pos);
             gunLine.startColor = Color.red;
             gunLine.endColor = Color.red;
+            ParticleSystem.MainModule main = gunParticles.main;
+            main.startColor = Color.red;
+            gunParticles.Play();
 
             yield return new WaitForSeconds(0.1f);
             gunLine.positionCount = 0;
@@ -190,6 +195,9 @@ public class UIManager : MonoBehaviour
             gunLine.SetPosition(1, pos);
             gunLine.startColor = Color.green;
             gunLine.endColor = Color.green;
+            ParticleSystem.MainModule main = gunParticles.main;
+            main.startColor = Color.green;
+            gunParticles.Play();
 
             yield return new WaitForSeconds(0.1f);
             gunLine.positionCount = 0;
@@ -197,6 +205,9 @@ public class UIManager : MonoBehaviour
         else if (type == -1)
         {
             // dud
+            // ParticleSystem.MainModule main = gunParticles.main;
+            // main.startColor = Color.blue;
+            // gunParticles.Play();
         }
         yield return new WaitForEndOfFrame();
     }

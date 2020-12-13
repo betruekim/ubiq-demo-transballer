@@ -236,7 +236,7 @@ namespace Transballer.PlaceableObjects
                     {
                         Debug.Log("snap angle changing");
                         // if we have been snapped to something for longer than a second
-                        snapAngle += alternateHand.Joystick.sqrMagnitude;
+                        snapAngle += alternateHand.Joystick.x + alternateHand.Joystick.y;
                     }
                     else
                     {
@@ -257,7 +257,7 @@ namespace Transballer.PlaceableObjects
                     float ang = Mathf.Atan2(startAngle.y, startAngle.x);
                     if (Mathf.Max(Mathf.Abs(alternateHand.Joystick.x), Mathf.Abs(alternateHand.Joystick.y)) > 0.7f)
                     {
-                        Vector3 next = lastHorizAngle + 0.5f * (Mathf.Atan2(alternateHand.Joystick.normalized.y, alternateHand.Joystick.normalized.x) - ang) * 180 / Mathf.PI * Vector3.forward;
+                        Vector3 next = lastHorizAngle + (Mathf.Atan2(alternateHand.Joystick.normalized.y, alternateHand.Joystick.normalized.x) - ang) * 180 / Mathf.PI * Vector3.forward;
                         // horizAngle = Vector3.Lerp(horizAngle, next, 0.2f);
                         horizAngle = next;
                     }
