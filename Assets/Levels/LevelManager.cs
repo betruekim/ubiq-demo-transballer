@@ -22,6 +22,22 @@ namespace Transballer.Levels
             ctx = NetworkScene.Register(this);
         }
 
+        bool started = false;
+        float startTime = 0;
+
+        public void StartLevel()
+        {
+            if (!started && NetworkManager.roomOwner)
+            {
+                started = true;
+                foreach (var spawner in GetComponentsInChildren<BallSpawner>())
+                {
+                    spawner.SpawnBalls();
+                }
+                startTime = Time.time;
+            }
+        }
+
         public void levelComplete()
         {
             if (NetworkManager.roomOwner)

@@ -12,7 +12,7 @@ namespace Transballer.Levels
 
         void IUseable.Use(Hand controller)
         {
-            GameObject.FindObjectOfType<BallSpawner>()?.SpawnBalls();
+            GameObject.FindObjectOfType<LevelManager>()?.StartLevel();
             targetPosition = Vector3.up * 0.451f;
         }
 
