@@ -255,7 +255,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3028500188585005029}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -538,10 +538,10 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4688054515910669191}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.75
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5950013805110015519
 GameObject:
@@ -778,12 +778,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84777e6a90b021547890810326e3af26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: 0
+  debug: 0
   snaps:
   - {fileID: 8084367602951462685}
   - {fileID: 742266660363942217}
   attachedTo: []
   originalOwner: 0
-  owner: 0
   barrelPivot: {fileID: 3621625881036127223}
   launchPoint: {fileID: 8060985915032550134}
   pickup: {fileID: 4536648245004469308}

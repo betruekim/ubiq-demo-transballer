@@ -9,7 +9,7 @@ public class NetworkManager : MonoBehaviour, INetworkObject, INetworkComponent, 
     // by setting a fixed networkId we can have objects synced in everyone's scenes
     NetworkId INetworkObject.Id { get; } = new NetworkId(4);
     NetworkContext ctx;
-    public static bool roomOwner = false;
+    public static bool roomOwner = true;
     RoomClient roomClient;
 
     public GameObject[] levels;

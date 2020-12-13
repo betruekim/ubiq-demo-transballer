@@ -17,12 +17,19 @@ namespace Transballer.PlaceableObjects
         public delegate void MaterialUpdate(int newMaterial, int newMaxMaterial);
         public event MaterialUpdate onMaterialChange;
 
+        public delegate void EquippedUpdate(int newSlot); // called when a new item is selected
+        public event EquippedUpdate onEquippedChange;
+
+        public delegate void PlaceUpdate(int type, Placeable target); // -2 removed, -1 nada, 0-count object
+        public event PlaceUpdate onPlaced;
+
         public bool useSnaps = true;
 
         private void Start()
         {
             networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
             HandController[] handControllers = GameObject.FindObjectsOfType<HandController>();
+
             foreach (var controller in handControllers)
             {
                 Debug.Log(controller.PrimaryButtonPress);
@@ -32,25 +39,71 @@ namespace Transballer.PlaceableObjects
                     rightHand = controller;
                     if (controller.TriggerPress != null)
                     {
-                        controller.TriggerPress.AddListener((bool pressed) => { if (pressed) { PlaceObject(); } });
+                        controller.TriggerPress.AddListener((bool pressed) =>
+                        {
+                            if (pressed)
+                            {
+                                if (UIManager.equipped == UIManager.SelectedHand.right) { PlaceObject(); }
+                            }
+                        });
                     }
                     if (controller.GripPress != null)
                     {
-                        controller.GripPress.AddListener((bool pressed) => { if (pressed) { DeselectObject(); } });
+                        controller.GripPress.AddListener((bool pressed) =>
+                        {
+                            if (pressed)
+                            {
+                                if (UIManager.equipped == UIManager.SelectedHand.right) { DeselectObject(); }
+                            }
+                        });
                     }
-                    // if (controller.PrimaryButtonPress != null)
-                    // {
-                    //     controller.PrimaryButtonPress.AddListener((bool pressed) => { if (pressed) { if (selectedObject >= 0) { DeselectObject(); } else { SelectObject(0); } } });
-                    // }
+                    if (controller.PrimaryButtonPress != null)
+                    {
+                        controller.PrimaryButtonPress.AddListener((bool pressed) =>
+                        {
+                            if (pressed)
+                            {
+                                if (UIManager.equipped == UIManager.SelectedHand.left) { SwitchSnaps(); }
+                            }
+                        });
+                        // controller.PrimaryButtonPress.AddListener((bool pressed) => { if (pressed) { if (selectedObject >= 0) { DeselectObject(); } else { SelectObject(0); } } });
+                    }
                 }
                 else
                 if (controller.gameObject.name == "Left Hand")
                 // if (controller.Left)
                 {
                     leftHand = controller;
+                    if (controller.TriggerPress != null)
+                    {
+                        controller.TriggerPress.AddListener((bool pressed) =>
+                        {
+                            if (pressed)
+                            {
+                                if (UIManager.equipped == UIManager.SelectedHand.left) { PlaceObject(); }
+                            }
+                        });
+                    }
+                    if (controller.GripPress != null)
+                    {
+                        controller.GripPress.AddListener((bool pressed) =>
+                        {
+                            if (pressed)
+                            {
+                                if (UIManager.equipped == UIManager.SelectedHand.left) { DeselectObject(); }
+                            }
+                        });
+                    }
                     if (controller.PrimaryButtonPress != null)
                     {
-                        controller.PrimaryButtonPress.AddListener((bool pressed) => { if (pressed) { SwitchSnaps(); } });
+                        controller.PrimaryButtonPress.AddListener((bool pressed) =>
+                        {
+                            if (pressed)
+                            {
+                                if (UIManager.equipped == UIManager.SelectedHand.right) { SwitchSnaps(); }
+                            }
+                        });
+                        // controller.PrimaryButtonPress.AddListener((bool pressed) => { if (pressed) { if (selectedObject >= 0) { DeselectObject(); } else { SelectObject(0); } } });
                     }
                 }
             }
@@ -123,6 +176,7 @@ namespace Transballer.PlaceableObjects
             vertAngle = Vector3.zero;
             placeDist = 1f;
             SpawnGhostObject();
+            onEquippedChange?.Invoke(index);
             if (useSnaps)
             {
                 foreach (Placeable placeable in PlaceableIndex.placedObjects.Values)
@@ -142,6 +196,7 @@ namespace Transballer.PlaceableObjects
         {
             DeselectObject();
             removing = true;
+            onEquippedChange?.Invoke(-2);
         }
 
         private void SpawnGhostObject()
@@ -172,72 +227,56 @@ namespace Transballer.PlaceableObjects
             //     PlaceObject();
             // }
 
-            if (leftHand.GripState)
+            HandController alternateHand = UIManager.equipped == UIManager.SelectedHand.left ? rightHand : leftHand;
+            if (alternateHand)
             {
-                if (hitElapsed > 0.3f)
+                if (alternateHand.GripState)
                 {
-                    Debug.Log("snap angle changing");
-                    // if we have been snapped to something for longer than a second
-                    snapAngle += leftHand.Joystick.sqrMagnitude;
-                }
-                else
-                {
-                    if (Mathf.Abs(leftHand.Joystick.y) > 0.3f && Mathf.Abs(leftHand.Joystick.y) > Mathf.Abs(leftHand.Joystick.x))
+                    if (hitElapsed > 0.3f)
                     {
-                        placeDist += leftHand.Joystick.y * Time.deltaTime * 2f;
-                        placeDist = Mathf.Clamp(placeDist, minPlaceDist, maxPlaceDist);
+                        Debug.Log("snap angle changing");
+                        // if we have been snapped to something for longer than a second
+                        snapAngle += alternateHand.Joystick.sqrMagnitude;
                     }
                     else
                     {
-                        vertAngle += Vector3.up * leftHand.Joystick.x;
+                        if (Mathf.Abs(alternateHand.Joystick.y) > 0.3f && Mathf.Abs(alternateHand.Joystick.y) > Mathf.Abs(alternateHand.Joystick.x))
+                        {
+                            placeDist += alternateHand.Joystick.y * Time.deltaTime * 2f;
+                            placeDist = Mathf.Clamp(placeDist, minPlaceDist, maxPlaceDist);
+                        }
+                        else
+                        {
+                            vertAngle += Vector3.up * alternateHand.Joystick.x;
+                        }
                     }
-                    // vertAngle = Mathf.Atan2(leftHand.Joystick.y, leftHand.Joystick.x) * 180 / Mathf.PI * Vector3.up;
-
-                    // if (Mathf.Abs(leftHand.Joystick.x) > Mathf.Abs(leftHand.Joystick.y))
-                    // {
-                    //     vertAngle = Vector3.up * leftHand.Joystick.x * 180;
-                    //     Debug.Log(leftHand.Joystick.x);
-                    // }
-                    // else
-                    // {
-                    //     placeDist += leftHand.Joystick.y * Time.deltaTime;
-                    //     placeDist = Mathf.Clamp(placeDist, minPlaceDist, maxPlaceDist);
-                    // }
                 }
-            }
-            else if (leftHand.TriggerState)
-            {
-                // https://answers.unity.com/questions/1259992/rotate-object-towards-joystick-input-using-c.html
-                float ang = Mathf.Atan2(startAngle.y, startAngle.x);
-                if (Mathf.Max(Mathf.Abs(leftHand.Joystick.x), Mathf.Abs(leftHand.Joystick.y)) > 0.7f)
+                else if (alternateHand.TriggerState)
                 {
-                    Vector3 next = lastHorizAngle + 0.5f * (Mathf.Atan2(leftHand.Joystick.normalized.y, leftHand.Joystick.normalized.x) - ang) * 180 / Mathf.PI * Vector3.forward;
-                    // horizAngle = Vector3.Lerp(horizAngle, next, 0.2f);
-                    horizAngle = next;
+                    // https://answers.unity.com/questions/1259992/rotate-object-towards-joystick-input-using-c.html
+                    float ang = Mathf.Atan2(startAngle.y, startAngle.x);
+                    if (Mathf.Max(Mathf.Abs(alternateHand.Joystick.x), Mathf.Abs(alternateHand.Joystick.y)) > 0.7f)
+                    {
+                        Vector3 next = lastHorizAngle + 0.5f * (Mathf.Atan2(alternateHand.Joystick.normalized.y, alternateHand.Joystick.normalized.x) - ang) * 180 / Mathf.PI * Vector3.forward;
+                        // horizAngle = Vector3.Lerp(horizAngle, next, 0.2f);
+                        horizAngle = next;
+                    }
+                    if (startAngle.sqrMagnitude < 0.01f && alternateHand.Joystick.sqrMagnitude > 0.25f)
+                    {
+                        // we just flicked to the side
+                        startAngle = alternateHand.Joystick.normalized;
+                    }
+                    else if (alternateHand.Joystick.sqrMagnitude < 0.25f && startAngle.sqrMagnitude > 0.01f)
+                    {
+                        // we just flicked back to zero
+                        startAngle = Vector2.zero;
+                        lastHorizAngle = horizAngle;
+                    }
                 }
-                if (startAngle.sqrMagnitude < 0.01f && leftHand.Joystick.sqrMagnitude > 0.25f)
+                else
                 {
-                    // we just flicked to the side
-                    startAngle = leftHand.Joystick.normalized;
-                }
-                else if (leftHand.Joystick.sqrMagnitude < 0.25f && startAngle.sqrMagnitude > 0.01f)
-                {
-                    // we just flicked back to zero
                     startAngle = Vector2.zero;
-                    lastHorizAngle = horizAngle;
                 }
-                // if (Mathf.Abs(leftHand.Joystick.x) > Mathf.Abs(leftHand.Joystick.y))
-                // {
-                //     customAngles += customRotation * Vector3.forward * leftHand.Joystick.x * 5;
-                // }
-                // else
-                // {
-                //     customAngles += customRotation * Vector3.up * leftHand.Joystick.y * 5;
-                // }
-            }
-            else
-            {
-                startAngle = Vector2.zero;
             }
             customRotation = Quaternion.Euler(horizAngle + vertAngle);
         }
@@ -251,8 +290,9 @@ namespace Transballer.PlaceableObjects
 
         private void MoveGhostToHandPos()
         {
-            ghostObject.transform.position = rightHand.transform.position + rightHand.transform.forward * placeDist;
-            ghostObject.transform.rotation = Quaternion.Euler(0, rightHand.transform.rotation.eulerAngles.y, 0) * customRotation;
+            HandController hand = UIManager.equipped == UIManager.SelectedHand.left ? leftHand : rightHand;
+            ghostObject.transform.position = hand.transform.position + hand.transform.forward * placeDist;
+            ghostObject.transform.rotation = Quaternion.Euler(0, hand.transform.rotation.eulerAngles.y, 0) * customRotation;
         }
 
         private void DoRaycast()
@@ -345,35 +385,38 @@ namespace Transballer.PlaceableObjects
                     ghostObject.SetMeshColors(Color.red);
                 }
             }
-
-            Ray ray = new Ray(rightHand.transform.position, rightHand.transform.forward);
-            Debug.DrawRay(ray.origin, ray.direction, Color.red, Time.deltaTime);
-            RaycastHit hit;
-            if (Physics.Raycast(ray.origin, ray.direction, out hit, 100f, 1 << LayerMask.NameToLayer("Placeable")))
+            else
             {
-                Placeable placeableHovered = hit.collider.gameObject.GetComponentInParent<Placeable>();
-                if (placeableHovered != hovered)
+                Ray ray = new Ray(rightHand.transform.position, rightHand.transform.forward);
+                Debug.DrawRay(ray.origin, ray.direction, Color.red, Time.deltaTime);
+                RaycastHit hit;
+                if (Physics.Raycast(ray.origin, ray.direction, out hit, 100f, 1 << LayerMask.NameToLayer("Placeable")))
+                {
+                    Placeable placeableHovered = hit.collider.gameObject.GetComponentInParent<Placeable>();
+                    if (placeableHovered != hovered)
+                    {
+                        if (hovered)
+                        {
+                            hovered.OffHovered();
+                        }
+                        placeableHovered.OnHovered();
+                        hovered = placeableHovered;
+                    }
+                    if (Input.GetKeyDown(KeyCode.R))
+                    {
+                        RemoveObject(placeableHovered);
+                    }
+                }
+                else
                 {
                     if (hovered)
                     {
                         hovered.OffHovered();
+                        hovered = null;
                     }
-                    placeableHovered.OnHovered();
-                    hovered = placeableHovered;
-                }
-                if (Input.GetKeyDown(KeyCode.R))
-                {
-                    RemoveObject(placeableHovered);
                 }
             }
-            else
-            {
-                if (hovered)
-                {
-                    hovered.OffHovered();
-                    hovered = null;
-                }
-            }
+
         }
 
         public void DeselectObject()
@@ -391,6 +434,8 @@ namespace Transballer.PlaceableObjects
                     s.HideGraphic();
                 }
             }
+
+            onEquippedChange?.Invoke(-1);
         }
 
         public void PlaceObject()
@@ -410,6 +455,7 @@ namespace Transballer.PlaceableObjects
                     }
                     material -= ghostObject.materialCost;
                     onMaterialChange?.Invoke(material, maxMaterial);
+                    onPlaced?.Invoke(selectedObject, ghostObject);
                     ghostObject = null;
                     DeselectObject();
                 }
@@ -418,6 +464,11 @@ namespace Transballer.PlaceableObjects
             {
                 RemoveObject(hovered);
             }
+            else
+            {
+                // call onplaced to show dud effect
+                onPlaced?.Invoke(-1, null);
+            }
 
         }
 
@@ -425,9 +476,14 @@ namespace Transballer.PlaceableObjects
         {
             if (placeable.originalOwner)
             {
+                onPlaced?.Invoke(-2, placeable);
                 placeable.Remove();
                 material += placeable.materialCost;
                 onMaterialChange?.Invoke(material, maxMaterial);
+            }
+            else
+            {
+                onPlaced?.Invoke(-1, null);
             }
         }
     }

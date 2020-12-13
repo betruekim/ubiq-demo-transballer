@@ -166,9 +166,21 @@ namespace Transballer.PlaceableObjects
             for (int i = 0; i < attachedTo.Count; i++)
             {
                 Snap otherSnap = attachedTo[i];
+                if (otherSnap == null)
+                {
+                    attachedTo.RemoveAt(i);
+                    i--;
+                    continue;
+                }
                 for (int j = 0; j < otherSnap.placeable.attachedTo.Count; j++)
                 {
                     Snap mySnap = otherSnap.placeable.attachedTo[j];
+                    if (mySnap == null)
+                    {
+                        otherSnap.placeable.attachedTo.RemoveAt(j);
+                        j--;
+                        continue;
+                    }
                     if (System.Array.IndexOf(snaps, mySnap) > -1)
                     {
                         Detach(mySnap, otherSnap);

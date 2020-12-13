@@ -10,11 +10,17 @@ using Transballer.PlaceableObjects;
 public class UIManager : MonoBehaviour
 {
 
-    public GameObject buildMenu, otherMenu, rightGun, leftGun;
+    GameObject buildMenu, gun;
+    LineRenderer gunLine;
+    Transform barrelExit;
     public GameObject spawnableButtonPrefab;
+    GameObject[] buttons;
+
     public PrefabCatalogue placeables;
+
     HandController leftHand;
     HandController rightHand;
+
     PlacementManager placementManager;
     Text material;
     Transform mainCamera;
@@ -36,11 +42,22 @@ public class UIManager : MonoBehaviour
 
     void InitUI()
     {
-        leftGun = leftHand.transform.Find("deag").gameObject;
-        rightGun = rightHand.transform.Find("deag").gameObject;
+        gun = rightHand.transform.Find("deag").gameObject;
+        gunLine = gun.GetComponent<LineRenderer>();
+        gunLine.positionCount = 0;
+        barrelExit = gun.transform.Find("suppressorPos_3");
         buildMenu = leftHand.transform.Find("buildMenu").gameObject;
-        otherMenu = null;
 
+        buttons = new GameObject[placeables.prefabs.Count + 1];
+        InitBuildMenu();
+
+        placementManager.onMaterialChange += UpdateMaterial;
+        placementManager.onEquippedChange += SelectItem;
+        placementManager.onPlaced += PlacedObject;
+    }
+
+    void InitBuildMenu()
+    {
         GridLayoutGroup buttonsContainer = buildMenu.GetComponentInChildren<GridLayoutGroup>();
         int i = 0;
         foreach (GameObject placeable in placeables.prefabs)
@@ -49,6 +66,7 @@ public class UIManager : MonoBehaviour
             button.GetComponentInChildren<Text>().text = $"{placeable.name} {placeable.GetComponent<Placeable>().materialCost}";
             int localIndex = i;
             button.GetComponent<Button>().onClick.AddListener(delegate { placementManager.SelectObject(localIndex); EventSystem.current.SetSelectedGameObject(null); });
+            buttons[i] = button;
             i++;
         }
 
@@ -56,9 +74,9 @@ public class UIManager : MonoBehaviour
         removeButton.GetComponentInChildren<Text>().text = $"remove";
         removeButton.GetComponentsInChildren<Image>()[1].sprite = removeIcon;
         removeButton.GetComponent<Button>().onClick.AddListener(delegate { placementManager.SelectRemover(); EventSystem.current.SetSelectedGameObject(null); });
+        buttons[i] = removeButton;
 
         material = buildMenu.transform.Find("Canvas").Find("spawnablesMenu").Find("material").GetComponent<Text>();
-        placementManager.onMaterialChange += UpdateMaterial;
     }
 
     void UpdateMaterial(int newMaterial, int newMaxMaterial)
@@ -66,44 +84,120 @@ public class UIManager : MonoBehaviour
         material.text = $"{newMaterial}/{newMaxMaterial}";
     }
 
-
-    bool HandWithinRange(HandController hand, float yMin, float yMax, float zMin, float zMax)
-    {
-        float y = hand.transform.localRotation.eulerAngles.y - mainCamera.localRotation.eulerAngles.y;
-        y = (y + 360) % 360;
-        float z = hand.transform.localRotation.eulerAngles.z;
-        return y > yMin && y < yMax && z > zMin && z < zMax;
-    }
-
-    void Update()
-    {
-        //0 70 -140
-        // otherMenu.SetActive(rightEquipped && HandWithinRange(rightHand, 360 - 120, 360 - 30, 60, 150));
-        // buildMenu.SetActive(rightEquipped && HandWithinRange(leftHand, 30, 120, 360 - 150, 360 - 60));
-    }
+    public enum SelectedHand { none, left, right };
 
     [SerializeField]
-    bool rightEquipped = false;
-    [SerializeField]
-    bool leftEquipped = false;
+    public static SelectedHand equipped = SelectedHand.none;
 
-    public void HolsterTrigger(bool rightHolster, HandController hand)
+    public void HolsterTrigger(HandController hand)
     {
-        Debug.Log($"{rightHolster} {hand}");
-        if (rightHolster)
+        if (hand.Right)
         {
-            rightEquipped = !rightEquipped;
-            rightGun.SetActive(rightEquipped);
-            buildMenu.SetActive(rightEquipped);
-            if (!rightEquipped)
+            if (equipped != SelectedHand.right)
             {
-                placementManager.DeselectObject();
+                equipped = SelectedHand.right;
+            }
+            else
+            {
+                equipped = SelectedHand.none;
+            }
+
+            gun.SetActive(equipped != SelectedHand.none);
+            buildMenu.SetActive(equipped != SelectedHand.none);
+
+            if (equipped == SelectedHand.right)
+            {
+                gun.transform.SetParent(rightHand.transform);
+                gun.transform.localPosition = Vector3.down * 0.02f;
+                gun.transform.localRotation = Quaternion.Euler(0, 180, 0);
+
+                buildMenu.transform.SetParent(leftHand.transform);
+                buildMenu.transform.localPosition = new Vector3(-0.128f, -0.136f, 0.008f);
+                buildMenu.transform.localRotation = Quaternion.Euler(18.994f, 88.983f, 171.066f);
             }
         }
         else
         {
-            leftEquipped = !leftEquipped;
-            leftGun.SetActive(leftEquipped);
+            if (equipped != SelectedHand.left)
+            {
+                equipped = SelectedHand.left;
+            }
+            else
+            {
+                equipped = SelectedHand.none;
+            }
+
+            gun.SetActive(equipped != SelectedHand.none);
+            buildMenu.SetActive(equipped != SelectedHand.none);
+
+            if (equipped == SelectedHand.left)
+            {
+                gun.transform.SetParent(leftHand.transform);
+                gun.transform.localPosition = Vector3.down * 0.02f;
+                gun.transform.localRotation = Quaternion.Euler(0, 180, 0);
+
+                buildMenu.transform.SetParent(rightHand.transform);
+                buildMenu.transform.localPosition = new Vector3(0.128f, -0.136f, -0.008f);
+                buildMenu.transform.localRotation = Quaternion.Euler(18.994f, 180 + 88.983f, 171.066f);
+            }
         }
+        placementManager.DeselectObject();
+    }
+
+    void SelectItem(int index)
+    {
+        Debug.Log($"UIManager selectItem called {index}");
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            buttons[i].GetComponent<Image>().color = Color.white;
+            if (i == index || (index == -2 && i == buttons.Length - 1))
+            {
+                buttons[i].GetComponent<Image>().color = Color.green;
+            }
+        }
+    }
+
+    void PlacedObject(int type, Placeable target)
+    {
+        StartCoroutine(PlacedObjectCoroutine(type, target));
+    }
+
+    IEnumerator PlacedObjectCoroutine(int type, Placeable target)
+    {
+        RaycastHit hit;
+        Vector3 pos = barrelExit.position - gun.transform.forward * 10f;
+        if (Physics.Raycast(barrelExit.position, -gun.transform.forward, out hit, 100f))
+        {
+            pos = hit.point;
+        }
+        if (type == -2)
+        {
+            // removed
+            gunLine.positionCount = 2;
+            gunLine.SetPosition(0, barrelExit.position);
+            gunLine.SetPosition(1, pos);
+            gunLine.startColor = Color.red;
+            gunLine.endColor = Color.red;
+
+            yield return new WaitForSeconds(0.1f);
+            gunLine.positionCount = 0;
+        }
+        else if (type >= 0)
+        {
+            // placed
+            gunLine.positionCount = 2;
+            gunLine.SetPosition(0, barrelExit.position);
+            gunLine.SetPosition(1, pos);
+            gunLine.startColor = Color.green;
+            gunLine.endColor = Color.green;
+
+            yield return new WaitForSeconds(0.1f);
+            gunLine.positionCount = 0;
+        }
+        else if (type == -1)
+        {
+            // dud
+        }
+        yield return new WaitForEndOfFrame();
     }
 }
