@@ -113,15 +113,15 @@ namespace Transballer.PlaceableObjects
         {
             base.Attach(mine, other);
 
-            mine.transform.Find("end")?.gameObject.SetActive(false);
-            other.transform.Find("end")?.gameObject.SetActive(false);
+            mine.transform.Find("trackEnd")?.gameObject.SetActive(false);
+            other.transform.Find("trackEnd")?.gameObject.SetActive(false);
         }
 
         public override void Detach(Snap mine, Snap other)
         {
             base.Detach(mine, other);
-            mine.transform.Find("end")?.gameObject.SetActive(true);
-            other.transform.Find("end")?.gameObject.SetActive(true);
+            mine.transform.Find("trackEnd")?.gameObject.SetActive(true);
+            other.transform.Find("trackEnd")?.gameObject.SetActive(true);
         }
     }
 
