@@ -8,6 +8,7 @@ using Ubik.XR;
 
 namespace Transballer.NetworkedPhysics
 {
+    [RequireComponent(typeof(Rigidbody))]
     public class NetworkedRigidbody : NetworkedObject, IGraspable
     {
         public UnityEngine.Rigidbody rb;
@@ -23,6 +24,7 @@ namespace Transballer.NetworkedPhysics
             base.Awake();
             manager = GameObject.FindObjectOfType<RigidbodyManager>();
             rb = GetComponent<UnityEngine.Rigidbody>();
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         }
 
         override public void OnSpawned(bool local)

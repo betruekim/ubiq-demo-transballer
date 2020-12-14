@@ -30,6 +30,17 @@ namespace Transballer.PlaceableObjects
                     Transballer.Messages.OnPlace placeInfo = Transballer.Messages.OnPlace.Deserialize(message.ToString());
                     OnPlace(placeInfo.snapIndex, placeInfo.snappedTo, placeInfo.snappedToSnapIndex);
                     break;
+                case "hoverInfo":
+                    HoverInfo info = HoverInfo.Deserialize(message.ToString());
+                    if (info.hovered)
+                    {
+                        OnHovered();
+                    }
+                    else
+                    {
+                        OffHovered();
+                    }
+                    break;
                 default:
                     base.ProcessMessage(message);
                     break;
@@ -193,14 +204,52 @@ namespace Transballer.PlaceableObjects
             base.OnRemove();
         }
 
-        public virtual void OnHovered()
+        public void Hover()
+        {
+            OnHovered();
+            // send message
+            ctx.Send(new HoverInfo(true).Serialize());
+        }
+
+        public void UnHover()
+        {
+            OffHovered();
+            // send message
+            ctx.Send(new HoverInfo(false).Serialize());
+        }
+
+        protected virtual void OnHovered()
         {
 
         }
 
-        public virtual void OffHovered()
+        protected virtual void OffHovered()
         {
 
+        }
+
+        [System.Serializable]
+        class HoverInfo : Messages.Message
+        {
+            public override string messageType => "hoverInfo";
+
+            public bool hovered;
+
+            public override string Serialize()
+            {
+                return $"hoverInfo${hovered}";
+            }
+
+            public HoverInfo(bool hovered)
+            {
+                this.hovered = hovered;
+            }
+
+            public static HoverInfo Deserialize(string message)
+            {
+                string[] components = message.Split('$');
+                return new HoverInfo(bool.Parse(components[1]));
+            }
         }
     }
 }

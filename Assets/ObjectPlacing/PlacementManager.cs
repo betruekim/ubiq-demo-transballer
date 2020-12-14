@@ -397,9 +397,9 @@ namespace Transballer.PlaceableObjects
                     {
                         if (hovered)
                         {
-                            hovered.OffHovered();
+                            hovered.UnHover();
                         }
-                        placeableHovered.OnHovered();
+                        placeableHovered.Hover();
                         hovered = placeableHovered;
                     }
                     if (Input.GetKeyDown(KeyCode.R))
@@ -411,7 +411,7 @@ namespace Transballer.PlaceableObjects
                 {
                     if (hovered)
                     {
-                        hovered.OffHovered();
+                        hovered.UnHover();
                         hovered = null;
                     }
                 }

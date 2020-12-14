@@ -182,29 +182,5 @@ namespace Transballer
                 return new OnPlace(int.Parse(components[1]), new NetworkId(int.Parse(components[2])), int.Parse(components[3]));
             }
         }
-
-        [System.Serializable]
-        public class MoveCannonAngle : Message
-        {
-            public override string messageType => "moveCannonAngle";
-
-            public Quaternion angle;
-
-            public override string Serialize()
-            {
-                return $"moveCannonAngle${JsonUtility.ToJson(angle)}";
-            }
-
-            public MoveCannonAngle(Quaternion angle)
-            {
-                this.angle = angle;
-            }
-
-            public static MoveCannonAngle Deserialize(string message)
-            {
-                string[] components = message.Split('$');
-                return new MoveCannonAngle(JsonUtility.FromJson<Quaternion>(components[1]));
-            }
-        }
     }
 }

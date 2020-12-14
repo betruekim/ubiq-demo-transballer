@@ -93,13 +93,13 @@ namespace Transballer.PlaceableObjects
             Gizmos.DrawWireCube(pickup.transform.position, pickup.transform.lossyScale);
         }
 
-        public override void OffHovered()
+        protected override void OffHovered()
         {
             base.OffHovered();
             arcRenderer.enabled = false;
         }
 
-        public override void OnHovered()
+        protected override void OnHovered()
         {
             // shows arc over one second of travel
             base.OnHovered();
@@ -126,7 +126,7 @@ namespace Transballer.PlaceableObjects
         void HingeReleased(Hand controller)
         {
             hingeGraspingController = null;
-            ctx.Send(new Transballer.Messages.MoveCannonAngle(launchPoint.parent.parent.rotation).Serialize());
+            ctx.Send(new MoveCannonAngle(launchPoint.parent.parent.rotation).Serialize());
         }
 
         public override void ProcessMessage(ReferenceCountedSceneGraphMessage message)
@@ -135,13 +135,37 @@ namespace Transballer.PlaceableObjects
             switch (messageType)
             {
                 case "moveCannonAngle":
-                    launchPoint.parent.parent.rotation = Transballer.Messages.MoveCannonAngle.Deserialize(message.ToString()).angle;
+                    launchPoint.parent.parent.rotation = MoveCannonAngle.Deserialize(message.ToString()).angle;
                     break;
                 default:
                     base.ProcessMessage(message);
                     break;
             }
 
+        }
+
+        [System.Serializable]
+        class MoveCannonAngle : Messages.Message
+        {
+            public override string messageType => "moveCannonAngle";
+
+            public Quaternion angle;
+
+            public override string Serialize()
+            {
+                return $"moveCannonAngle${JsonUtility.ToJson(angle)}";
+            }
+
+            public MoveCannonAngle(Quaternion angle)
+            {
+                this.angle = angle;
+            }
+
+            public static MoveCannonAngle Deserialize(string message)
+            {
+                string[] components = message.Split('$');
+                return new MoveCannonAngle(JsonUtility.FromJson<Quaternion>(components[1]));
+            }
         }
 
         private void OnEnable()
