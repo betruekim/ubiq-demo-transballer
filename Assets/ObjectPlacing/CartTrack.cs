@@ -8,6 +8,7 @@ namespace Transballer.PlaceableObjects
     public class CartTrack : Placeable
     {
         public override int materialCost => 10;
+        public override Vector3 snappedRotateAxis => Vector3.right;
         public override bool CanBePlacedOn(Snap target)
         {
             // we can only snap a cart to a cartTrack, and we can only snap to the top snap

@@ -22,12 +22,13 @@ namespace Transballer.PlaceableObjects
             return grounded.transform.position - GetMatchingRotation(grounded, snapper) * snapper.transform.localPosition;
         }
 
+        static MethodInfo rotateAround = typeof(Transform).GetMethod("RotateAround", new Type[] { typeof(Vector3), typeof(Vector3), typeof(float) });
         public static void SetExtraRotation(Snap grounded, Snap snapper, float angle)
         {
             // this has to be run after moving the snapper using GetMatchingPos and GetMatchingRot
             // since RotateAround is an internal function, we have to use Reflection to access it
-            var rotateAround = typeof(Transform).GetMethod("RotateAround", new Type[] { typeof(Vector3), typeof(Vector3), typeof(float) });
-            rotateAround.Invoke(snapper.placeable.transform, new object[] { snapper.transform.position, snapper.transform.forward, angle });
+            Vector3 axis = snapper.transform.rotation * snapper.placeable.snappedRotateAxis;
+            rotateAround.Invoke(snapper.placeable.transform, new object[] { snapper.transform.position, axis, angle });
         }
 
         GameObject snapGraphic;

@@ -16,6 +16,8 @@ namespace Transballer.PlaceableObjects
         public bool originalOwner = false;
         protected bool placed = false;
 
+        public virtual Vector3 snappedRotateAxis { get; } = Vector3.forward;
+
         override public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
             if (debug)
