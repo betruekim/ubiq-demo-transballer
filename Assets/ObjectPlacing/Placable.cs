@@ -109,6 +109,13 @@ namespace Transballer.PlaceableObjects
                     s.HideGraphic();
                 }
             }
+            foreach (Transform t in transform.Find("model").GetComponentInChildren<Transform>())
+            {
+                if (t.gameObject.layer == LayerMask.NameToLayer("Default"))
+                {
+                    t.gameObject.layer = LayerMask.NameToLayer("Placeable");
+                }
+            }
             if (snapIndex >= 0)
             {
                 Placeable placeableSnappedTo = PlaceableIndex.placedObjects[snappedTo];
@@ -208,6 +215,7 @@ namespace Transballer.PlaceableObjects
 
         public void Hover()
         {
+            Debug.Log("hover");
             OnHovered();
             // send message
             ctx.Send(new HoverInfo(true).Serialize());
@@ -215,6 +223,7 @@ namespace Transballer.PlaceableObjects
 
         public void UnHover()
         {
+            Debug.Log("unhover");
             OffHovered();
             // send message
             ctx.Send(new HoverInfo(false).Serialize());

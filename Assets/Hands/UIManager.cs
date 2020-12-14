@@ -148,7 +148,7 @@ public class UIManager : MonoBehaviour
 
     void SelectItem(int index)
     {
-        Debug.Log($"UIManager selectItem called {index}");
+        // Debug.Log($"UIManager selectItem called {index}");
         for (int i = 0; i < buttons.Length; i++)
         {
             buttons[i].GetComponent<Image>().color = Color.white;
