@@ -74,7 +74,7 @@ namespace Transballer.Levels
 
         private void movePlayer()
         {
-            GameObject playerPosition = GameObject.Find("PlayerPosition");
+            GameObject playerPosition = GameObject.Find("spawnPoint");
             GameObject player = GameObject.Find("Player");
             player.transform.position = playerPosition.transform.position;
             player.transform.rotation = playerPosition.transform.rotation;

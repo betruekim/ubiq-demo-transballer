@@ -42,7 +42,8 @@ namespace Transballer.Levels
 
                         if (hoopRef.ballsToGo == 0)
                         {
-                            GameObject.FindObjectOfType<LevelManager>().levelComplete();
+                            // GameObject.FindObjectOfType<LevelManager>().levelComplete();
+                            hoopRef.Complete();
                         }
                     }
                 }

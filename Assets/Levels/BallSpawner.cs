@@ -16,16 +16,23 @@ namespace Transballer.Levels
         public GameObject spawnPoint;
         private LevelManager levelManager;
 
+        List<Level.EmissionBurst> emissions;
+
         private void Awake()
         {
             networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
             levelManager = GameObject.FindObjectOfType<LevelManager>();
         }
 
+        public void SetEmissions(List<Level.EmissionBurst> emissions)
+        {
+            this.emissions = emissions;
+        }
+
         public void SpawnBalls()
         {
             float waitTime = 0;
-            foreach (var burst in levelManager.level.emission)
+            foreach (var burst in emissions)
             {
                 StartCoroutine(SpawnBalls(burst.count, burst.duration, waitTime));
                 waitTime += burst.duration;
@@ -56,10 +63,5 @@ namespace Transballer.Levels
             // Add to the ball list
             levelManager.ballList.Add(spawnedBall.GetComponent<Ball>());
         }
-
-        // private void displayTime(int seconds)
-        // {
-        //     transform.Find("Timer").GetComponent<TextMesh>().text = string.Format("{0}", seconds);
-        // }
     }
 }

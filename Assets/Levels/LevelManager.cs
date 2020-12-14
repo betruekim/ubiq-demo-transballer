@@ -11,6 +11,8 @@ namespace Transballer.Levels
         public NetworkId Id { get; } = new NetworkId(15);
         NetworkContext ctx;
         public List<Ball> ballList;
+        BallSpawner spawner;
+        List<Hoop> hoops;
 
         public GameObject levelSelect;
         public GameObject ui;
@@ -20,6 +22,15 @@ namespace Transballer.Levels
         void Awake()
         {
             ctx = NetworkScene.Register(this);
+            spawner = GetComponentInChildren<BallSpawner>();
+            spawner.SetEmissions(level.emission);
+
+            hoops = new List<Hoop>();
+            hoops.AddRange(GetComponentsInChildren<Hoop>());
+            for (int i = 0; i < hoops.Count; i++)
+            {
+                hoops[i].SetIndex(i);
+            }
         }
 
         bool started = false;
@@ -35,6 +46,23 @@ namespace Transballer.Levels
                     spawner.SpawnBalls();
                 }
                 startTime = Time.time;
+            }
+        }
+
+        public void HoopComplete(int index)
+        {
+            for (int i = 0; i < hoops.Count; i++)
+            {
+                if (hoops[i].index == index)
+                {
+                    hoops.RemoveAt(i);
+                    break;
+                }
+            }
+            if (hoops.Count == 0)
+            {
+                // level complete
+                levelComplete();
             }
         }
 
