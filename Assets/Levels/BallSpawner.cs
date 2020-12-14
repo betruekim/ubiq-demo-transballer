@@ -16,6 +16,7 @@ namespace Transballer.Levels
         public GameObject spawnPoint;
         private LevelManager levelManager;
 
+        [SerializeField]
         List<Level.EmissionBurst> emissions;
 
         private void Awake()
@@ -26,11 +27,13 @@ namespace Transballer.Levels
 
         public void SetEmissions(List<Level.EmissionBurst> emissions)
         {
+            Debug.Log($"emissions set {emissions.Count}");
             this.emissions = emissions;
         }
 
         public void SpawnBalls()
         {
+            Debug.Log("spawnBalls called");
             float waitTime = 0;
             foreach (var burst in emissions)
             {

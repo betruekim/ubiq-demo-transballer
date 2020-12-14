@@ -68,54 +68,123 @@ namespace Transballer.PlaceableObjects
         [SerializeField]
         float progress = 0f;
         [SerializeField]
-        float speed = 1f;
+        float speed = 0f;
         private void FixedUpdate()
         {
             if (!owner || !placed)
             {
                 return;
             }
-            progress += Time.fixedDeltaTime * speed;
-            CartTrack currentTrack = null;
-            RaycastHit hit;
-            Ray trackRay = new Ray(transform.position + transform.forward * 0.04f * Mathf.Sign(speed), -transform.up);
-            Debug.DrawRay(trackRay.origin, trackRay.direction, Color.red, Time.fixedDeltaTime);
-            if (Physics.Raycast(trackRay.origin, trackRay.direction, out hit, 1f, 1 << LayerMask.NameToLayer("TrackCollider")))
+            if (speed != 0)
             {
-                currentTrack = hit.collider.transform.parent.gameObject.GetComponent<CartTrack>();
-                if (currentTrack != lastTrack)
+                CartTrack currentTrack = null;
+                RaycastHit hit;
+                Ray trackRay = new Ray(transform.position + transform.forward * 0.04f * Mathf.Sign(speed), -transform.up);
+                Debug.DrawRay(trackRay.origin, trackRay.direction, Color.red, Time.fixedDeltaTime);
+                if (Physics.Raycast(trackRay.origin, trackRay.direction, out hit, 1f, 1 << LayerMask.NameToLayer("TrackCollider")))
                 {
-                    if (lastTrack == null)
+                    currentTrack = hit.collider.transform.parent.gameObject.GetComponent<CartTrack>();
+                    if (currentTrack != lastTrack)
                     {
-                        progress = 0.5f;
+                        if (lastTrack == null)
+                        {
+                            progress = 0.5f;
+                        }
+                        else
+                        {
+                            progress = 0.5f * (1 - Mathf.Sign(speed));
+                        }
+                        lastTrack = currentTrack;
                     }
-                    else
-                    {
-                        progress = 0.5f * (1 - Mathf.Sign(speed));
-                    }
-                    lastTrack = currentTrack;
                 }
+
+                Ray endRay = new Ray(transform.position + transform.forward * 0.3f * Mathf.Sign(speed) + transform.up * 0.05f, transform.forward * Mathf.Sign(speed));
+                Debug.DrawRay(endRay.origin, endRay.direction, Color.red, Time.fixedDeltaTime);
+                if (Physics.Raycast(endRay.origin, endRay.direction, out hit, 0.1f, 1 << LayerMask.NameToLayer("TrackEnd")))
+                {
+                    TrackEnd end = hit.transform.GetComponentInChildren<TrackEnd>();
+                    switch (end.type)
+                    {
+                        case TrackEnd.EndType.stop:
+                            speed *= 0;
+                            break;
+                        case TrackEnd.EndType.bounce:
+                            speed *= -1;
+                            break;
+                    }
+                }
+
+                if (currentTrack)
+                {
+                    transform.position = currentTrack.GetCartPos(progress);
+                    transform.rotation = currentTrack.GetCartRot(progress);
+                }
+                base.Move();
+                foreach (Placeable attached in attachedToTop)
+                {
+                    if (attached.owner)
+                    {
+                        attached.Move();
+                    }
+                }
+                progress += Time.fixedDeltaTime * speed;
+            }
+        }
+
+        [System.Serializable]
+        public class CartPush : Messages.Message
+        {
+            public override string messageType => "cartPush";
+            public float direction;
+
+            public override string Serialize()
+            {
+                return $"cartPush${direction}";
             }
 
-            Ray endRay = new Ray(transform.position + transform.forward * 0.3f * Mathf.Sign(speed), transform.forward * Mathf.Sign(speed));
-            Debug.DrawRay(endRay.origin, endRay.direction, Color.red, Time.fixedDeltaTime);
-            if (Physics.Raycast(endRay.origin, endRay.direction, out hit, 0.1f, 1 << LayerMask.NameToLayer("Snap")))
+            public CartPush(float direction)
             {
-                speed *= -1;
+                this.direction = direction;
             }
 
-            if (currentTrack)
+            public static CartPush Deserialize(string message)
             {
-                transform.position = currentTrack.GetCartPos(progress);
-                transform.rotation = currentTrack.GetCartRot(progress);
+                string[] components = message.Split('$');
+                return new CartPush(float.Parse(components[1]));
             }
-            base.Move();
-            foreach (Placeable attached in attachedToTop)
+        }
+
+        public void Push(float direction)
+        {
+            if (!owner)
             {
-                if (attached.owner)
-                {
-                    attached.Move();
-                }
+                ctx.Send(new CartPush(direction).Serialize());
+            }
+            else
+            {
+                OnPush(direction);
+            }
+        }
+
+        private void OnPush(float direction)
+        {
+            if (owner)
+            {
+                speed = Mathf.Sign(direction);
+            }
+        }
+
+        public override void ProcessMessage(ReferenceCountedSceneGraphMessage message)
+        {
+            string messageType = Messages.GetType(message.ToString());
+            switch (messageType)
+            {
+                case "cartPush":
+                    OnPush(CartPush.Deserialize(message.ToString()).direction);
+                    break;
+                default:
+                    base.ProcessMessage(message);
+                    break;
             }
         }
     }

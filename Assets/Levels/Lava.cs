@@ -15,7 +15,7 @@ namespace Transballer.Levels
         private void Awake()
         {
             spawner = GameObject.FindObjectOfType<NetworkSpawner>();
-            particleSystem = GetComponent<ParticleSystem>();
+            particleSystem = GetComponentInChildren<ParticleSystem>();
             ParticleSystem.ShapeModule shape = particleSystem.shape;
             shape.scale = transform.lossyScale;
         }

@@ -38,13 +38,11 @@ namespace Transballer.Levels
 
         public void StartLevel()
         {
+            Debug.Log("levelStart");
             if (!started && NetworkManager.roomOwner)
             {
                 started = true;
-                foreach (var spawner in GetComponentsInChildren<BallSpawner>())
-                {
-                    spawner.SpawnBalls();
-                }
+                spawner.SpawnBalls();
                 startTime = Time.time;
             }
         }

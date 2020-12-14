@@ -7,7 +7,7 @@ namespace Transballer.Levels
 {
     public class PhysicalButton : MonoBehaviour, IUseable
     {
-
+        public Vector3 offset;
         Vector3 targetPosition;
         Vector3 startPosition;
         public UnityEngine.Events.UnityEvent onButtonDown;
@@ -21,7 +21,7 @@ namespace Transballer.Levels
         void IUseable.Use(Hand controller)
         {
             onButtonDown.Invoke();
-            targetPosition = startPosition - Vector3.up * transform.lossyScale.y / 2;
+            targetPosition = startPosition + offset;
         }
 
         void IUseable.UnUse(Hand controller)

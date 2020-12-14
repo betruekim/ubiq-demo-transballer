@@ -99,7 +99,7 @@ namespace Transballer.PlaceableObjects
             foreach (Collider col in GetComponentsInChildren<Collider>())
             {
                 col.enabled = true;
-                col.gameObject.layer = LayerMask.NameToLayer("Placeable");
+                // col.gameObject.layer = LayerMask.NameToLayer("Placeable");
                 Snap s = col.gameObject.GetComponent<Snap>();
                 if (s)
                 {
@@ -139,7 +139,7 @@ namespace Transballer.PlaceableObjects
             foreach (Collider col in gameObject.GetComponentsInChildren<Collider>())
             {
                 col.enabled = false;
-                col.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+                // col.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             }
             placed = false;
         }

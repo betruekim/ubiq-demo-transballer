@@ -17,13 +17,6 @@ namespace Transballer.PlaceableObjects
         protected override void OnPlace(int snapIndex, NetworkId snappedTo, int snappedToSnapIndex)
         {
             base.OnPlace(snapIndex, snappedTo, snappedToSnapIndex);
-            for (int i = 0; i < transform.childCount; i++)
-            {
-                if (transform.GetChild(i).name.StartsWith("trackCollider"))
-                {
-                    transform.GetChild(i).gameObject.layer = LayerMask.NameToLayer("TrackCollider");
-                }
-            }
             if (snapIndex > -1)
             {
                 // ^ is XOR operator
@@ -33,7 +26,7 @@ namespace Transballer.PlaceableObjects
                     reversed = true;
                     foreach (Transform trackPoint in trackPoints)
                     {
-                        trackPoint.localRotation = trackPoint.localRotation * Quaternion.AngleAxis(180, trackPoint.up);
+                        trackPoint.localRotation = trackPoint.localRotation * Quaternion.AngleAxis(180, Vector3.up);
                     }
                 }
             }
@@ -114,6 +107,21 @@ namespace Transballer.PlaceableObjects
                 Gizmos.DrawRay(pos + dir, right * arrowHeadLength);
                 Gizmos.DrawRay(pos + dir, left * arrowHeadLength);
             }
+        }
+
+        public override void Attach(Snap mine, Snap other)
+        {
+            base.Attach(mine, other);
+
+            mine.transform.Find("end")?.gameObject.SetActive(false);
+            other.transform.Find("end")?.gameObject.SetActive(false);
+        }
+
+        public override void Detach(Snap mine, Snap other)
+        {
+            base.Detach(mine, other);
+            mine.transform.Find("end")?.gameObject.SetActive(true);
+            other.transform.Find("end")?.gameObject.SetActive(true);
         }
     }
 
