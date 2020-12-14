@@ -8,17 +8,25 @@ namespace Transballer.Levels
     public class PhysicalButton : MonoBehaviour, IUseable
     {
 
-        Vector3 targetPosition = Vector3.up * 0.5f;
+        Vector3 targetPosition;
+        Vector3 startPosition;
+        public UnityEngine.Events.UnityEvent onButtonDown;
+
+        private void Awake()
+        {
+            startPosition = transform.localPosition;
+            targetPosition = startPosition;
+        }
 
         void IUseable.Use(Hand controller)
         {
-            GameObject.FindObjectOfType<LevelManager>()?.StartLevel();
-            targetPosition = Vector3.up * 0.451f;
+            onButtonDown.Invoke();
+            targetPosition = startPosition - Vector3.up * transform.lossyScale.y / 2;
         }
 
         void IUseable.UnUse(Hand controller)
         {
-            targetPosition = Vector3.up * 0.5f;
+            targetPosition = startPosition;
         }
 
         private void Update()
