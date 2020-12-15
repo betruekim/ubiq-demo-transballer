@@ -27,6 +27,9 @@ namespace Transballer.PlaceableObjects
             string type = Transballer.Messages.GetType(message.ToString());
             switch (type)
             {
+                case "UI":
+                    ui.ProcessMessage(message);
+                    break;
                 case "onPlace":
                     Debug.Log($"{Id} {owner} {message}");
                     Transballer.Messages.OnPlace placeInfo = Transballer.Messages.OnPlace.Deserialize(message.ToString());
@@ -49,6 +52,19 @@ namespace Transballer.PlaceableObjects
             }
         }
 
+        protected PlaceableUI ui;
+
+        public void UISendMessage(string message)
+        {
+            ctx.Send(message);
+        }
+
+
+        protected virtual void InitUI()
+        {
+            ui = GetComponentInChildren<PlaceableUI>();
+        }
+
         override protected void Awake()
         {
             base.Awake();
@@ -61,6 +77,8 @@ namespace Transballer.PlaceableObjects
                 snap.index = index;
                 index++;
             }
+            InitUI();
+            ui?.gameObject.SetActive(false);
 
             // start out as a ghost before being placed
             MakeGhost();
@@ -123,7 +141,6 @@ namespace Transballer.PlaceableObjects
             }
             for (int i = 0; i < renderers.Length; i++)
             {
-                Debug.Log(renderers[i].material.color);
                 renderers[i].material.color = originalColors[i];
             }
             placed = true;
@@ -256,12 +273,18 @@ namespace Transballer.PlaceableObjects
 
         protected virtual void OnHovered()
         {
-
+            if (ui)
+            {
+                ui.gameObject.SetActive(true);
+            }
         }
 
         protected virtual void OffHovered()
         {
-
+            if (ui)
+            {
+                ui.gameObject.SetActive(false);
+            }
         }
 
         [System.Serializable]
