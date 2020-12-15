@@ -23,6 +23,8 @@ namespace Transballer.Levels
         Transform doorsParent;
         GameObject[] doors;
 
+        GameObject[] interactableArray;
+
         LevelManager currentLevel;
 
 
@@ -62,10 +64,14 @@ namespace Transballer.Levels
             {
                 // spawn interactables at table
                 GameObject table = GameObject.Find("table");
-                foreach (var prefab in interactables.prefabs)
+                interactableArray = new GameObject[interactables.prefabs.Count];
+
+                for (int j = 0; j != interactableArray.Length; j++)
                 {
-                    GameObject spawned = networkSpawner.SpawnPersistent(prefab);
+                    GameObject spawned = networkSpawner.SpawnPersistent(interactables.prefabs[j]);
                     spawned.transform.position = table.transform.position + Vector3.up * 2f;
+
+                    interactableArray[j] = spawned;
                 }
             }
         }
@@ -96,6 +102,14 @@ namespace Transballer.Levels
                 foreach (var id in ids)
                 {
                     PlaceableObjects.PlaceableIndex.placedObjects[id].Remove();
+                }
+
+                foreach (var interactable in interactableArray)
+                {
+                    if (interactable != null)
+                    {
+                        interactable.GetComponent<NetworkedPhysics.NetworkedRigidbody>().Remove();
+                    }
                 }
 
                 if (levelIndex == -1)
