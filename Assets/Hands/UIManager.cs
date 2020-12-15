@@ -67,7 +67,11 @@ public class UIManager : MonoBehaviour
             GameObject button = GameObject.Instantiate(spawnableButtonPrefab, buttonsContainer.transform);
             button.GetComponentInChildren<Text>().text = $"{placeable.name} {placeable.GetComponent<Placeable>().materialCost}";
             int localIndex = i;
-            button.GetComponent<Button>().onClick.AddListener(delegate { placementManager.SelectObject(localIndex); EventSystem.current.SetSelectedGameObject(null); });
+            button.GetComponent<Button>().onClick.AddListener(delegate
+            {
+                placementManager.SelectObject(localIndex);
+                EventSystem.current?.SetSelectedGameObject(null);
+            });
             buttons[i] = button;
             i++;
         }

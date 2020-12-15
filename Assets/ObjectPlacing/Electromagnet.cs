@@ -16,6 +16,7 @@ namespace Transballer.PlaceableObjects
         public bool timerControl = true;
         public float onDuration = 1f;
         public float offDuration = 1f;
+        public bool stayOn = false;
         public bool on = true;
 
         float elapsed = 0f;
@@ -46,7 +47,7 @@ namespace Transballer.PlaceableObjects
             ui.placeable = this;
             ui.placeableType = typeof(Electromagnet);
             ui.AddBoolean("timerControl");
-            ui.AddBoolean("on");
+            ui.AddBoolean("stayOn");
             ui.AddFloat("offDuration", 0, 10);
             ui.AddFloat("onDuration", 0, 10);
             ui.GenerateUI();
@@ -70,7 +71,7 @@ namespace Transballer.PlaceableObjects
                 }
 
             }
-            if (on)
+            if (on || stayOn)
             {
                 foreach (var meta in manager.rigidbodies)
                 {
@@ -98,7 +99,7 @@ namespace Transballer.PlaceableObjects
         {
             foreach (var coil in coils)
             {
-                if (on)
+                if (on || stayOn)
                 {
                     coil.GetComponent<ParticleSystem>().Play();
                 }

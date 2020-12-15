@@ -77,15 +77,9 @@ namespace Transballer.PlaceableObjects
             else
             {
                 launchedElapsed += Time.fixedDeltaTime;
-                if (launchedElapsed > period)
+                if (launchedElapsed > period && autoFire)
                 {
-                    // launch ball
-                    currentBall.transform.position = launchPoint.transform.position + launchPoint.transform.up;
-                    currentBall.transform.rotation = launchPoint.transform.rotation;
-                    currentBall.SetKinematic(false);
-                    currentBall.rb.velocity = launchPoint.transform.up * power;
-                    currentBall = null;
-                    launchedElapsed = 0f;
+                    FireBall();
                 }
             }
         }
@@ -121,6 +115,20 @@ namespace Transballer.PlaceableObjects
                 arcRenderer.enabled = true;
                 arcRenderer.positionCount = 20;
                 arcRenderer.GetComponent<MeshRenderer>().enabled = true;
+            }
+        }
+
+        public void FireBall()
+        {
+            if (currentBall)
+            {
+                // launch ball
+                currentBall.transform.position = launchPoint.transform.position + launchPoint.transform.up;
+                currentBall.transform.rotation = launchPoint.transform.rotation;
+                currentBall.SetKinematic(false);
+                currentBall.rb.velocity = launchPoint.transform.up * power;
+                currentBall = null;
+                launchedElapsed = 0f;
             }
         }
 
