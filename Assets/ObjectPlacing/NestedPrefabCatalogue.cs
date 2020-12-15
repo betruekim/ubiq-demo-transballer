@@ -8,6 +8,7 @@ using Ubik.Samples;
 public class NestedPrefabCatalogue : PrefabCatalogue
 {
     public List<PrefabCatalogue> catalogues;
+    public List<GameObject> randomItems;
 
     private void OnValidate()
     {
@@ -20,6 +21,20 @@ public class NestedPrefabCatalogue : PrefabCatalogue
                 newList.AddRange(catalogue.prefabs);
             }
         }
+        newList.AddRange(randomItems);
         base.prefabs = newList;
+    }
+
+    public static GameObject GetPrefabFromName(string name)
+    {
+        PrefabCatalogue catalogue = GameObject.FindObjectOfType<NetworkSpawner>().catalogue;
+        foreach (GameObject g in catalogue.prefabs)
+        {
+            if (g.name.CompareTo(name) == 0)
+            {
+                return g;
+            }
+        }
+        throw new System.Exception($"cannot find prefab with name {name}");
     }
 }

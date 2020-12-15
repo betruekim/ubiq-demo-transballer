@@ -15,9 +15,11 @@ namespace Transballer.PlaceableObjects
         public Transform launchPoint;
         public BoxCollider pickup;
 
-        public float exitVelocity = 1;
         public Quaternion barrelAngle = Quaternion.Euler(-60, 0, 0);
-        public float launchDelay = 1f;
+
+        bool autoFire = true;
+        float power = 1f;
+        float period = 1f;
 
         Transballer.NetworkedPhysics.NetworkedRigidbody currentBall = null;
 
@@ -28,6 +30,16 @@ namespace Transballer.PlaceableObjects
             base.Awake();
             pickup.enabled = false;
             arcRenderer = GetComponentInChildren<LineRenderer>();
+        }
+
+        override protected void InitUI()
+        {
+            base.InitUI();
+            ui.placeable = this;
+            ui.placeableType = typeof(Cannon);
+            ui.AddBoolean("autoFire");
+            ui.AddFloat("power", 0.1f, 20);
+            ui.GenerateUI();
         }
 
         float launchedElapsed = 0f;
@@ -65,15 +77,9 @@ namespace Transballer.PlaceableObjects
             else
             {
                 launchedElapsed += Time.fixedDeltaTime;
-                if (launchedElapsed > launchDelay)
+                if (launchedElapsed > period && autoFire)
                 {
-                    // launch ball
-                    currentBall.transform.position = launchPoint.transform.position + launchPoint.transform.up;
-                    currentBall.transform.rotation = launchPoint.transform.rotation;
-                    currentBall.SetKinematic(false);
-                    currentBall.rb.velocity = launchPoint.transform.up * exitVelocity;
-                    currentBall = null;
-                    launchedElapsed = 0f;
+                    FireBall();
                 }
             }
         }
@@ -97,6 +103,7 @@ namespace Transballer.PlaceableObjects
         {
             base.OffHovered();
             arcRenderer.enabled = false;
+            arcRenderer.GetComponent<MeshRenderer>().enabled = false;
         }
 
         protected override void OnHovered()
@@ -107,12 +114,21 @@ namespace Transballer.PlaceableObjects
             {
                 arcRenderer.enabled = true;
                 arcRenderer.positionCount = 20;
-                for (int i = 0; i < arcRenderer.positionCount; i++)
-                {
-                    float t = 2 * (float)i / (float)arcRenderer.positionCount;
-                    // s = ut + 0.5at^2
-                    arcRenderer.SetPosition(i, launchPoint.transform.position + launchPoint.transform.up * exitVelocity * t + 0.5f * Physics.gravity * t * t);
-                }
+                arcRenderer.GetComponent<MeshRenderer>().enabled = true;
+            }
+        }
+
+        public void FireBall()
+        {
+            if (currentBall)
+            {
+                // launch ball
+                currentBall.transform.position = launchPoint.transform.position + launchPoint.transform.up;
+                currentBall.transform.rotation = launchPoint.transform.rotation;
+                currentBall.SetKinematic(false);
+                currentBall.rb.velocity = launchPoint.transform.up * power;
+                currentBall = null;
+                launchedElapsed = 0f;
             }
         }
 
@@ -186,6 +202,15 @@ namespace Transballer.PlaceableObjects
             {
                 Vector3 dir = (hingeGraspingController.transform.position - launchPoint.parent.parent.position).normalized;
                 launchPoint.parent.parent.rotation = Quaternion.LookRotation(transform.right, dir);
+            }
+            if (arcRenderer.enabled)
+            {
+                for (int i = 0; i < arcRenderer.positionCount; i++)
+                {
+                    float t = 2 * (float)i / (float)arcRenderer.positionCount;
+                    // s = ut + 0.5at^2
+                    arcRenderer.SetPosition(i, launchPoint.transform.position + launchPoint.transform.up * power * t + 0.5f * Physics.gravity * t * t);
+                }
             }
         }
     }

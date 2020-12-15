@@ -16,18 +16,17 @@ namespace Transballer.PlaceableObjects
         public bool timerControl = true;
         public float onDuration = 1f;
         public float offDuration = 1f;
-
-        float elapsed = 0f;
+        public bool stayOn = false;
         public bool on = true;
 
-        ElectromagnetMenu ui;
+        float elapsed = 0f;
+
         GameObject[] coils;
 
         override protected void Awake()
         {
             base.Awake();
             manager = GameObject.FindObjectOfType<Transballer.NetworkedPhysics.RigidbodyManager>();
-            ui = transform.Find("ui").GetComponent<ElectromagnetMenu>();
 
             coils = new GameObject[3];
             int i = 0;
@@ -39,7 +38,20 @@ namespace Transballer.PlaceableObjects
                     i++;
                 }
             }
-            SetCoilEffects(false);
+            SetCoilEffects();
+        }
+
+        protected override void InitUI()
+        {
+            base.InitUI();
+            ui.placeable = this;
+            ui.placeableType = typeof(Electromagnet);
+            ui.AddBoolean("timerControl");
+            ui.AddBoolean("stayOn");
+            ui.AddFloat("offDuration", 0, 10);
+            ui.AddFloat("onDuration", 0, 10);
+            ui.GenerateUI();
+            ui.OnUiUpdate += SetCoilEffects;
         }
 
         private void FixedUpdate()
@@ -55,11 +67,11 @@ namespace Transballer.PlaceableObjects
                 {
                     elapsed = 0;
                     on = !on;
-                    SetCoilEffects(on);
+                    SetCoilEffects();
                 }
 
             }
-            if (on)
+            if (on || stayOn)
             {
                 foreach (var meta in manager.rigidbodies)
                 {
@@ -83,11 +95,11 @@ namespace Transballer.PlaceableObjects
             }
         }
 
-        void SetCoilEffects(bool on)
+        void SetCoilEffects()
         {
             foreach (var coil in coils)
             {
-                if (on)
+                if (on || stayOn)
                 {
                     coil.GetComponent<ParticleSystem>().Play();
                 }
@@ -98,93 +110,12 @@ namespace Transballer.PlaceableObjects
             }
         }
 
-        void OnUpdate(bool timerControl, bool manualOn, float on, float off)
-        {
-            this.timerControl = timerControl;
-            this.onDuration = on;
-            this.offDuration = off;
-            this.on = manualOn;
-            this.elapsed = 0;
-            SetCoilEffects(manualOn);
-
-            // syncing ui for everyone
-            ui.timerController = timerControl;
-            ui.manualOn = manualOn;
-            ui.onDuration = on;
-            ui.offDuration = off;
-            ui.onLabel.text = $"{Mathf.Round(on * 10) / 10f}s";
-            ui.offLabel.text = $"{Mathf.Round(off * 10) / 10f}s";
-        }
-
-        void SendUpdate(bool timerControl, bool manualOn, float on, float off)
-        {
-            ctx.Send(new ElectromagnetUpdate(timerControl, manualOn, on, off).Serialize());
-            OnUpdate(timerControl, manualOn, on, off);
-        }
-
-        public override void ProcessMessage(ReferenceCountedSceneGraphMessage message)
-        {
-            string messageType = Messages.GetType(message.ToString());
-            switch (messageType)
-            {
-                case "electromagnetUpdate":
-                    ElectromagnetUpdate update = ElectromagnetUpdate.Deserialize(message.ToString());
-                    OnUpdate(update.timerControl, update.manualOn, update.onDuration, update.offDuration);
-                    break;
-                default:
-                    base.ProcessMessage(message);
-                    break;
-
-            }
-        }
-
-        protected override void OnHovered()
-        {
-            ui.gameObject.SetActive(true);
-            ui.GetComponent<ElectromagnetMenu>().onElectromagnetUpdate += OnUpdate;
-        }
-
-        protected override void OffHovered()
-        {
-            ui.GetComponent<ElectromagnetMenu>().onElectromagnetUpdate -= OnUpdate;
-            ui.gameObject.SetActive(false);
-        }
-
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(attractionPoint.position, radius);
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(attractionPoint.position, 0.1f);
-        }
-
-        [System.Serializable]
-        public class ElectromagnetUpdate : Messages.Message
-        {
-            public override string messageType => "electromagnetUpdate";
-            public bool timerControl;
-            public bool manualOn;
-            public float onDuration;
-            public float offDuration;
-
-            public ElectromagnetUpdate(bool timerControl, bool manualOn, float on, float off)
-            {
-                this.timerControl = timerControl;
-                this.manualOn = manualOn;
-                this.onDuration = on;
-                this.offDuration = off;
-            }
-
-            public override string Serialize()
-            {
-                return $"{messageType}${timerControl}${manualOn}${onDuration}${offDuration}";
-            }
-
-            public static ElectromagnetUpdate Deserialize(string message)
-            {
-                string[] components = message.Split('$');
-                return new ElectromagnetUpdate(bool.Parse(components[1]), bool.Parse(components[2]), float.Parse(components[3]), float.Parse(components[4]));
-            }
         }
     }
 }

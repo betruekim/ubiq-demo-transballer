@@ -143,6 +143,23 @@ namespace Transballer.Levels
             }
             currentLevel = levelManager;
             movePlayer();
+
+            UIManager UIManager = GameObject.FindObjectOfType<UIManager>();
+            foreach (GameObject g in UIManager.buttons)
+            {
+                if (!levelManager.allowedPlaceables.Contains(g.name) && levelManager.allowedPlaceables.Count > 0)
+                {
+                    g.SetActive(false);
+                }
+                else if (levelManager.disallowedPlaceables.Contains(g.name) && levelManager.disallowedPlaceables.Count > 0)
+                {
+                    g.SetActive(false);
+                }
+                else
+                {
+                    g.SetActive(true);
+                }
+            }
         }
 
         private void movePlayer()
