@@ -98,7 +98,7 @@ public class UIManager : MonoBehaviour
 
     public void HolsterTrigger(HandController hand)
     {
-        if (!NetworkManager.connected)
+        if (!NetworkManager.connected || !NetworkManager.inLevel)
         {
             return;
         }

@@ -11,6 +11,7 @@ public class NetworkManager : MonoBehaviour, INetworkObject, INetworkComponent, 
     NetworkContext ctx;
     public static bool roomOwner = true;
     public static bool connected = false;
+    public static bool inLevel = false;
     RoomClient roomClient;
 
     public GameObject[] levels;

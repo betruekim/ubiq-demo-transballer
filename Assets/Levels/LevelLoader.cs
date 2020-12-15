@@ -146,6 +146,8 @@ namespace Transballer.Levels
                     g.SetActive(true);
                 }
             }
+
+            NetworkManager.inLevel = true;
         }
 
         private void movePlayer()
@@ -171,6 +173,7 @@ namespace Transballer.Levels
                 }
             }
             movePlayer();
+            NetworkManager.inLevel = false;
         }
 
         void INetworkComponent.ProcessMessage(ReferenceCountedSceneGraphMessage message)
