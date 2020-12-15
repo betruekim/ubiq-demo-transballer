@@ -21,12 +21,25 @@ namespace Transballer.PlaceableObjects
         public bool on = true;
 
         GameObject ui;
+        GameObject[] coils;
 
         override protected void Awake()
         {
             base.Awake();
             manager = GameObject.FindObjectOfType<Transballer.NetworkedPhysics.RigidbodyManager>();
             ui = transform.Find("ui").gameObject;
+
+            coils = new GameObject[3];
+            int i = 0;
+            foreach (Transform t in transform.Find("model").GetComponentsInChildren<Transform>())
+            {
+                if (t.gameObject.name.StartsWith("Torus"))
+                {
+                    coils[i] = t.gameObject;
+                    i++;
+                }
+            }
+            SetCoilEffects(false);
         }
 
         private void FixedUpdate()
@@ -42,6 +55,7 @@ namespace Transballer.PlaceableObjects
                 {
                     elapsed = 0;
                     on = !on;
+                    SetCoilEffects(on);
                 }
 
             }
@@ -69,6 +83,21 @@ namespace Transballer.PlaceableObjects
             }
         }
 
+        void SetCoilEffects(bool on)
+        {
+            foreach (var coil in coils)
+            {
+                if (on)
+                {
+                    coil.GetComponent<ParticleSystem>().Play();
+                }
+                else
+                {
+                    coil.GetComponent<ParticleSystem>().Stop();
+                }
+            }
+        }
+
         void OnUpdate(bool timerControl, bool manualOn, float on, float off)
         {
             this.timerControl = timerControl;
@@ -76,7 +105,7 @@ namespace Transballer.PlaceableObjects
             this.offDuration = off;
             this.on = manualOn;
             this.elapsed = 0;
-            // set colors
+            SetCoilEffects(manualOn);
         }
 
         void SendUpdate(bool timerControl, bool manualOn, float on, float off)
