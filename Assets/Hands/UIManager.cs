@@ -102,6 +102,7 @@ public class UIManager : MonoBehaviour
         {
             return;
         }
+        HintManager.SetComplete(HintManager.equipping, true);
         if (hand.Right)
         {
             if (equipped != SelectedHand.right)

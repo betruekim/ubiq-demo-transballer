@@ -39,6 +39,8 @@ namespace Transballer.Levels
                         hoopRef.ballsToGo -= 1;
                         hoop.transform.Find("BallDisplay").GetComponent<TextMesh>().text = string.Format("{0}", hoopRef.ballsToGo);
                         collision.gameObject.SetActive(false);
+                        HintManager.SetComplete(HintManager.hoops, true);
+
 
                         // Play sound
                         gameObject.GetComponent<AudioSource>().Play();

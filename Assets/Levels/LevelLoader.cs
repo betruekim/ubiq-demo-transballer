@@ -147,6 +147,11 @@ namespace Transballer.Levels
             UIManager UIManager = GameObject.FindObjectOfType<UIManager>();
             foreach (GameObject g in UIManager.buttons)
             {
+                if (g.name == "remove")
+                {
+                    g.SetActive(true);
+                    continue;
+                }
                 if (!levelManager.allowedPlaceables.Contains(g.name) && levelManager.allowedPlaceables.Count > 0)
                 {
                     g.SetActive(false);

@@ -486,6 +486,7 @@ Transform:
   - {fileID: 2167933592598905453}
   - {fileID: 2302196747866968713}
   - {fileID: 8062560973192111886}
+  - {fileID: 7270976134959817030}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -507,6 +508,107 @@ MonoBehaviour:
   collider2Hit: 0
   ballsToGo: 0
   gate1: []
+--- !u!1001 &3038842770367801697
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1511932125165661104}
+    m_Modifications:
+    - target: {fileID: 5677791336058980388, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_Name
+      value: HintObject
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980389, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_Radius
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: title
+      value: Hoops
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: hintID
+      value: hoops
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: hintText
+      value: Levels have one or more hoops that need to be fed in order to complete
+        the level. Drop balls into the hoop to feed it!
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: offset.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1aa7641025f5d204291b083d2e9f2874, type: 3}
+--- !u!4 &7270976134959817030 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+    type: 3}
+  m_PrefabInstance: {fileID: 3038842770367801697}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7523616127695864037
 PrefabInstance:
   m_ObjectHideFlags: 0

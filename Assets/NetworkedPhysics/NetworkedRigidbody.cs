@@ -110,6 +110,8 @@ namespace Transballer.NetworkedPhysics
             graspingController = controller;
             rb.useGravity = false;
             ctx.Send(new Messages.GraspUpdate(true).Serialize());
+
+            HintManager.SetComplete(HintManager.grasping, true);
         }
 
         public void Release(Hand controller)
