@@ -98,6 +98,9 @@ namespace Transballer.PlaceableObjects
                 ctx.Send(new Transballer.Messages.OnPlace(snapIndex, snappedTo, snappedToSnapIndex).Serialize());
                 OnPlace(snapIndex, snappedTo, snappedToSnapIndex);
                 originalOwner = true;
+
+                // Play placing sound
+                gameObject.GetComponent<AudioSource>().Play();
             }
             else
             {
