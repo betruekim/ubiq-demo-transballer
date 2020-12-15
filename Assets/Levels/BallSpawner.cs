@@ -17,7 +17,7 @@ namespace Transballer.Levels
         private LevelManager levelManager;
 
         [SerializeField]
-        List<Level.EmissionBurst> emissions;
+        List<LevelManager.EmissionBurst> emissions;
 
         private void Awake()
         {
@@ -25,7 +25,7 @@ namespace Transballer.Levels
             levelManager = GameObject.FindObjectOfType<LevelManager>();
         }
 
-        public void SetEmissions(List<Level.EmissionBurst> emissions)
+        public void SetEmissions(List<LevelManager.EmissionBurst> emissions)
         {
             Debug.Log($"emissions set {emissions.Count}");
             this.emissions = emissions;
