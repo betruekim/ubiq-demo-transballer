@@ -23,6 +23,7 @@ namespace Transballer.Levels
             {
                 // Load in the level
                 loaderScript.LoadLevelOwner(levelIndex);
+                HintManager.SetComplete(HintManager.levelDoors, true);
             }
         }
     }

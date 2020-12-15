@@ -56,6 +56,8 @@ namespace Transballer.Levels
                     started = true;
                     spawner.SpawnBalls();
                     startTime = Time.time;
+                    HintManager.SetComplete(HintManager.spawners, true);
+                    HintManager.SetComplete(HintManager.levelButton, true);
                 }
                 else
                 {
