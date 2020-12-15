@@ -194,6 +194,7 @@ namespace Transballer.PlaceableObjects
 
         public void SelectRemover()
         {
+            Debug.Log("equipped remover");
             DeselectObject();
             removing = true;
             onEquippedChange?.Invoke(-2);
@@ -441,6 +442,7 @@ namespace Transballer.PlaceableObjects
         public void PlaceObject()
         {
             // TODO: check if we are aiming at a canvas
+            Debug.Log("pressed place");
             if (selectedObject >= 0 && ghostObject && canBePlaced)
             {
                 if (ghostObject.materialCost <= material)
@@ -462,12 +464,14 @@ namespace Transballer.PlaceableObjects
             }
             else if (removing && hovered)
             {
+                Debug.Log("removing ting");
                 RemoveObject(hovered);
             }
             else
             {
                 // call onplaced to show dud effect
                 onPlaced?.Invoke(-1, null);
+                Debug.Log("dud");
             }
 
         }

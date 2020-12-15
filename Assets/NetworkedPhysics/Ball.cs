@@ -32,7 +32,6 @@ namespace Transballer.NetworkedPhysics
         {
             string msgString = message.ToString();
             string messageType = Transballer.Messages.GetType(msgString);
-            Debug.Log(msgString);
 
             switch (messageType)
             {

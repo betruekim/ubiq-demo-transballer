@@ -129,7 +129,7 @@ namespace Transballer.PlaceableObjects
                     s.HideGraphic();
                 }
             }
-            foreach (Transform t in transform.Find("model").GetComponentInChildren<Transform>())
+            foreach (Transform t in transform.Find("model").GetComponentsInChildren<Transform>())
             {
                 if (t.gameObject.layer == LayerMask.NameToLayer("Default"))
                 {

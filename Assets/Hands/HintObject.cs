@@ -22,8 +22,8 @@ public class HintObject : MonoBehaviour
     {
         if (HintManager.IsComplete(hintID))
         {
-            Destroy(hintObject);
             Destroy(gameObject);
+            return;
         }
 
         hintObject = GameObject.Instantiate(hintPrefab);

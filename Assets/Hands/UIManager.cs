@@ -79,8 +79,9 @@ public class UIManager : MonoBehaviour
 
         GameObject removeButton = GameObject.Instantiate(spawnableButtonPrefab, buttonsContainer.transform);
         removeButton.GetComponentInChildren<Text>().text = $"remove";
+        removeButton.name = "remove";
         removeButton.GetComponentsInChildren<Image>()[1].sprite = removeIcon;
-        removeButton.GetComponent<Button>().onClick.AddListener(delegate { placementManager.SelectRemover(); EventSystem.current.SetSelectedGameObject(null); });
+        removeButton.GetComponent<Button>().onClick.AddListener(delegate { placementManager.SelectRemover(); EventSystem.current?.SetSelectedGameObject(null); });
         buttons[i] = removeButton;
 
         material = buildMenu.transform.Find("Canvas").Find("spawnablesMenu").Find("material").GetComponent<Text>();

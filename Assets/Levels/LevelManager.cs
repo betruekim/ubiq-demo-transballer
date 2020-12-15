@@ -87,7 +87,7 @@ namespace Transballer.Levels
             {
                 // level complete
                 Debug.Log("LEVEL COMLETE!");
-                throw new System.Exception("SPAWN NEXT LEVEL DOOR HERE! USE LEVELLOADER");
+                GameObject.FindObjectOfType<LevelLoader>().SpawnNextLevelDoor(nextLevelIndex, Vector3.zero, Quaternion.identity);
             }
         }
 

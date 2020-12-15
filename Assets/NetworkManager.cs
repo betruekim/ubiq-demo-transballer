@@ -20,13 +20,13 @@ public class NetworkManager : MonoBehaviour, INetworkObject, INetworkComponent, 
     {
         ctx = NetworkScene.Register(this);
         roomClient = GameObject.FindObjectOfType<RoomClient>();
-        roomClient.OnRoom.AddListener(OnRoom);
+        roomClient.OnJoinedRoom.AddListener(OnRoom);
     }
 
     private void Start()
     {
-        roomClient.OnPeer?.AddListener(CheckRoomOwner);
-        roomClient.OnPeerRemoved?.AddListener(CheckRoomOwner);
+        // roomClient.OnPeer?.AddListener(CheckRoomOwner);
+        // roomClient.OnPeerRemoved?.AddListener(CheckRoomOwner);
     }
 
     void OnRoom()
@@ -44,7 +44,7 @@ public class NetworkManager : MonoBehaviour, INetworkObject, INetworkComponent, 
             peerCount++;
         }
         roomOwner = peerCount == 1;
-        Debug.Log($"roomOwner: {roomOwner}");
+        Debug.Log($"roomOwner: {roomOwner} {peerCount}");
     }
 
     void INetworkComponent.ProcessMessage(ReferenceCountedSceneGraphMessage message)

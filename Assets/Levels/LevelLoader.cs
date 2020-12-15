@@ -84,6 +84,13 @@ namespace Transballer.Levels
             return newDoor;
         }
 
+        GameObject nextLevelDoor;
+
+        public void SpawnNextLevelDoor(int index, Vector3 pos, Quaternion rot)
+        {
+            nextLevelDoor = SpawnDoor(index, pos, rot, transform);
+        }
+
         public void LoadLevelOwner(int levelIndex)
         {
             if (NetworkManager.connected && NetworkManager.roomOwner)
@@ -98,10 +105,11 @@ namespace Transballer.Levels
                         currentLevel.ballList.RemoveAt(0);
                     }
                 }
-                var ids = PlaceableObjects.PlaceableIndex.placedObjects.Keys;
+                var ids = new List<int>(PlaceableObjects.PlaceableIndex.placedObjects.Keys);
                 foreach (var id in ids)
                 {
-                    PlaceableObjects.PlaceableIndex.placedObjects[id].Remove();
+                    // TODO THIS STILL BREAKS CONTINUITY MAYBE?
+                    PlaceableObjects.PlaceableIndex.placedObjects[id].RemoveSudo();
                 }
 
                 foreach (var interactable in interactableArray)
@@ -132,6 +140,10 @@ namespace Transballer.Levels
             environment.SetActive(false);
             ui.SetActive(false);
             doorsParent.gameObject.SetActive(false);
+            if (nextLevelDoor)
+            {
+                Destroy(nextLevelDoor);
+            }
         }
 
         // this is called by levelmanager in OnSpawned
