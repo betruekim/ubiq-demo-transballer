@@ -208,24 +208,24 @@ namespace Transballer.PlaceableObjects
 
         private void Update()
         {
-            // for (int i = 0; i < objects.Length; i++)
-            // {
-            //     if (Input.GetKeyDown(KeyCode.Alpha1 + i))
-            //     {
-            //         if (selectedObject != i)
-            //         {
-            //             SelectObject(i);
-            //         }
-            //         else
-            //         {
-            //             DeselectObject();
-            //         }
-            //     }
-            // }
-            // if (Input.GetMouseButtonDown(0))
-            // {
-            //     PlaceObject();
-            // }
+            for (int i = 0; i < objects.Length; i++)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+                {
+                    if (selectedObject != i)
+                    {
+                        SelectObject(i);
+                    }
+                    else
+                    {
+                        DeselectObject();
+                    }
+                }
+            }
+            if (Input.GetMouseButtonDown(0))
+            {
+                PlaceObject();
+            }
 
             HandController alternateHand = UIManager.equipped == UIManager.SelectedHand.left ? rightHand : leftHand;
             if (alternateHand)
