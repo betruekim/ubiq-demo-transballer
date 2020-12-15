@@ -80,7 +80,6 @@ namespace Transballer.PlaceableObjects
                 ctx.Send(new Transballer.Messages.OnPlace(snapIndex, snappedTo, snappedToSnapIndex).Serialize());
                 OnPlace(snapIndex, snappedTo, snappedToSnapIndex);
                 originalOwner = true;
-                SetMeshColors(Color.white);
             }
             else
             {
@@ -122,6 +121,11 @@ namespace Transballer.PlaceableObjects
                 Attach(snaps[snapIndex], placeableSnappedTo.snaps[snappedToSnapIndex]);
                 placeableSnappedTo.Attach(placeableSnappedTo.snaps[snappedToSnapIndex], snaps[snapIndex]);
             }
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Debug.Log(renderers[i].material.color);
+                renderers[i].material.color = originalColors[i];
+            }
             placed = true;
         }
 
@@ -143,12 +147,22 @@ namespace Transballer.PlaceableObjects
             attachedTo.Remove(other);
         }
 
+        Color[] originalColors;
+        MeshRenderer[] renderers;
+
+
         public virtual void MakeGhost()
         {
             foreach (Collider col in gameObject.GetComponentsInChildren<Collider>())
             {
                 col.enabled = false;
                 // col.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+            }
+            renderers = GetComponentsInChildren<MeshRenderer>();
+            originalColors = new Color[renderers.Length];
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                originalColors[i] = renderers[i].material.color;
             }
             placed = false;
         }
