@@ -30,7 +30,7 @@ namespace Transballer.Levels
 
             networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
             ui = GameObject.Find("UI");
-            environment = transform.Find("environment").gameObject;
+            environment = GameObject.Find("environment");
 
             GameObject.FindObjectOfType<RoomClient>().OnRoom.AddListener(SpawnDoors);
         }
