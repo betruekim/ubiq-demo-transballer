@@ -18,6 +18,9 @@ namespace Transballer.NetworkedPhysics
 
         public Hand graspingController;
         public bool graspedRemotely = false;
+        public virtual Vector3 graspPoint { get; } = Vector3.zero; // local offset where the object should be grasped
+        public virtual Vector3 graspForward { get; } = Vector3.zero; // object will attempt to point it's forward axis in the direction of graspForward axis on the grasping controller
+        public virtual Vector3 graspUp { get; } = Vector3.zero; // same as above but for upward
 
         override protected void Awake()
         {
@@ -148,11 +151,25 @@ namespace Transballer.NetworkedPhysics
 
         protected virtual void FixedUpdate()
         {
-            if (graspingController != null)
+            if (graspingController)
             {
-                rb.angularVelocity *= 0;
-                rb.velocity = (graspingController.transform.position - transform.position) * 20;
+                rb.velocity = (graspingController.transform.position - (transform.position + transform.rotation * graspPoint)) * 20;
+                if (graspForward.sqrMagnitude != 0)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(graspingController.transform.rotation * graspForward, graspingController.transform.rotation * graspUp);
+                    rb.MoveRotation(targetRot);
+                }
+                else
+                {
+                    rb.angularVelocity *= 0;
+                }
             }
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(transform.position + transform.rotation * graspPoint, 0.05f);
         }
     }
 }

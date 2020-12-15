@@ -20,6 +20,10 @@ public class NetworkManager : MonoBehaviour, INetworkObject, INetworkComponent, 
         ctx = NetworkScene.Register(this);
         roomClient = GameObject.FindObjectOfType<RoomClient>();
         roomClient.OnRoom.AddListener(OnRoom);
+    }
+
+    private void Start()
+    {
         roomClient.OnPeer?.AddListener(CheckRoomOwner);
         roomClient.OnPeerRemoved?.AddListener(CheckRoomOwner);
     }

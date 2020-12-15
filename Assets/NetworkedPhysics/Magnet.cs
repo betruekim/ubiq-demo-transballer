@@ -7,6 +7,9 @@ namespace Transballer.NetworkedPhysics
     {
         public float radius = 5f;
         public float power = 10f;
+        public override Vector3 graspPoint => Vector3.back * 0.05f;
+        public override Vector3 graspForward => Vector3.forward;
+        public override Vector3 graspUp => Vector3.right;
 
         override protected void FixedUpdate()
         {
