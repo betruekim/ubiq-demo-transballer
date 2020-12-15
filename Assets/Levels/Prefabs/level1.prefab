@@ -1147,7 +1147,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ballList: []
-  level: {fileID: 11400000, guid: 05466cf8540410a4faa3993052b85f42, type: 2}
+  allowedMaterial: 0
+  emission: []
+  allowedPlaceables: []
+  disallowedPlaceables: []
   nextLevelIndex: 0
 --- !u!1 &5256857805559653414
 GameObject:

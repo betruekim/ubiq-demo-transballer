@@ -21,6 +21,11 @@ namespace Transballer.PlaceableObjects
         float power = 1f;
         float period = 1f;
 
+        public AudioClip gunshot;
+        public AudioClip reload;
+        private AudioSource audioSource;
+
+
         Transballer.NetworkedPhysics.NetworkedRigidbody currentBall = null;
 
         LineRenderer arcRenderer;
@@ -30,6 +35,7 @@ namespace Transballer.PlaceableObjects
             base.Awake();
             pickup.enabled = false;
             arcRenderer = GetComponentInChildren<LineRenderer>();
+            audioSource = gameObject.GetComponent<AudioSource>();
         }
 
         override protected void InitUI()
@@ -72,6 +78,9 @@ namespace Transballer.PlaceableObjects
                     ball.SetKinematic(true);
                     ball.transform.position = launchPoint.transform.position;
                     currentBall = ball;
+
+                    audioSource.clip = reload;
+                    audioSource.Play();
                 }
             }
             else
@@ -129,6 +138,9 @@ namespace Transballer.PlaceableObjects
                 currentBall.rb.velocity = launchPoint.transform.up * power;
                 currentBall = null;
                 launchedElapsed = 0f;
+
+                audioSource.clip = gunshot;
+                audioSource.Play();
             }
         }
 
