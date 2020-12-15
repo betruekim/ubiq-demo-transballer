@@ -15,6 +15,7 @@ namespace Transballer.Levels
 
         public PrefabCatalogue levels;
         public GameObject doorPrefab;
+        public PrefabCatalogue interactables;
 
         GameObject ui;
         GameObject environment;
@@ -23,6 +24,7 @@ namespace Transballer.Levels
         GameObject[] doors;
 
         LevelManager currentLevel;
+
 
         void Awake()
         {
@@ -53,6 +55,18 @@ namespace Transballer.Levels
                 Vector3 pos = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)) * radius;
 
                 doors[i] = SpawnDoor(i, pos, Quaternion.Euler(0, angle * Mathf.Rad2Deg, 0), doorsParent);
+            }
+
+
+            if (NetworkManager.roomOwner)
+            {
+                // spawn interactables at table
+                GameObject table = GameObject.Find("table");
+                foreach (var prefab in interactables.prefabs)
+                {
+                    GameObject spawned = networkSpawner.SpawnPersistent(prefab);
+                    spawned.transform.position = table.transform.position + Vector3.up * 2f;
+                }
             }
         }
 

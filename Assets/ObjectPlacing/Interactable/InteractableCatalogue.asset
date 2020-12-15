@@ -10,7 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4467f6c3b47040840ab7f7665d8bddbe, type: 3}
-  m_Name: BallCatalogue
+  m_Name: InteractableCatalogue
   m_EditorClassIdentifier: 
   prefabs:
   - {fileID: 2061997242598594536, guid: 4aa9fbe924f54764db17f84ac47b524e, type: 3}
+  - {fileID: 1140698309410283690, guid: ffe2506aa8924914ab0dc2aa312beed0, type: 3}
+  - {fileID: 4834946648897661401, guid: 8a850480198c98e4b9c8ca58141e9ef5, type: 3}
