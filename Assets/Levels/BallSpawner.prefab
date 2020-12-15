@@ -186,6 +186,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: HintObject
       objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980388, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
         type: 3}
       propertyPath: hintID
