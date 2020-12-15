@@ -220,18 +220,24 @@ namespace Transballer.PlaceableObjects
 
         public void Hover()
         {
-            Debug.Log("hover");
-            OnHovered();
-            // send message
-            ctx.Send(new HoverInfo(true).Serialize());
+            if (placed)
+            {
+                // Debug.Log("hover");
+                OnHovered();
+                // send message
+                ctx.Send(new HoverInfo(true).Serialize());
+            }
         }
 
         public void UnHover()
         {
-            Debug.Log("unhover");
-            OffHovered();
-            // send message
-            ctx.Send(new HoverInfo(false).Serialize());
+            if (placed)
+            {
+                // Debug.Log("unhover");
+                OffHovered();
+                // send message
+                ctx.Send(new HoverInfo(false).Serialize());
+            }
         }
 
         protected virtual void OnHovered()
