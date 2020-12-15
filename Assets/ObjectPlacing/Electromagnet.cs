@@ -20,14 +20,14 @@ namespace Transballer.PlaceableObjects
         float elapsed = 0f;
         public bool on = true;
 
-        GameObject ui;
+        ElectromagnetMenu ui;
         GameObject[] coils;
 
         override protected void Awake()
         {
             base.Awake();
             manager = GameObject.FindObjectOfType<Transballer.NetworkedPhysics.RigidbodyManager>();
-            ui = transform.Find("ui").gameObject;
+            ui = transform.Find("ui").GetComponent<ElectromagnetMenu>();
 
             coils = new GameObject[3];
             int i = 0;
@@ -106,6 +106,14 @@ namespace Transballer.PlaceableObjects
             this.on = manualOn;
             this.elapsed = 0;
             SetCoilEffects(manualOn);
+
+            // syncing ui for everyone
+            ui.timerController = timerControl;
+            ui.manualOn = manualOn;
+            ui.onDuration = on;
+            ui.offDuration = off;
+            ui.onLabel.text = $"{Mathf.Round(on * 10) / 10f}s";
+            ui.offLabel.text = $"{Mathf.Round(off * 10) / 10f}s";
         }
 
         void SendUpdate(bool timerControl, bool manualOn, float on, float off)
@@ -132,14 +140,14 @@ namespace Transballer.PlaceableObjects
 
         protected override void OnHovered()
         {
-            ui.SetActive(true);
+            ui.gameObject.SetActive(true);
             ui.GetComponent<ElectromagnetMenu>().onElectromagnetUpdate += OnUpdate;
         }
 
         protected override void OffHovered()
         {
             ui.GetComponent<ElectromagnetMenu>().onElectromagnetUpdate -= OnUpdate;
-            ui.SetActive(false);
+            ui.gameObject.SetActive(false);
         }
 
         private void OnDrawGizmos()

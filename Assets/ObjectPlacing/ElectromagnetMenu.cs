@@ -11,11 +11,13 @@ namespace Transballer.PlaceableObjects
         public Toggle powerToggle;
         public Slider onSlider;
         public Slider offSlider;
+        public Text onLabel;
+        public Text offLabel;
 
-        bool timerController = true;
-        bool manualOn = false;
-        float onDuration = 1;
-        float offDuration = 1;
+        public bool timerController = true;
+        public bool manualOn = false;
+        public float onDuration = 1;
+        public float offDuration = 1;
 
         public delegate void ElectromagnetUpdate(bool timerController, bool manualOn, float onDuration, float offDuration);
         public event ElectromagnetUpdate onElectromagnetUpdate;
