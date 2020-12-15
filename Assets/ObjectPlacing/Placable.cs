@@ -180,6 +180,11 @@ namespace Transballer.PlaceableObjects
             }
         }
 
+        public void RemoveSudo()
+        {
+            base.Remove();
+        }
+
         override protected void OnRemove()
         {
             PlaceableIndex.RemovePlacedObject(this);

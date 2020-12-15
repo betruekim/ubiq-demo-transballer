@@ -10,6 +10,7 @@ public class NetworkManager : MonoBehaviour, INetworkObject, INetworkComponent, 
     NetworkId INetworkObject.Id { get; } = new NetworkId(4);
     NetworkContext ctx;
     public static bool roomOwner = true;
+    public static bool connected = false;
     RoomClient roomClient;
 
     public GameObject[] levels;
@@ -19,20 +20,26 @@ public class NetworkManager : MonoBehaviour, INetworkObject, INetworkComponent, 
         ctx = NetworkScene.Register(this);
         roomClient = GameObject.FindObjectOfType<RoomClient>();
         roomClient.OnRoom.AddListener(OnRoom);
+        roomClient.OnPeer?.AddListener(CheckRoomOwner);
+        roomClient.OnPeerRemoved?.AddListener(CheckRoomOwner);
     }
 
     void OnRoom()
     {
         Debug.Log("OnRoom");
+        connected = true;
+        CheckRoomOwner(null);
+    }
+
+    void CheckRoomOwner(PeerArgs peerArgs)
+    {
         int peerCount = 0;
         foreach (var peer in roomClient.Peers)
         {
             peerCount++;
         }
-        if (peerCount == 1)
-        {
-            roomOwner = true;
-        }
+        roomOwner = peerCount == 1;
+        Debug.Log($"roomOwner: {roomOwner}");
     }
 
     void INetworkComponent.ProcessMessage(ReferenceCountedSceneGraphMessage message)

@@ -4488,16 +4488,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d52d2e5fd29c0f14ca3aab3a37f9ae0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildMenu: {fileID: 0}
-  otherMenu: {fileID: 0}
-  rightGun: {fileID: 0}
-  leftGun: {fileID: 0}
   spawnableButtonPrefab: {fileID: 8572614828137404149, guid: bff8f7b91ca9d2f43adb6309c774b264,
     type: 3}
   placeables: {fileID: 11400000, guid: 8badd51964d96c847a66b9c95c82824b, type: 2}
   removeIcon: {fileID: 21300000, guid: a1e32bf0c76d6114f851df6cb532d73f, type: 3}
-  rightEquipped: 0
-  leftEquipped: 0
 --- !u!114 &4040324930909098590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4700,6 +4694,7 @@ GameObject:
   - component: {fileID: 5002214747511749401}
   - component: {fileID: 4040324931091209518}
   - component: {fileID: 4040324931091209519}
+  - component: {fileID: -6896729689922672246}
   m_Layer: 0
   m_Name: Network Scene
   m_TagString: Untagged
@@ -4791,6 +4786,19 @@ MonoBehaviour:
   networkObjectId:
     id: 0
     type: 0
+--- !u!114 &-6896729689922672246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4040324931091209512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6a30dd524900ed41b2536b6a7d47ebd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levels: []
 --- !u!1 &4040324931184683080
 GameObject:
   m_ObjectHideFlags: 0

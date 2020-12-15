@@ -2,82 +2,179 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Ubik.Samples;
+using Ubik.Messaging;
+using Ubik.Rooms;
 
 namespace Transballer.Levels
 {
-    public class LevelLoader : MonoBehaviour
+    public class LevelLoader : MonoBehaviour, INetworkComponent, INetworkObject
     {
-        public NetworkSpawner networkSpawner;
-        public PrefabCatalogue levels;
-        public GameObject levelSelect;
+        NetworkSpawner networkSpawner;
+        NetworkContext ctx;
+        NetworkId INetworkObject.Id { get; } = new NetworkId(10);
 
-        private bool waitingForLoad = false;
+        public PrefabCatalogue levels;
+        public GameObject doorPrefab;
+
+        GameObject ui;
+        GameObject environment;
+
+        Transform doorsParent;
+        GameObject[] doors;
+
+        LevelManager currentLevel;
 
         void Awake()
         {
+            ctx = NetworkScene.Register(this);
+
             networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
+            ui = GameObject.Find("UI");
+            environment = transform.Find("environment").gameObject;
+
+            GameObject.FindObjectOfType<RoomClient>().OnRoom.AddListener(SpawnDoors);
         }
 
-        void Update()
+        void SpawnDoors()
         {
-            if (waitingForLoad)
+            if (doorsParent != null)
             {
-                loadLevel();
+                doorsParent.gameObject.SetActive(true);
+                return;
+            }
+            doors = new GameObject[levels.prefabs.Count];
+            doorsParent = new GameObject("doors").transform;
+
+            float radius = 5f;
+            for (int i = 0; i < doors.Length; i++)
+            {
+                // placing doors in a circle around 0,0
+                float angle = (float)i / (float)doors.Length * Mathf.PI * 2;
+                Vector3 pos = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)) * radius;
+
+                doors[i] = SpawnDoor(i, pos, Quaternion.Euler(0, angle * Mathf.Rad2Deg, 0), doorsParent);
             }
         }
 
-        public void loadLevelOwner(int levelIndex)
+        GameObject SpawnDoor(int index, Vector3 pos, Quaternion rotation, Transform parent)
         {
-            // Disable level selector
-            levelSelect.SetActive(false);
+            GameObject newDoor = GameObject.Instantiate(doorPrefab, pos, rotation, parent);
+            newDoor.GetComponentInChildren<LevelDoor>().SetIndex(index);
+            newDoor.GetComponentInChildren<TextMesh>().text = $"Level {index + 1}";
+            return newDoor;
+        }
 
-            // Disable UI
-            GameObject ui = GameObject.Find("UI");
+        public void LoadLevelOwner(int levelIndex)
+        {
+            if (NetworkManager.connected && NetworkManager.roomOwner)
+            {
+                // clean up spawned stuff
+                if (currentLevel)
+                {
+                    while (currentLevel.ballList.Count > 0)
+                    {
+                        var ball = currentLevel.ballList[0];
+                        ball.Remove();
+                        currentLevel.ballList.RemoveAt(0);
+                    }
+                }
+                var ids = PlaceableObjects.PlaceableIndex.placedObjects.Keys;
+                foreach (var id in ids)
+                {
+                    PlaceableObjects.PlaceableIndex.placedObjects[id].Remove();
+                }
+
+                if (levelIndex == -1)
+                {
+                    ctx.Send(new BackToLevelSelect().Serialize());
+                    StartCoroutine(OnBackToLevelSelect());
+                    return;
+                }
+                else if (levelIndex >= 0 && levelIndex < levels.prefabs.Count)
+                {
+                    networkSpawner.Spawn(levels.prefabs[levelIndex]);
+                    ctx.Send(new OnLoad().Serialize());
+                    OnLoadLevel();
+                }
+            }
+        }
+
+        private void OnLoadLevel()
+        {
+            environment.SetActive(false);
             ui.SetActive(false);
-
-            // Load in the prefab
-            GameObject spawnedLevel = networkSpawner.Spawn(levels.prefabs[levelIndex]);
-
-            // Give the spawned level references so it can reenable at the end
-            spawnedLevel.GetComponent<LevelManager>().levelSelect = levelSelect;
-            spawnedLevel.GetComponent<LevelManager>().ui = ui;
-
-            // Move the player
-            movePlayer();
-
+            doorsParent.gameObject.SetActive(false);
         }
 
-        public void loadLevel()
+        // this is called by levelmanager in OnSpawned
+        public void LevelSpawned(LevelManager levelManager)
         {
-            waitingForLoad = true;
-
-            if (GameObject.FindObjectOfType<LevelManager>() != null)
+            if (currentLevel)
             {
-                // Disable level selector
-                levelSelect.SetActive(false);
-
-                // Disable UI
-                GameObject ui = GameObject.Find("UI");
-                ui.SetActive(false);
-
-                // Give the spawned level references so it can reenable at the end
-                // Hold on while until spawns in? Hacky workaround
-                GameObject.FindObjectOfType<LevelManager>().levelSelect = levelSelect;
-                GameObject.FindObjectOfType<LevelManager>().ui = ui;
-
-                // Move the player to his spot
-                movePlayer();
-                waitingForLoad = false;
+                Destroy(currentLevel.gameObject);
             }
-
+            currentLevel = levelManager;
+            movePlayer();
         }
 
         private void movePlayer()
         {
-            GameObject playerPosition = GameObject.Find("spawnPoint");
+            Transform playerPosition = currentLevel.transform.Find("spawnPoint");
             GameObject player = GameObject.Find("Player");
             player.transform.position = playerPosition.transform.position;
             player.transform.rotation = playerPosition.transform.rotation;
+        }
+
+        IEnumerator OnBackToLevelSelect()
+        {
+            environment.SetActive(true);
+            ui.SetActive(true);
+            doorsParent.gameObject.SetActive(true);
+
+            if (currentLevel)
+            {
+                Destroy(currentLevel.gameObject);
+                while (GameObject.FindObjectOfType<LevelManager>())
+                {
+                    yield return new WaitForEndOfFrame();
+                }
+            }
+            movePlayer();
+        }
+
+        void INetworkComponent.ProcessMessage(ReferenceCountedSceneGraphMessage message)
+        {
+            string msgType = Messages.GetType(message.ToString());
+            switch (msgType)
+            {
+                case "levelLoad":
+                    OnLoadLevel();
+                    break;
+                case "levelBack":
+                    StartCoroutine(OnBackToLevelSelect());
+                    break;
+                default:
+                    throw new System.Exception($"unknown message type {msgType}");
+            }
+        }
+
+        [System.Serializable]
+        public class OnLoad : Transballer.Messages.Message
+        {
+            public override string messageType => "levelLoad";
+            public override string Serialize()
+            {
+                return "levelLoad$";
+            }
+        }
+        [System.Serializable]
+        public class BackToLevelSelect : Transballer.Messages.Message
+        {
+            public override string messageType => "levelBack";
+            public override string Serialize()
+            {
+                return "levelBack$";
+            }
         }
     }
 }

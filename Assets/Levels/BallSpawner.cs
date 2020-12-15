@@ -42,6 +42,11 @@ namespace Transballer.Levels
             }
         }
 
+        public void StopSpawning()
+        {
+            StopAllCoroutines();
+        }
+
         private IEnumerator SpawnBalls(int count, float duration, float delay)
         {
             yield return new WaitForSeconds(delay);

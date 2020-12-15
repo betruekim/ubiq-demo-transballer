@@ -93,6 +93,10 @@ public class UIManager : MonoBehaviour
 
     public void HolsterTrigger(HandController hand)
     {
+        if (!NetworkManager.connected)
+        {
+            return;
+        }
         if (hand.Right)
         {
             if (equipped != SelectedHand.right)
