@@ -1,3 +1,4 @@
+using Ubik.Messaging;
 using UnityEngine;
 
 namespace Transballer.PlaceableObjects
@@ -78,6 +79,28 @@ namespace Transballer.PlaceableObjects
             // set colors
         }
 
+        void SendUpdate(bool timerControl, bool manualOn, float on, float off)
+        {
+            ctx.Send(new ElectromagnetUpdate(timerControl, manualOn, on, off).Serialize());
+            OnUpdate(timerControl, manualOn, on, off);
+        }
+
+        public override void ProcessMessage(ReferenceCountedSceneGraphMessage message)
+        {
+            string messageType = Messages.GetType(message.ToString());
+            switch (messageType)
+            {
+                case "electromagnetUpdate":
+                    ElectromagnetUpdate update = ElectromagnetUpdate.Deserialize(message.ToString());
+                    OnUpdate(update.timerControl, update.manualOn, update.onDuration, update.offDuration);
+                    break;
+                default:
+                    base.ProcessMessage(message);
+                    break;
+
+            }
+        }
+
         protected override void OnHovered()
         {
             ui.SetActive(true);
@@ -96,6 +119,35 @@ namespace Transballer.PlaceableObjects
             Gizmos.DrawWireSphere(attractionPoint.position, radius);
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(attractionPoint.position, 0.1f);
+        }
+
+        [System.Serializable]
+        public class ElectromagnetUpdate : Messages.Message
+        {
+            public override string messageType => "electromagnetUpdate";
+            public bool timerControl;
+            public bool manualOn;
+            public float onDuration;
+            public float offDuration;
+
+            public ElectromagnetUpdate(bool timerControl, bool manualOn, float on, float off)
+            {
+                this.timerControl = timerControl;
+                this.manualOn = manualOn;
+                this.onDuration = on;
+                this.offDuration = off;
+            }
+
+            public override string Serialize()
+            {
+                return $"{messageType}${timerControl}${manualOn}${onDuration}${offDuration}";
+            }
+
+            public static ElectromagnetUpdate Deserialize(string message)
+            {
+                string[] components = message.Split('$');
+                return new ElectromagnetUpdate(bool.Parse(components[1]), bool.Parse(components[2]), float.Parse(components[3]), float.Parse(components[4]));
+            }
         }
     }
 }
