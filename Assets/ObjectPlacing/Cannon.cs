@@ -38,7 +38,7 @@ namespace Transballer.PlaceableObjects
             ui.placeable = this;
             ui.placeableType = typeof(Cannon);
             ui.AddBoolean("autoFire");
-            ui.AddFloat("power", 0.1f, 5);
+            ui.AddFloat("power", 0.1f, 20);
             ui.GenerateUI();
         }
 
