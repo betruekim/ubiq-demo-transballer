@@ -203,8 +203,8 @@ namespace Transballer.Levels
                     yield return new WaitForEndOfFrame();
                 }
             }
-            movePlayer();
             NetworkManager.inLevel = false;
+            movePlayer();
         }
 
         void INetworkComponent.ProcessMessage(ReferenceCountedSceneGraphMessage message)
