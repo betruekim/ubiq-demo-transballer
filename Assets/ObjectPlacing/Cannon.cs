@@ -141,6 +141,8 @@ namespace Transballer.PlaceableObjects
 
                 audioSource.clip = gunshot;
                 audioSource.Play();
+
+                HintManager.SetComplete(HintManager.cannonFired, true);
             }
         }
 

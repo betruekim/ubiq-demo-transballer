@@ -159,6 +159,7 @@ namespace Transballer.PlaceableObjects
             if (!owner)
             {
                 ctx.Send(new CartPush(direction).Serialize());
+                HintManager.SetComplete(HintManager.cartButton, true);
             }
             else
             {

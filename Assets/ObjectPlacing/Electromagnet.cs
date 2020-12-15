@@ -108,6 +108,7 @@ namespace Transballer.PlaceableObjects
                     coil.GetComponent<ParticleSystem>().Stop();
                 }
             }
+            HintManager.SetComplete(HintManager.electromagnetUsed, true);
         }
 
         private void OnDrawGizmos()

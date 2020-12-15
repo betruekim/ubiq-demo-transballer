@@ -735,6 +735,7 @@ Transform:
   - {fileID: 8281877648003520320}
   - {fileID: 3545119600710903023}
   - {fileID: 6869229020898261519}
+  - {fileID: 6444648561695142662}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -892,6 +893,108 @@ Transform:
   m_Father: {fileID: 8070529715809055820}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1703605976063818529
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 8070529715809055820}
+    m_Modifications:
+    - target: {fileID: 5677791336058980388, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_Name
+      value: HintObject
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980389, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_Radius
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: hintID
+      value: cannonFired
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: title
+      value: Cannon Firing
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: hintText
+      value: Cannons can transport balls more efficiently than pipes. Drop a ball
+        in the pickup cube and let it rip. The button on the side can be used to
+        fire the cannon manually.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: offset.y
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1aa7641025f5d204291b083d2e9f2874, type: 3}
+--- !u!4 &6444648561695142662 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+    type: 3}
+  m_PrefabInstance: {fileID: 1703605976063818529}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3085627661191027140
 PrefabInstance:
   m_ObjectHideFlags: 0

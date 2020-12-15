@@ -12,6 +12,13 @@ public class HintManager : MonoBehaviour
     public const string spawners = "spawners";
     public const string levelButton = "levelButton";
     public const string equipping = "equipping";
+    public const string cannonFired = "cannonFired";
+    public const string cushionUsed = "cushionUsed";
+    public const string electromagnetUsed = "electromagnetUsed";
+    public const string cartButton = "cartButton";
+    public const string trackEnds = "trackEnds";
+    public const string splitter = "splitter";
+
 
     public static bool IsComplete(string id)
     {

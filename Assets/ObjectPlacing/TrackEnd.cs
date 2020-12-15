@@ -28,6 +28,7 @@ namespace Transballer.PlaceableObjects
         {
             type = (EndType)(((int)type + 1) % 2);
             stopRenderer.material.color = colorSettings[type];
+            HintManager.SetComplete(HintManager.trackEnds, true);
         }
 
         void IUseable.UnUse(Hand controller)

@@ -37,6 +37,7 @@ namespace Transballer.PlaceableObjects
                 ball.rb.velocity = splits[splitIndex].transform.forward * (2 + ball.rb.velocity.magnitude);
                 splitIndex++;
                 splitIndex %= splits.Length;
+                HintManager.SetComplete(HintManager.splitter, true);
             }
         }
     }

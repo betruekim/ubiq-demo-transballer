@@ -163,8 +163,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3844648762255165694}
-  - component: {fileID: 1011261818078761808}
   - component: {fileID: 293326151882671915}
+  - component: {fileID: 407256322270929630}
   m_Layer: 0
   m_Name: cushion
   m_TagString: Untagged
@@ -185,27 +185,10 @@ Transform:
   m_Children:
   - {fileID: 3844648760527887370}
   - {fileID: 4018866840656080554}
+  - {fileID: 7670526479649392277}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1011261818078761808
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3844648762255165693}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b98a8b886be88346847dc5cbd964e85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  owner: 1
-  debug: 0
-  snaps:
-  - {fileID: 8335924612597482532}
-  attachedTo: []
-  originalOwner: 0
 --- !u!82 &293326151882671915
 AudioSource:
   m_ObjectHideFlags: 0
@@ -302,6 +285,114 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &407256322270929630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3844648762255165693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 478f1b6c479f0a2438ca006349681fc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  owner: 1
+  debug: 0
+  snaps:
+  - {fileID: 8335924612597482532}
+  attachedTo: []
+  originalOwner: 0
+--- !u!1001 &2646073766222548658
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 3844648762255165694}
+    m_Modifications:
+    - target: {fileID: 5677791336058980388, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_Name
+      value: HintObject
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: hintID
+      value: cushionUsed
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: title
+      value: Cushions
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: hintText
+      value: Cushions soften the impact of balls.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1aa7641025f5d204291b083d2e9f2874, type: 3}
+--- !u!4 &7670526479649392277 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+    type: 3}
+  m_PrefabInstance: {fileID: 2646073766222548658}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3857121321066742401
 PrefabInstance:
   m_ObjectHideFlags: 0

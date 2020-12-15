@@ -334,6 +334,7 @@ Transform:
   - {fileID: 6031285975123883610}
   - {fileID: 6721951833057560818}
   - {fileID: 6461026674229708897}
+  - {fileID: 1548643721616842765}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -658,15 +659,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c14fa05571db31c479525d2d4ca52316, type: 3}
---- !u!1 &6484532825743974036 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -7029948723529949830, guid: c14fa05571db31c479525d2d4ca52316,
-    type: 3}
-  m_PrefabInstance: {fileID: 5155824282522944494}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4565340884774306814 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -516098083770646512, guid: c14fa05571db31c479525d2d4ca52316,
+    type: 3}
+  m_PrefabInstance: {fileID: 5155824282522944494}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4613818672536904709 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c14fa05571db31c479525d2d4ca52316,
     type: 3}
   m_PrefabInstance: {fileID: 5155824282522944494}
   m_PrefabAsset: {fileID: 0}
@@ -676,9 +677,9 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 5155824282522944494}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &4613818672536904709 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c14fa05571db31c479525d2d4ca52316,
+--- !u!1 &6484532825743974036 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -7029948723529949830, guid: c14fa05571db31c479525d2d4ca52316,
     type: 3}
   m_PrefabInstance: {fileID: 5155824282522944494}
   m_PrefabAsset: {fileID: 0}
@@ -756,6 +757,102 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2595670745763958237, guid: 54a79cf888f739847a5f9bb3e0baad77,
     type: 3}
   m_PrefabInstance: {fileID: 5258690231887092254}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6608595264956164138
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 7652295009653124788}
+    m_Modifications:
+    - target: {fileID: 5677791336058980388, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_Name
+      value: HintObject
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: hintID
+      value: trackEnds
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: title
+      value: Tracks
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: hintText
+      value: Used to transport minecarts around. You can interact with the end stoppers
+        to switch them from bouncy to stoppy.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980390, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: offset.y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1aa7641025f5d204291b083d2e9f2874, type: 3}
+--- !u!4 &1548643721616842765 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5677791336058980391, guid: 1aa7641025f5d204291b083d2e9f2874,
+    type: 3}
+  m_PrefabInstance: {fileID: 6608595264956164138}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7802349243869074575
 PrefabInstance:
