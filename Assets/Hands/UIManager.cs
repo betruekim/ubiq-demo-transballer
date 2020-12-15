@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour
     ParticleSystem gunParticles;
     Transform barrelExit;
     public GameObject spawnableButtonPrefab;
-    GameObject[] buttons;
+    public GameObject[] buttons;
 
     public PrefabCatalogue placeables;
 
@@ -65,6 +65,7 @@ public class UIManager : MonoBehaviour
         foreach (GameObject placeable in placeables.prefabs)
         {
             GameObject button = GameObject.Instantiate(spawnableButtonPrefab, buttonsContainer.transform);
+            button.name = placeable.name;
             button.GetComponentInChildren<Text>().text = $"{placeable.name} {placeable.GetComponent<Placeable>().materialCost}";
             int localIndex = i;
             button.GetComponent<Button>().onClick.AddListener(delegate

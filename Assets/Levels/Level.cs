@@ -16,5 +16,9 @@ namespace Transballer.Levels
         }
         [SerializeField]
         public List<EmissionBurst> emission = new List<EmissionBurst>();
+
+        // you can set either of these, leave both empty to allow all objects
+        public List<string> allowedPlaceables;
+        public List<string> disallowedPlaceables;
     }
 }
