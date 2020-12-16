@@ -112,13 +112,13 @@ namespace Transballer.Levels
                     PlaceableObjects.PlaceableIndex.placedObjects[id].RemoveSudo();
                 }
 
-                foreach (var interactable in interactableArray)
-                {
-                    if (interactable != null)
-                    {
-                        interactable.GetComponent<NetworkedPhysics.NetworkedRigidbody>().Remove();
-                    }
-                }
+                // foreach (var interactable in interactableArray)
+                // {
+                //     if (interactable != null)
+                //     {
+                //         interactable.GetComponent<NetworkedPhysics.NetworkedRigidbody>().Remove();
+                //     }
+                // }
 
                 if (levelIndex == -1)
                 {
