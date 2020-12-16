@@ -60,20 +60,20 @@ namespace Transballer.Levels
             }
 
 
-            if (NetworkManager.roomOwner)
-            {
-                // spawn interactables at table
-                GameObject table = GameObject.Find("table");
-                interactableArray = new GameObject[interactables.prefabs.Count];
+            // if (NetworkManager.roomOwner)
+            // {
+            //     // spawn interactables at table
+            //     GameObject table = GameObject.Find("table");
+            //     interactableArray = new GameObject[interactables.prefabs.Count];
 
-                for (int j = 0; j != interactableArray.Length; j++)
-                {
-                    GameObject spawned = networkSpawner.SpawnPersistent(interactables.prefabs[j]);
-                    spawned.transform.position = table.transform.position + Vector3.up * 2f;
+            //     for (int j = 0; j != interactableArray.Length; j++)
+            //     {
+            //         GameObject spawned = networkSpawner.SpawnPersistent(interactables.prefabs[j]);
+            //         spawned.transform.position = table.transform.position + Vector3.up * 2f;
 
-                    interactableArray[j] = spawned;
-                }
-            }
+            //         interactableArray[j] = spawned;
+            //     }
+            // }
         }
 
         GameObject SpawnDoor(int index, Vector3 pos, Quaternion rotation, Transform parent)
