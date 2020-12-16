@@ -67,6 +67,12 @@ namespace Ubik.XR
                     if (!contacted.Contains(collider))
                     {
                         contacted.Add(collider);
+                        Outline outline;
+                        if (outline = collider.GetComponent<Outline>())
+                        {
+                            outline.OutlineWidth = 20f;
+                            outline.OutlineColor = Color.green;
+                        }
                     }
                     return;
                 }
@@ -76,6 +82,11 @@ namespace Ubik.XR
         private void OnTriggerExit(Collider collider)
         {
             contacted.Remove(collider);
+            Outline outline;
+            if (outline = collider.GetComponent<Outline>())
+            {
+                outline.OutlineWidth = 0;
+            }
         }
     }
 }
