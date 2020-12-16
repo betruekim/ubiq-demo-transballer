@@ -20,18 +20,18 @@ namespace Transballer.Levels
             shape.scale = transform.lossyScale;
         }
 
-        private void OnCollisionEnter(Collision other)
-        {
-            NetworkedRigidbody rb = other.gameObject.GetComponent<NetworkedRigidbody>();
-            if (rb)
-            {
-                if (rb.owner)
-                {
-                    rb.Remove();
-                    GameObject particles = spawner.Spawn(lavaParticlesPrefab);
-                    particles.GetComponent<LavaParticles>().SetPosition(other.GetContact(0).point);
-                }
-            }
-        }
+        // private void OnCollisionEnter(Collision other)
+        // {
+        //     NetworkedRigidbody rb = other.gameObject.GetComponent<NetworkedRigidbody>();
+        //     if (rb)
+        //     {
+        //         if (rb.owner)
+        //         {
+        //             rb.Remove();
+        //             GameObject particles = spawner.Spawn(lavaParticlesPrefab);
+        //             particles.GetComponent<LavaParticles>().SetPosition(other.GetContact(0).point);
+        //         }
+        //     }
+        // }
     }
 }
