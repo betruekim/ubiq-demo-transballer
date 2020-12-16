@@ -9,7 +9,6 @@ namespace Transballer.PlaceableObjects
     public class Cannon : Placeable
     {
         public override int materialCost => 10;
-        public override bool canBePlacedFreely => false;
 
         public GameObject barrelPivot;
         public Transform launchPoint;
@@ -200,14 +199,14 @@ namespace Transballer.PlaceableObjects
 
         private void OnEnable()
         {
-            launchPoint.GetComponent<RemoteGraspable>().OnGrasp += HingeGrasped;
-            launchPoint.GetComponent<RemoteGraspable>().OnRelease += HingeReleased;
+            launchPoint.parent.GetComponent<RemoteGraspable>().OnGrasp += HingeGrasped;
+            launchPoint.parent.GetComponent<RemoteGraspable>().OnRelease += HingeReleased;
         }
 
         private void OnDisable()
         {
-            launchPoint.GetComponent<RemoteGraspable>().OnGrasp -= HingeGrasped;
-            launchPoint.GetComponent<RemoteGraspable>().OnRelease -= HingeReleased;
+            launchPoint.parent.GetComponent<RemoteGraspable>().OnGrasp -= HingeGrasped;
+            launchPoint.parent.GetComponent<RemoteGraspable>().OnRelease -= HingeReleased;
         }
 
         private void Update()

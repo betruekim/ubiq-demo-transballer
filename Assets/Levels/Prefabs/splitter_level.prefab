@@ -589,7 +589,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ballList: []
-  allowedMaterial: 0
+  allowedMaterial: 100
   emission:
   - count: 30
     duration: 10

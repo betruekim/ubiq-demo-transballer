@@ -180,15 +180,23 @@ namespace Transballer.Levels
 
             NetworkManager.inLevel = true;
 
-            GameObject.FindObjectOfType<PlaceableObjects.PlacementManager>().SetMaxMaterial(Mathf.FloorToInt(levelManager.allowedMaterial / NetworkManager.peers.Keys.Count));
+            GameObject.FindObjectOfType<PlaceableObjects.PlacementManager>().SetMaxMaterial(Mathf.FloorToInt(levelManager.allowedMaterial / (NetworkManager.peers.Keys.Count + 1)));
         }
 
         private void movePlayer()
         {
-            Transform playerPosition = currentLevel.transform.Find("spawnPoint");
             GameObject player = GameObject.Find("Player");
-            player.transform.position = playerPosition.transform.position;
-            player.transform.rotation = playerPosition.transform.rotation;
+            if (currentLevel)
+            {
+                Transform playerPosition = currentLevel.transform.Find("spawnPoint");
+                player.transform.position = playerPosition.transform.position;
+                player.transform.rotation = playerPosition.transform.rotation;
+            }
+            else
+            {
+                player.transform.position = Vector3.zero;
+                player.transform.rotation = Quaternion.identity;
+            }
         }
 
         IEnumerator OnBackToLevelSelect()

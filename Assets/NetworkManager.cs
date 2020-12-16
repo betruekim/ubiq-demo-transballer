@@ -20,6 +20,7 @@ namespace Transballer
 
         // keep track of when we join a room, if everyone does this we should be able to figure out a room owner
         // it doesn't actually matter who is room owner, so long as all clients agree
+        // doesn't keep track of my guid!!
         public static Dictionary<string, long> peers = new Dictionary<string, long>();
         public static long utcTime;
 
@@ -28,6 +29,10 @@ namespace Transballer
             ctx = NetworkScene.Register(this);
             roomClient = GameObject.FindObjectOfType<RoomClient>();
             roomClient.OnJoinedRoom.AddListener(OnJoinedRoom);
+        }
+
+        private void Start()
+        {
             roomClient.OnPeer.AddListener(RequestAllTimes);
             roomClient.OnPeerRemoved.AddListener(OnPeerLeft);
         }

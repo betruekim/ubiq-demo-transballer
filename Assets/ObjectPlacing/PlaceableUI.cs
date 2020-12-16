@@ -113,6 +113,7 @@ namespace Transballer.PlaceableObjects
         {
             FieldInfo info = placeableType.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             info.SetValue(placeable, value);
+            // TODO test tomorrow - does removing this just leave the UI out of sync? and the infinite updates stops?
             floatUIs[name].Item1.value = value;
             floatUIs[name].Item2.text = $"{Mathf.Round(value * 10) / 10f}";
         }
