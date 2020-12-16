@@ -35,7 +35,10 @@ namespace Transballer.Levels
         void Awake()
         {
             spawner = GetComponentInChildren<BallSpawner>();
-            spawner.SetEmissions(emission);
+            if (spawner)
+            {
+                spawner.SetEmissions(emission);
+            }
 
             hoops = new List<Hoop>();
             hoops.AddRange(GetComponentsInChildren<Hoop>());
