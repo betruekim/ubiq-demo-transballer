@@ -25,9 +25,12 @@ namespace Transballer.Levels
             NetworkedRigidbody rb = other.gameObject.GetComponent<NetworkedRigidbody>();
             if (rb)
             {
-                rb.Remove();
-                GameObject particles = spawner.Spawn(lavaParticlesPrefab);
-                particles.GetComponent<LavaParticles>().SetPosition(other.GetContact(0).point);
+                if (rb.owner)
+                {
+                    rb.Remove();
+                    GameObject particles = spawner.Spawn(lavaParticlesPrefab);
+                    particles.GetComponent<LavaParticles>().SetPosition(other.GetContact(0).point);
+                }
             }
         }
     }

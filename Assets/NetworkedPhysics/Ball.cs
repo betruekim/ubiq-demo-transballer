@@ -36,7 +36,7 @@ namespace Transballer.NetworkedPhysics
             switch (messageType)
             {
                 case "colourMessage":
-                    Debug.Log("Colour message received: " + msgString);
+                    // Debug.Log("Colour message received: " + msgString);
                     ColourMessage colour = ColourMessage.Deserialize(msgString);
                     OnSetColor(colour.colour);
                     break;
