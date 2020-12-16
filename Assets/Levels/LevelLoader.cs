@@ -180,11 +180,12 @@ namespace Transballer.Levels
         private void movePlayer()
         {
             GameObject player = GameObject.Find("Player");
+            int myPlayerIndex = GameObject.FindObjectOfType<NetworkManager>().GetMyPlayerIndex();
             if (currentLevel)
             {
-                Transform playerPosition = currentLevel.transform.Find("spawnPoint");
-                player.transform.position = playerPosition.transform.position;
-                player.transform.rotation = playerPosition.transform.rotation;
+                GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("SpawnPoint");
+                player.transform.position = spawnPoints[myPlayerIndex % spawnPoints.Length].transform.position;
+                player.transform.rotation = spawnPoints[myPlayerIndex % spawnPoints.Length].transform.rotation;
             }
             else
             {

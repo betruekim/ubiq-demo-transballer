@@ -94,6 +94,21 @@ namespace Transballer
             CheckRoomOwner();
         }
 
+        public int GetMyPlayerIndex()
+        {
+            List<KeyValuePair<string, long>> sortedGuids = new List<KeyValuePair<string, long>>(peers.Count);
+            sortedGuids.Add(new KeyValuePair<string, long>(roomClient.me.guid, utcTime));
+            sortedGuids.Sort((KeyValuePair<string, long> a, KeyValuePair<string, long> b) => { return (int)(a.Value - b.Value); });
+            for (int i = 0; i < sortedGuids.Count; i++)
+            {
+                if (sortedGuids[i].Key == roomClient.me.guid)
+                {
+                    return i;
+                }
+            }
+            throw new System.Exception("GetMyPlayerIndex, couldn't find my guid inside sortedGuids?");
+        }
+
         [System.Serializable]
         public class JoinOrder : Messages.Message
         {
