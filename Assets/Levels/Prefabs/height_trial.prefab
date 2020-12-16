@@ -2031,7 +2031,7 @@ MonoBehaviour:
   - funnel
   - cannon
   disallowedPlaceables: []
-  nextLevelIndex: 7
+  nextLevelIndex: 8
 --- !u!1 &5256857805559653414
 GameObject:
   m_ObjectHideFlags: 0

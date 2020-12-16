@@ -162,7 +162,7 @@ MonoBehaviour:
   - cannon
   - cushion
   disallowedPlaceables: []
-  nextLevelIndex: 5
+  nextLevelIndex: 6
 --- !u!1 &2086819390141105803
 GameObject:
   m_ObjectHideFlags: 0
