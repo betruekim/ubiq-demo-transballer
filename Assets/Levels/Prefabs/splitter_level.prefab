@@ -327,7 +327,7 @@ GameObject:
   - component: {fileID: 7609496802998198057}
   m_Layer: 0
   m_Name: spawnPoint
-  m_TagString: Untagged
+  m_TagString: SpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -589,7 +589,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ballList: []
-  allowedMaterial: 100
+  allowedMaterial: 500
   emission:
   - count: 30
     duration: 10

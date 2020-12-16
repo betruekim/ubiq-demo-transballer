@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 1570407508803311696}
   - component: {fileID: 1800598716}
   m_Layer: 0
-  m_Name: tutorialCannon
+  m_Name: levelCannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -150,12 +150,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ballList: []
-  allowedMaterial: 0
+  allowedMaterial: 400
   emission:
   - count: 20
     duration: 10
-  - count: 30
-    duration: 5
   allowedPlaceables:
   - straightpipe
   - turn45
@@ -364,7 +362,7 @@ GameObject:
   - component: {fileID: 3018234719391539618}
   m_Layer: 0
   m_Name: spawnPoint
-  m_TagString: Untagged
+  m_TagString: SpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2009,7 +2007,7 @@ PrefabInstance:
       value: 'You can use material to spawn objects which will help you.
 
         Using
-        your spawn gun, try creating a cannon to get the balls across.'
+        your spawn gun, try creating a cannon to get the balls across!'
       objectReference: {fileID: 0}
     - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
         type: 3}
@@ -2159,7 +2157,7 @@ PrefabInstance:
     - target: {fileID: 4519722851809514466, guid: 860fd0236152c404ab09f2ea804ff57a,
         type: 3}
       propertyPath: ballsToGo
-      value: 10
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5831057638886194158, guid: 860fd0236152c404ab09f2ea804ff57a,
         type: 3}
