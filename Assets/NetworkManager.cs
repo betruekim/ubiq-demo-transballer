@@ -42,6 +42,7 @@ namespace Transballer
             utcTime = new System.DateTimeOffset(System.DateTime.UtcNow).ToUnixTimeMilliseconds();
             connected = true;
             ctx.Send(new JoinOrder(utcTime, roomClient.me.guid).Serialize());
+            CheckRoomOwner();
         }
 
         void RequestAllTimes(PeerArgs args)
@@ -61,6 +62,7 @@ namespace Transballer
                     JoinOrder info = JoinOrder.Deserialize(message.ToString());
                     peers[info.guid] = info.joinTime;
                     CheckRoomOwner();
+                    Debug.Log($"roomOwner {roomOwner}");
                     break;
                 default:
                     throw new System.Exception($"unknown message type {messageType}");
@@ -69,6 +71,7 @@ namespace Transballer
 
         void CheckRoomOwner()
         {
+            Debug.Log($"checking room owner with {peers.Count} peers");
             foreach (var kvp in peers)
             {
                 if (kvp.Key == roomClient.me.guid)
@@ -100,7 +103,7 @@ namespace Transballer
 
             public override string Serialize()
             {
-                return $"setKinematic${joinTime}${guid}";
+                return $"joinOrder${joinTime}${guid}";
             }
 
             public JoinOrder(long joinTime, string guid)
