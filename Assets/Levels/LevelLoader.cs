@@ -163,18 +163,18 @@ namespace Transballer.Levels
 
             GameObject.FindObjectOfType<PlaceableObjects.PlacementManager>().SetMaxMaterial(Mathf.FloorToInt(levelManager.allowedMaterial / (NetworkManager.peers.Keys.Count + 1)));
 
-            if (NetworkManager.roomOwner)
-            {
-                interactablesTable = networkSpawner.Spawn(NestedPrefabCatalogue.GetPrefabFromName("interactablesTable")).GetComponent<Transballer.NetworkedPhysics.Table>();
-                GameObject tableSpawnPoint = GameObject.Find("tableSpawnPoint");
-                if (tableSpawnPoint)
-                {
-                    interactablesTable.transform.position = tableSpawnPoint.transform.position;
-                    interactablesTable.transform.rotation = tableSpawnPoint.transform.rotation;
-                    interactablesTable.Move();
-                }
-                interactablesTable.SpawnInteractables();
-            }
+            // if (NetworkManager.roomOwner)
+            // {
+            //     interactablesTable = networkSpawner.Spawn(NestedPrefabCatalogue.GetPrefabFromName("interactablesTable")).GetComponent<Transballer.NetworkedPhysics.Table>();
+            //     GameObject tableSpawnPoint = GameObject.Find("tableSpawnPoint");
+            //     if (tableSpawnPoint)
+            //     {
+            //         interactablesTable.transform.position = tableSpawnPoint.transform.position;
+            //         interactablesTable.transform.rotation = tableSpawnPoint.transform.rotation;
+            //         interactablesTable.Move();
+            //     }
+            //     interactablesTable.SpawnInteractables();
+            // }
         }
 
         private void movePlayer()
