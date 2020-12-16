@@ -9,6 +9,6 @@ PhysicMaterial:
   m_Name: No Friction Bouncy
   dynamicFriction: 0.01
   staticFriction: 0.01
-  bounciness: 0.9
+  bounciness: 0.7
   frictionCombine: 0
   bounceCombine: 1
