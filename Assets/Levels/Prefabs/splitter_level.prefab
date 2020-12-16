@@ -600,7 +600,7 @@ MonoBehaviour:
   - funnel
   - splitter
   disallowedPlaceables: []
-  nextLevelIndex: 1
+  nextLevelIndex: 4
 --- !u!1 &2408934682797106159
 GameObject:
   m_ObjectHideFlags: 0

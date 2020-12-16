@@ -2020,7 +2020,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ballList: []
-  allowedMaterial: 100
+  allowedMaterial: 400
   emission:
   - count: 30
     duration: 10
@@ -2031,7 +2031,7 @@ MonoBehaviour:
   - funnel
   - cannon
   disallowedPlaceables: []
-  nextLevelIndex: 1
+  nextLevelIndex: 7
 --- !u!1 &5256857805559653414
 GameObject:
   m_ObjectHideFlags: 0

@@ -164,7 +164,7 @@ MonoBehaviour:
   - cart
   - cushion
   disallowedPlaceables: []
-  nextLevelIndex: 0
+  nextLevelIndex: 6
 --- !u!1 &2086819390141105803
 GameObject:
   m_ObjectHideFlags: 0

@@ -1163,7 +1163,7 @@ MonoBehaviour:
   - turn45
   - turn90
   disallowedPlaceables: []
-  nextLevelIndex: 0
+  nextLevelIndex: 9
 --- !u!1 &5256857805559653414
 GameObject:
   m_ObjectHideFlags: 0
