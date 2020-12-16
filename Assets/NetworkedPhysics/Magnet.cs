@@ -3,7 +3,7 @@ using Ubik.XR;
 
 namespace Transballer.NetworkedPhysics
 {
-    public class Magnet : NetworkedRigidbody, IUseable
+    public class Magnet : NetworkedRigidbody
     {
         public float radius = 5f;
         public float power = 10f;
@@ -11,6 +11,16 @@ namespace Transballer.NetworkedPhysics
         public override Vector3 graspPoint => Vector3.back * 0.05f;
         public override Vector3 graspForward => Vector3.forward;
         public override Vector3 graspUp => Vector3.right;
+
+        private void OnEnable()
+        {
+            GetComponentInChildren<RemoteUseable>().OnUse += Use;
+        }
+
+        private void OnDisable()
+        {
+            GetComponentInChildren<RemoteUseable>().OnUse -= Use;
+        }
 
         override protected void FixedUpdate()
         {
@@ -34,12 +44,12 @@ namespace Transballer.NetworkedPhysics
             }
         }
 
-        void IUseable.UnUse(Hand controller)
-        {
-            // TODO: should this be a toggle or a press and hold?
-        }
+        // void IUseable.UnUse(Hand controller)
+        // {
+        //     // TODO: should this be a toggle or a press and hold?
+        // }
 
-        void IUseable.Use(Hand controller)
+        void Use(Hand controller)
         {
             on = !on;
         }

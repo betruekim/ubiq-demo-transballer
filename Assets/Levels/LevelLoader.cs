@@ -23,8 +23,6 @@ namespace Transballer.Levels
         Transform doorsParent;
         GameObject[] doors;
 
-        GameObject[] interactableArray;
-
         LevelManager currentLevel;
 
 
@@ -58,22 +56,6 @@ namespace Transballer.Levels
 
                 doors[i] = SpawnDoor(i, pos, Quaternion.Euler(0, angle * Mathf.Rad2Deg, 0), doorsParent);
             }
-
-
-            // if (NetworkManager.roomOwner)
-            // {
-            //     // spawn interactables at table
-            //     GameObject table = GameObject.Find("table");
-            //     interactableArray = new GameObject[interactables.prefabs.Count];
-
-            //     for (int j = 0; j != interactableArray.Length; j++)
-            //     {
-            //         GameObject spawned = networkSpawner.SpawnPersistent(interactables.prefabs[j]);
-            //         spawned.transform.position = table.transform.position + Vector3.up * 2f;
-
-            //         interactableArray[j] = spawned;
-            //     }
-            // }
         }
 
         GameObject SpawnDoor(int index, Vector3 pos, Quaternion rotation, Transform parent)
@@ -90,6 +72,8 @@ namespace Transballer.Levels
         {
             nextLevelDoor = SpawnDoor(index, pos, rot, transform);
         }
+
+        Transballer.NetworkedPhysics.Table interactablesTable;
 
         public void LoadLevelOwner(int levelIndex)
         {
@@ -112,13 +96,10 @@ namespace Transballer.Levels
                     PlaceableObjects.PlaceableIndex.placedObjects[id].RemoveSudo();
                 }
 
-                // foreach (var interactable in interactableArray)
-                // {
-                //     if (interactable != null)
-                //     {
-                //         interactable.GetComponent<NetworkedPhysics.NetworkedRigidbody>().Remove();
-                //     }
-                // }
+                if (interactablesTable)
+                {
+                    interactablesTable.Remove();
+                }
 
                 if (levelIndex == -1)
                 {
@@ -181,6 +162,11 @@ namespace Transballer.Levels
             NetworkManager.inLevel = true;
 
             GameObject.FindObjectOfType<PlaceableObjects.PlacementManager>().SetMaxMaterial(Mathf.FloorToInt(levelManager.allowedMaterial / (NetworkManager.peers.Keys.Count + 1)));
+
+            if (NetworkManager.roomOwner)
+            {
+                interactablesTable = networkSpawner.Spawn(NestedPrefabCatalogue.GetPrefabFromName("interactablesTable")).GetComponent<Transballer.NetworkedPhysics.Table>();
+            }
         }
 
         private void movePlayer()
