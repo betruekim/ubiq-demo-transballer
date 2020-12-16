@@ -26,7 +26,6 @@ namespace Transballer
 
         PlacementManager placementManager;
         Text material;
-        Transform mainCamera;
         public Sprite removeIcon;
 
         void Start()
@@ -38,7 +37,6 @@ namespace Transballer
             rightHand.gameObject.layer = LayerMask.NameToLayer("Hands");
             placementManager = GameObject.FindObjectOfType<PlacementManager>();
             placeables = placementManager.placeables;
-            mainCamera = Camera.main.transform;
 
             InitUI();
         }
