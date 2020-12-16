@@ -7,6 +7,13 @@ namespace Transballer.Levels
     public class Hoop : MonoBehaviour
     {
         public int index;
+        [HideInInspector]
+        public int initialBalls;
+
+        void Awake()
+        {
+            initialBalls = ballsToGo;
+        }
 
         public void SetIndex(int index)
         {

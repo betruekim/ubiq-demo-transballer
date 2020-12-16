@@ -30,6 +30,8 @@ namespace Transballer.Levels
         public List<string> disallowedPlaceables;
         public int nextLevelIndex = -1;
 
+        private int activeHoops;
+
         void Awake()
         {
             spawner = GetComponentInChildren<BallSpawner>();
@@ -37,9 +39,11 @@ namespace Transballer.Levels
 
             hoops = new List<Hoop>();
             hoops.AddRange(GetComponentsInChildren<Hoop>());
+            activeHoops = 0;
             for (int i = 0; i < hoops.Count; i++)
             {
                 hoops[i].SetIndex(i);
+                activeHoops++;
             }
         }
 
@@ -69,6 +73,15 @@ namespace Transballer.Levels
                         ball.Remove();
                     }
                     ballList.Clear();
+
+                    // Reset the hoops
+                    activeHoops = 0;
+                    for (int i = 0; i < hoops.Count; i++)
+                    {
+                        hoops[i].ballsToGo = hoops[i].initialBalls;
+                        activeHoops++;
+                    }
+
                 }
             }
         }
@@ -79,11 +92,12 @@ namespace Transballer.Levels
             {
                 if (hoops[i].index == index)
                 {
-                    hoops.RemoveAt(i);
+                    // hoops.RemoveAt(i);
+                    activeHoops--;
                     break;
                 }
             }
-            if (hoops.Count == 0)
+            if (activeHoops == 0)
             {
                 // level complete
                 Debug.Log("LEVEL COMLETE!");
