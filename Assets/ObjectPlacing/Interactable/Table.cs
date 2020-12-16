@@ -11,9 +11,20 @@ namespace Transballer.NetworkedPhysics
         [SerializeField]
         List<NetworkedRigidbody> spawned;
 
-        public override void OnSpawned(bool local)
+
+        public void SpawnInteractables()
         {
-            base.OnSpawned(local);
+            StartCoroutine(SpawnInteractablesIE());
+        }
+
+        IEnumerator SpawnInteractablesIE()
+        {
+            while (!owner)
+            {
+                // remember owner is set after OnSpawned is called, so this will only run after onspawned
+                // also this is only ever called by owner, so no infinite waiting
+                yield return new WaitForEndOfFrame();
+            }
             Debug.Log("ON SPAWNED TABLE");
             // spawn extras
             NetworkSpawner spawner = GameObject.FindObjectOfType<NetworkSpawner>();
