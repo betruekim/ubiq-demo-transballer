@@ -157,8 +157,6 @@ namespace Transballer.PlaceableObjects
 
         public void SelectObject(int index)
         {
-            Debug.Log(Environment.StackTrace);
-            SetMaxMaterial(400); // TODO REMOVE THIS
             if (index < 0 || index >= objects.Length)
             {
                 throw new System.Exception($"index {index} less than zero or greater than objects length ${objects.Length}");

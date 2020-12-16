@@ -179,6 +179,8 @@ namespace Transballer.Levels
             }
 
             NetworkManager.inLevel = true;
+
+            GameObject.FindObjectOfType<PlaceableObjects.PlacementManager>().SetMaxMaterial(Mathf.FloorToInt(levelManager.allowedMaterial / NetworkManager.peers.Keys.Count));
         }
 
         private void movePlayer()
