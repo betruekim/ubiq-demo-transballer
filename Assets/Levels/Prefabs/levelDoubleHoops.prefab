@@ -1150,7 +1150,8 @@ MonoBehaviour:
   emission:
   - count: 10
     duration: 3
-  allowedPlaceables: []
+  allowedPlaceables:
+  - remove
   disallowedPlaceables: []
   nextLevelIndex: 0
 --- !u!1 &5256857805559653414
