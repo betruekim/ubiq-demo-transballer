@@ -4,68 +4,112 @@ using Ubik.Messaging;
 using Ubik.Samples;
 using Ubik.Rooms;
 
-public class NetworkManager : MonoBehaviour, INetworkObject, INetworkComponent, ISpawnable
+namespace Transballer
 {
-    // by setting a fixed networkId we can have objects synced in everyone's scenes
-    NetworkId INetworkObject.Id { get; } = new NetworkId(4);
-    NetworkContext ctx;
-    public static bool roomOwner = true;
-    public static bool connected = false;
-    public static bool inLevel = false;
-    RoomClient roomClient;
-
-    public GameObject[] levels;
-
-    private void Awake()
+    public class NetworkManager : MonoBehaviour, INetworkObject, INetworkComponent
     {
-        ctx = NetworkScene.Register(this);
-        roomClient = GameObject.FindObjectOfType<RoomClient>();
-        roomClient.OnJoinedRoom.AddListener(OnRoom);
-    }
+        // by setting a fixed networkId we can have objects synced in everyone's scenes
+        NetworkId INetworkObject.Id { get; } = new NetworkId(4);
+        NetworkContext ctx;
+        public static bool roomOwner = true;
+        public static bool connected = false;
+        public static bool inLevel = false;
+        RoomClient roomClient;
 
-    private void Start()
-    {
-        // roomClient.OnPeer?.AddListener(CheckRoomOwner);
-        // roomClient.OnPeerRemoved?.AddListener(CheckRoomOwner);
-    }
+        public GameObject[] levels;
 
-    void OnRoom()
-    {
-        Debug.Log("OnRoom");
-        connected = true;
-        CheckRoomOwner(null);
-    }
+        // keep track of when we join a room, if everyone does this we should be able to figure out a room owner
+        // it doesn't actually matter who is room owner, so long as all clients agree
+        public Dictionary<string, long> peers;
+        public long utcTime;
 
-    void CheckRoomOwner(PeerArgs peerArgs)
-    {
-        int peerCount = 0;
-        foreach (var peer in roomClient.Peers)
+        private void Awake()
         {
-            peerCount++;
+            ctx = NetworkScene.Register(this);
+            peers = new Dictionary<string, long>();
+            roomClient = GameObject.FindObjectOfType<RoomClient>();
+            roomClient.OnJoinedRoom.AddListener(OnJoinedRoom);
+            roomClient.OnPeer.AddListener(RequestAllTimes);
+            roomClient.OnPeerRemoved.AddListener(OnPeerLeft);
         }
-        roomOwner = peerCount == 1;
-        Debug.Log($"roomOwner: {roomOwner} {peerCount}");
-    }
 
-    void INetworkComponent.ProcessMessage(ReferenceCountedSceneGraphMessage message)
-    {
-        Debug.Log("levelmanager message");
-        Debug.Log(message);
-    }
-
-    void ISpawnable.OnSpawned(bool local)
-    {
-        DontDestroyOnLoad(this);
-        Debug.Log("Levelmanager spawned");
-        if (local)
+        void OnJoinedRoom()
         {
+            utcTime = new System.DateTimeOffset(System.DateTime.UtcNow).ToUnixTimeMilliseconds();
+            connected = true;
+            ctx.Send(new JoinOrder(utcTime, roomClient.me.guid).Serialize());
+        }
+
+        void RequestAllTimes(PeerArgs args)
+        {
+            ctx.Send("requestAllTimes");
+        }
+
+        void INetworkComponent.ProcessMessage(ReferenceCountedSceneGraphMessage message)
+        {
+            string messageType = Messages.GetType(message.ToString());
+            switch (messageType)
+            {
+                case "requestAllTimes":
+                    ctx.Send(new JoinOrder(utcTime, roomClient.me.guid).Serialize());
+                    break;
+                case "joinOrder":
+                    JoinOrder info = JoinOrder.Deserialize(message.ToString());
+                    peers[info.guid] = info.joinTime;
+                    CheckRoomOwner();
+                    break;
+                default:
+                    throw new System.Exception($"unknown message type {messageType}");
+            }
+        }
+
+        void CheckRoomOwner()
+        {
+            foreach (var kvp in peers)
+            {
+                if (kvp.Key == roomClient.me.guid)
+                {
+                    continue;
+                }
+                if (kvp.Value < utcTime)
+                {
+                    // this peer joined before us
+                    roomOwner = false;
+                    return;
+                }
+            }
             roomOwner = true;
-            Debug.Log("!!I am the room owner!!");
         }
-    }
 
-    public void LoadLevel(int index)
-    {
+        void OnPeerLeft(PeerArgs args)
+        {
+            peers.Remove(args.guid);
+            CheckRoomOwner();
+        }
 
+        [System.Serializable]
+        public class JoinOrder : Messages.Message
+        {
+            public override string messageType => "joinOrder";
+            public long joinTime;
+            public string guid;
+
+            public override string Serialize()
+            {
+                return $"setKinematic${joinTime}${guid}";
+            }
+
+            public JoinOrder(long joinTime, string guid)
+            {
+                this.joinTime = joinTime;
+                this.guid = guid;
+            }
+
+            public static JoinOrder Deserialize(string message)
+            {
+                string[] components = message.Split('$');
+                return new JoinOrder(long.Parse(components[1]), components[2]);
+            }
+        }
     }
 }
