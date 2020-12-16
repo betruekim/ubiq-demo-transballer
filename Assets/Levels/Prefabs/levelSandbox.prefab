@@ -1128,7 +1128,6 @@ Transform:
   - {fileID: 9084283307985590293}
   - {fileID: 1247079705}
   - {fileID: 2532824041161849124}
-  - {fileID: 1381898769310641825}
   - {fileID: 5067383260945736740}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1146,9 +1145,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ballList: []
-  allowedMaterial: 100
-  emission: []
-  allowedPlaceables: []
+  allowedMaterial: 10000
+  emission:
+  - count: 50
+    duration: 15
+  allowedPlaceables:
+  - cannon
+  - cart
+  - cushion
+  - electromagnet
+  - funnel
+  - hollowCart
+  - splitter
+  - straightpipe
+  - track
+  - trackTurn90
+  - turn45
+  - turn90
   disallowedPlaceables: []
   nextLevelIndex: 0
 --- !u!1 &5256857805559653414
@@ -1477,7 +1490,7 @@ PrefabInstance:
     - target: {fileID: 8901431510672906817, guid: 2c3891fd927e1d4479271022950f2321,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.5
+      value: -0.366
       objectReference: {fileID: 0}
     - target: {fileID: 8901431510672906817, guid: 2c3891fd927e1d4479271022950f2321,
         type: 3}
@@ -1643,7 +1656,7 @@ PrefabInstance:
     - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
         type: 3}
       propertyPath: m_RootOrder
-      value: 10
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
         type: 3}
@@ -1838,7 +1851,7 @@ PrefabInstance:
     - target: {fileID: 4519722851809514466, guid: 860fd0236152c404ab09f2ea804ff57a,
         type: 3}
       propertyPath: ballsToGo
-      value: 30
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5831057638886194158, guid: 860fd0236152c404ab09f2ea804ff57a,
         type: 3}
@@ -1918,7 +1931,7 @@ PrefabInstance:
     - target: {fileID: 5580507601653339460, guid: c2051964d451cbb438ebac2b66a80457,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4
+      value: -10.67
       objectReference: {fileID: 0}
     - target: {fileID: 5580507601653339460, guid: c2051964d451cbb438ebac2b66a80457,
         type: 3}
@@ -1987,94 +2000,4 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5580507601653339460, guid: c2051964d451cbb438ebac2b66a80457,
     type: 3}
   m_PrefabInstance: {fileID: 5256857804653876214}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &7478182444989235905
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 5256857805543010050}
-    m_Modifications:
-    - target: {fileID: 1401439306712174303, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3567564156664956021, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_Name
-      value: bobbingLabel
-      objectReference: {fileID: 0}
-    - target: {fileID: 3567564156664956021, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5213128046307322297, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_Text
-      value: "Press the red button \nto activate the spawner!"
-      objectReference: {fileID: 0}
-    - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 4.838
-      objectReference: {fileID: 0}
-    - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.87
-      objectReference: {fileID: 0}
-    - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 08c76070e37ab154f86637de1c173281, type: 3}
---- !u!4 &1381898769310641825 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8424733845754621024, guid: 08c76070e37ab154f86637de1c173281,
-    type: 3}
-  m_PrefabInstance: {fileID: 7478182444989235905}
   m_PrefabAsset: {fileID: 0}
