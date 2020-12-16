@@ -79,6 +79,7 @@ namespace Transballer.Levels
                     for (int i = 0; i < hoops.Count; i++)
                     {
                         hoops[i].ballsToGo = hoops[i].initialBalls;
+                        hoops[i].gameObject.transform.Find("BallDisplay").GetComponent<TextMesh>().text = string.Format("{0}", hoops[i].ballsToGo);
                         activeHoops++;
                     }
 
