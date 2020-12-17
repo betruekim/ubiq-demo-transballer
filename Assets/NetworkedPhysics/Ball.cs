@@ -16,10 +16,7 @@ namespace Transballer.NetworkedPhysics
             {
                 Random rand = new Random();
                 OnSetColor(colours[rand.Next(colours.Length)]);
-
                 ctx.Send(new ColourMessage(ballRenderer.material.color).Serialize());
-
-                Debug.Log("ColourMessage sent.");
             }
             else
             {
