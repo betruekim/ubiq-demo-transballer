@@ -5,25 +5,27 @@ using UnityEngine.UI;
 using Ubiq.Messaging;
 using Ubiq.Spawning;
 using Transballer.NetworkedPhysics;
-
+using Ubiq.Rooms;
 
 namespace Transballer.Levels
 {
     public class BallSpawner : MonoBehaviour
     {
-        private NetworkSpawnManager networkSpawner;
-
         public GameObject ball;
         public GameObject spawnPoint;
         private LevelManager levelManager;
+        private NetworkSpawnManager spawner;
+        private RoomClient client;
 
         [SerializeField]
         List<LevelManager.EmissionBurst> emissions;
 
         private void Start()
         {
-            networkSpawner = NetworkSpawnManager.Find(this);
             levelManager = GameObject.FindObjectOfType<LevelManager>();
+            spawner = NetworkSpawnManager.Find(this);
+            client = RoomClient.Find(this);
+            spawner.OnSpawned.AddListener(OnSpawned);
         }
 
         public void SetEmissions(List<LevelManager.EmissionBurst> emissions)
@@ -59,12 +61,20 @@ namespace Transballer.Levels
             yield break;
         }
 
+        private void OnSpawned(GameObject g, IRoom room, IPeer peer, NetworkSpawnOrigin origin)
+        {
+            if(g.GetComponent<Ball>() is Ball b)
+            {
+                b.OnSpawned(peer == client.Me);
+            }
+        }
+
         private void spawnBall(int ballNumber)
         {
             float jitter = 0.1f;
             Vector3 offset = new Vector3(Random.Range(-jitter, jitter), 0.0f, Random.Range(-jitter, jitter));
-            var spawnedBall = NetworkSpawnManager.Find(this).SpawnWithPeerScope(ball);
-            spawnedBall.GetComponent<NetworkedObject>().OnSpawned(true);
+            var spawnedBall = spawner.SpawnWithPeerScope(ball);
+
             spawnedBall.transform.position = spawnPoint.transform.position + offset;
 
             // Add unique name for each ball

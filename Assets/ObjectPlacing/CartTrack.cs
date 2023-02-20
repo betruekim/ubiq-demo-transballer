@@ -37,8 +37,9 @@ namespace Transballer.PlaceableObjects
         public bool reversed = false;
         float frac = 1f;
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             trackPoints = new List<Transform>();
             for (int i = 0; i < transform.childCount; i++)
             {

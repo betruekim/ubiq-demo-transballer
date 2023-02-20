@@ -3,12 +3,14 @@ using UnityEngine;
 using Ubiq.Samples;
 using Ubiq.XR;
 using Ubiq.Spawning;
+using Ubiq.Rooms;
 
 namespace Transballer.PlaceableObjects
 {
     public class PlacementManager : MonoBehaviour
     {
-        public NetworkSpawnManager networkSpawner;
+        private NetworkSpawnManager networkSpawner;
+        private RoomClient roomClient;
         public HandController rightHand;
         public HandController leftHand;
 
@@ -28,7 +30,9 @@ namespace Transballer.PlaceableObjects
 
         private void Start()
         {
-            networkSpawner = GameObject.FindObjectOfType<NetworkSpawnManager>();
+            roomClient = RoomClient.Find(this);
+            networkSpawner = NetworkSpawnManager.Find(this);
+            networkSpawner.OnSpawned.AddListener(OnSpawned);
             HandController[] handControllers = GameObject.FindObjectsOfType<HandController>();
 
             foreach (var controller in handControllers)
@@ -203,8 +207,15 @@ namespace Transballer.PlaceableObjects
         {
             Debug.Log("SpawnGhostObject");
             ghostObject = networkSpawner.SpawnWithPeerScope(objects[selectedObject]).GetComponent<Placeable>();
-            ghostObject.OnSpawned(true);
             MoveGhostToHandPos();
+        }
+
+        private void OnSpawned(GameObject g, IRoom room, IPeer peer, NetworkSpawnOrigin origin)
+        {
+            if(g.GetComponent<Placeable>() is Placeable p)
+            {
+                p.OnSpawned(peer == roomClient.Me);
+            }
         }
 
         private void Update()

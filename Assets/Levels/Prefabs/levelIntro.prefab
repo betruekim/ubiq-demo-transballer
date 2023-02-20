@@ -1176,7 +1176,7 @@ MonoBehaviour:
   - turn90
   - funnel
   disallowedPlaceables: []
-  nextLevelIndex: 2
+  nextLevelIndex: 1
 --- !u!1 &5256857805559653414
 GameObject:
   m_ObjectHideFlags: 0

@@ -23,8 +23,10 @@ namespace Transballer.PlaceableObjects
 
         GameObject[] coils;
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             manager = GameObject.FindObjectOfType<Transballer.NetworkedPhysics.RigidbodyManager>();
 
             coils = new GameObject[3];

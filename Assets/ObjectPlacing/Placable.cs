@@ -65,7 +65,7 @@ namespace Transballer.PlaceableObjects
             ui = GetComponentInChildren<PlaceableUI>();
         }
 
-        void Awake()
+        protected virtual void Awake()
         {
             attachedTo = new List<Snap>();
             snaps = GetComponentsInChildren<Snap>();

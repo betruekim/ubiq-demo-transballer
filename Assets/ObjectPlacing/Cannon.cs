@@ -29,8 +29,9 @@ namespace Transballer.PlaceableObjects
 
         LineRenderer arcRenderer;
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             pickup.enabled = false;
             arcRenderer = GetComponentInChildren<LineRenderer>();
             audioSource = gameObject.GetComponent<AudioSource>();
