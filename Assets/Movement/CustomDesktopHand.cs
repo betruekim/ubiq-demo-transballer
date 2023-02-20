@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // custom version of DesktopHand that doesn't raycast ignoreRaycast layers
-namespace Ubik.XR
+namespace Ubiq.XR
 {
     public class CustomDesktopHand : Hand, IPrimaryButtonProvider
     {

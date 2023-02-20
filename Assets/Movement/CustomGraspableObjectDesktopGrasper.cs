@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Linq;
 using UnityEngine;
-using Ubik.Geometry;
+using Ubiq.Geometry;
 
-namespace Ubik.XR
+namespace Ubiq.XR
 {
     /// <summary>
     /// This component acts as a hand for a desktop user, by placing a proxy at components found through raycasting.

@@ -2,8 +2,8 @@ using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Ubik.Samples;
-using Ubik.Messaging;
+using Ubiq.Samples;
+using Ubiq.Messaging;
 
 namespace Transballer.PlaceableObjects
 {

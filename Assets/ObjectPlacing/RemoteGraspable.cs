@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ubik.XR;
+using Ubiq.XR;
 
 
 public class RemoteGraspable : MonoBehaviour, IGraspable

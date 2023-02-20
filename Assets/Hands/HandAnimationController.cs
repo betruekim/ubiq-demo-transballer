@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ubik.XR;
+using Ubiq.XR;
 
 public class HandAnimationController : MonoBehaviour
 {
@@ -14,12 +14,17 @@ public class HandAnimationController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameObject playerObject = GameObject.FindObjectOfType<PlayerController>().gameObject;
-        rightHand = playerObject.transform.Find("Right Hand").gameObject.GetComponent<HandController>();
-        leftHand = playerObject.transform.Find("Left Hand").gameObject.GetComponent<HandController>();
-
-        leftHand.GripPress.AddListener(OnLeftGrasp);
-        rightHand.GripPress.AddListener(OnRightGrasp);
+        foreach (var item in XRPlayerController.Singleton.handControllers)
+        {
+            if(item.Left)
+            {
+                item.GripPress.AddListener(OnLeftGrasp);
+            }
+            if(item.Right)
+            {
+                item.GripPress.AddListener(OnRightGrasp);
+            }
+        }
 
         leftHandAnimator = gameObject.transform.GetChild(0).Find("LeftHand").gameObject.GetComponent<Animator>();
         rightHandAnimator = gameObject.transform.GetChild(0).Find("InvertedLeftHand").gameObject.GetComponent<Animator>();

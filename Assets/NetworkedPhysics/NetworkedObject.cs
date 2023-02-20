@@ -1,18 +1,17 @@
 using UnityEngine;
-using Ubik.Messaging;
-using Ubik.Samples;
-using Ubik.XR;
+using Ubiq.Spawning;
+using Ubiq.Messaging;
 
 namespace Transballer.NetworkedPhysics
 {
-    public abstract class NetworkedObject : MonoBehaviour, INetworkObject, INetworkComponent, ISpawnable
+    public abstract class NetworkedObject : MonoBehaviour, INetworkSpawnable
     {
-        public NetworkId Id { get; } = new NetworkId();
+        public NetworkId NetworkId { get; set; }
         protected NetworkContext ctx;
         public bool owner = true;
         public bool debug = false;
 
-        protected virtual void Awake()
+        public virtual void Start()
         {
             ctx = NetworkScene.Register(this);
         }

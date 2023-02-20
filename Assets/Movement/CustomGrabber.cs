@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Ubik.XR
+namespace Ubiq.XR
 {
     /// <summary>
     /// This interacts with Components that implement IGraspable, when its trigger collider enters their collider.

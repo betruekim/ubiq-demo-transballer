@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Transballer.NetworkedPhysics;
-using Ubik.Samples;
-using Ubik.Messaging;
+using Ubiq.Spawning;
+using Ubiq.Messaging;
 
 namespace Transballer.Levels
 {
-    public class LevelManager : MonoBehaviour, INetworkObject, ISpawnable
+    public class LevelManager : MonoBehaviour, INetworkSpawnable
     {
-        NetworkId INetworkObject.Id { get; } = new NetworkId();
+        public NetworkId NetworkId { get; set; }
 
         public List<Ball> ballList;
         BallSpawner spawner;
@@ -51,7 +51,6 @@ namespace Transballer.Levels
         }
 
         bool started = false;
-        float startTime = 0;
 
         public void StartLevel()
         {
@@ -62,7 +61,6 @@ namespace Transballer.Levels
                     Debug.Log("levelStart");
                     started = true;
                     spawner.SpawnBalls();
-                    startTime = Time.time;
                     HintManager.SetComplete(HintManager.spawners, true);
                     HintManager.SetComplete(HintManager.levelButton, true);
                 }
@@ -107,11 +105,6 @@ namespace Transballer.Levels
                 Debug.Log("LEVEL COMLETE!");
                 GameObject.FindObjectOfType<LevelLoader>().SpawnNextLevelDoor(nextLevelIndex, Vector3.zero, Quaternion.identity);
             }
-        }
-
-        void ISpawnable.OnSpawned(bool local)
-        {
-            GameObject.FindObjectOfType<LevelLoader>().LevelSpawned(this);
         }
     }
 

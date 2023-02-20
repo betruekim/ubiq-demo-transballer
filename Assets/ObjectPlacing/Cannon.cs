@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ubik.XR;
-using Ubik.Messaging;
+using Ubiq.XR;
+using Ubiq.Messaging;
 
 namespace Transballer.PlaceableObjects
 {
@@ -29,9 +29,8 @@ namespace Transballer.PlaceableObjects
 
         LineRenderer arcRenderer;
 
-        protected override void Awake()
+        void Awake()
         {
-            base.Awake();
             pickup.enabled = false;
             arcRenderer = GetComponentInChildren<LineRenderer>();
             audioSource = gameObject.GetComponent<AudioSource>();

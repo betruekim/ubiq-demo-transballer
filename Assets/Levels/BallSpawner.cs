@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Ubik.Samples;
-using Ubik.Messaging;
+using Ubiq.Messaging;
+using Ubiq.Spawning;
 using Transballer.NetworkedPhysics;
+
 
 namespace Transballer.Levels
 {
     public class BallSpawner : MonoBehaviour
     {
-        public NetworkSpawner networkSpawner;
+        private NetworkSpawnManager networkSpawner;
 
         public GameObject ball;
         public GameObject spawnPoint;
@@ -19,9 +20,9 @@ namespace Transballer.Levels
         [SerializeField]
         List<LevelManager.EmissionBurst> emissions;
 
-        private void Awake()
+        private void Start()
         {
-            networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
+            networkSpawner = NetworkSpawnManager.Find(this);
             levelManager = GameObject.FindObjectOfType<LevelManager>();
         }
 
@@ -62,7 +63,8 @@ namespace Transballer.Levels
         {
             float jitter = 0.1f;
             Vector3 offset = new Vector3(Random.Range(-jitter, jitter), 0.0f, Random.Range(-jitter, jitter));
-            GameObject spawnedBall = networkSpawner.Spawn(ball);
+            var spawnedBall = NetworkSpawnManager.Find(this).SpawnWithPeerScope(ball);
+            spawnedBall.GetComponent<NetworkedObject>().OnSpawned(true);
             spawnedBall.transform.position = spawnPoint.transform.position + offset;
 
             // Add unique name for each ball

@@ -1,5 +1,5 @@
 using UnityEngine;
-using Ubik.Messaging;
+using Ubiq.Messaging;
 
 namespace Transballer
 {
@@ -179,7 +179,7 @@ namespace Transballer
             public static OnPlace Deserialize(string message)
             {
                 string[] components = message.Split('$');
-                return new OnPlace(int.Parse(components[1]), new NetworkId(int.Parse(components[2])), int.Parse(components[3]));
+                return new OnPlace(int.Parse(components[1]), new NetworkId(components[2]), int.Parse(components[3]));
             }
         }
     }

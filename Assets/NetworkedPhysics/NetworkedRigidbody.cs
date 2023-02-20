@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ubik.Messaging;
-using Ubik.Samples;
-using Ubik.XR;
-
+using Ubiq.XR;
+using Ubiq.Spawning;
+using Ubiq.Messaging;
 
 namespace Transballer.NetworkedPhysics
 {
@@ -21,11 +20,11 @@ namespace Transballer.NetworkedPhysics
         public virtual Vector3 graspPoint { get; } = Vector3.zero; // local offset where the object should be grasped
         public virtual Vector3 graspForward { get; } = Vector3.zero; // object will attempt to point it's forward axis in the direction of graspForward axis on the grasping controller
         public virtual Vector3 graspUp { get; } = Vector3.zero; // same as above but for upward
+
         public Outline outline;
 
-        override protected void Awake()
+        void Awake()
         {
-            base.Awake();
             manager = GameObject.FindObjectOfType<RigidbodyManager>();
             rb = GetComponent<UnityEngine.Rigidbody>();
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
@@ -39,7 +38,7 @@ namespace Transballer.NetworkedPhysics
             manager.Register(this);
         }
 
-        override public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
+        public override void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
             string msgString = message.ToString();
             string messageType = Messages.GetType(msgString);

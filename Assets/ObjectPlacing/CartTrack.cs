@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Ubik.Messaging;
+using Ubiq.Messaging;
 using UnityEngine;
 
 namespace Transballer.PlaceableObjects
@@ -37,9 +37,8 @@ namespace Transballer.PlaceableObjects
         public bool reversed = false;
         float frac = 1f;
 
-        protected override void Awake()
+        void Awake()
         {
-            base.Awake();
             trackPoints = new List<Transform>();
             for (int i = 0; i < transform.childCount; i++)
             {

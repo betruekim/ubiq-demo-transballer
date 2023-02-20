@@ -12,9 +12,8 @@ namespace Transballer.Levels
             base.Move();
         }
 
-        override protected void Awake()
+        void Awake()
         {
-            base.Awake();
             ParticleSystem.MainModule main = GetComponentInChildren<ParticleSystem>().main;
             StartCoroutine(RemoveDelayed(main.duration));
         }

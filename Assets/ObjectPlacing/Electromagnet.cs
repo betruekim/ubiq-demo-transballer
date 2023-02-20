@@ -1,4 +1,4 @@
-using Ubik.Messaging;
+using Ubiq.Messaging;
 using UnityEngine;
 
 namespace Transballer.PlaceableObjects
@@ -23,9 +23,8 @@ namespace Transballer.PlaceableObjects
 
         GameObject[] coils;
 
-        override protected void Awake()
+        void Awake()
         {
-            base.Awake();
             manager = GameObject.FindObjectOfType<Transballer.NetworkedPhysics.RigidbodyManager>();
 
             coils = new GameObject[3];

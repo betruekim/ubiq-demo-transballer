@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Ubik.Messaging;
-using Ubik.Samples;
+using Ubiq.Messaging;
+using Ubiq.Samples;
 
 namespace Transballer.PlaceableObjects
 {
@@ -22,7 +22,7 @@ namespace Transballer.PlaceableObjects
         {
             if (debug)
             {
-                Debug.Log($"{Id} {owner} {message}");
+                Debug.Log($"{NetworkId} {owner} {message}");
             }
             string type = Transballer.Messages.GetType(message.ToString());
             switch (type)
@@ -31,7 +31,7 @@ namespace Transballer.PlaceableObjects
                     ui.ProcessMessage(message);
                     break;
                 case "onPlace":
-                    Debug.Log($"{Id} {owner} {message}");
+                    Debug.Log($"{NetworkId} {owner} {message}");
                     Transballer.Messages.OnPlace placeInfo = Transballer.Messages.OnPlace.Deserialize(message.ToString());
                     OnPlace(placeInfo.snapIndex, placeInfo.snappedTo, placeInfo.snappedToSnapIndex);
                     break;
@@ -65,9 +65,8 @@ namespace Transballer.PlaceableObjects
             ui = GetComponentInChildren<PlaceableUI>();
         }
 
-        override protected void Awake()
+        void Awake()
         {
-            base.Awake();
             attachedTo = new List<Snap>();
             snaps = GetComponentsInChildren<Snap>();
             int index = 0;
@@ -112,7 +111,7 @@ namespace Transballer.PlaceableObjects
         {
             if (canBePlacedFreely)
             {
-                Place(-1, null, -1);
+                Place(-1, NetworkId.Null, -1);
             }
         }
 

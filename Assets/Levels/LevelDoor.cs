@@ -19,7 +19,7 @@ namespace Transballer.Levels
 
         void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.name == "Right Hand")
+            if (other.gameObject.layer == LayerMask.NameToLayer("PlayerController"))
             {
                 // Load in the level
                 loaderScript.LoadLevelOwner(levelIndex);

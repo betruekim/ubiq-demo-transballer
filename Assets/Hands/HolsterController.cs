@@ -1,5 +1,5 @@
 using UnityEngine;
-using Ubik.XR;
+using Ubiq.XR;
 
 namespace Transballer
 {

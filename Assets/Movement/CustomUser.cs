@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Ubik.XR
+namespace Ubiq.XR
 {
     public class CustomUser : MonoBehaviour
     {

@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using Ubik.XR;
-using Ubik.Samples;
+using Ubiq.XR;
+using Ubiq.Spawning;
 using Transballer.PlaceableObjects;
 
 namespace Transballer
 {
     public class UIManager : MonoBehaviour
     {
-
-        GameObject buildMenu, gun;
+        public GameObject buildMenu;
+        public GameObject gun;
         LineRenderer gunLine;
         ParticleSystem gunParticles;
         Transform barrelExit;
@@ -21,8 +21,8 @@ namespace Transballer
 
         public PrefabCatalogue placeables;
 
-        HandController leftHand;
-        HandController rightHand;
+        public HandController leftHand;
+        public HandController rightHand;
 
         PlacementManager placementManager;
         Text material;
@@ -30,25 +30,17 @@ namespace Transballer
 
         void Start()
         {
-            GameObject playerObject = GameObject.FindObjectOfType<PlayerController>().gameObject;
-            leftHand = playerObject.transform.Find("Left Hand").gameObject.GetComponent<HandController>();
-            rightHand = playerObject.transform.Find("Right Hand").gameObject.GetComponent<HandController>();
-            leftHand.gameObject.layer = LayerMask.NameToLayer("Hands");
-            rightHand.gameObject.layer = LayerMask.NameToLayer("Hands");
             placementManager = GameObject.FindObjectOfType<PlacementManager>();
             placeables = placementManager.placeables;
-
             InitUI();
         }
 
         void InitUI()
         {
-            gun = rightHand.transform.Find("deag").gameObject;
             gunLine = gun.GetComponent<LineRenderer>();
             gunLine.positionCount = 0;
             gunParticles = gun.GetComponentInChildren<ParticleSystem>();
             barrelExit = gun.transform.Find("suppressorPos_3");
-            buildMenu = leftHand.transform.Find("buildMenu").gameObject;
 
             buttons = new GameObject[placeables.prefabs.Count + 1];
             InitBuildMenu();

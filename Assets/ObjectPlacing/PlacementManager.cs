@@ -1,13 +1,14 @@
 using System;
 using UnityEngine;
-using Ubik.Samples;
-using Ubik.XR;
+using Ubiq.Samples;
+using Ubiq.XR;
+using Ubiq.Spawning;
 
 namespace Transballer.PlaceableObjects
 {
     public class PlacementManager : MonoBehaviour
     {
-        NetworkSpawner networkSpawner;
+        public NetworkSpawnManager networkSpawner;
         public HandController rightHand;
         public HandController leftHand;
 
@@ -27,7 +28,7 @@ namespace Transballer.PlaceableObjects
 
         private void Start()
         {
-            networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
+            networkSpawner = GameObject.FindObjectOfType<NetworkSpawnManager>();
             HandController[] handControllers = GameObject.FindObjectsOfType<HandController>();
 
             foreach (var controller in handControllers)
@@ -148,7 +149,7 @@ namespace Transballer.PlaceableObjects
         Placeable ghostObject = null;
         float placeDist = 1f;
         const float minPlaceDist = 0.2f;
-        const float maxPlaceDist = 2f;
+        const float maxPlaceDist = 3f;
         Vector3 horizAngle, vertAngle = Vector3.zero;
         Vector3 lastHorizAngle = Vector3.zero;
         Vector2 startAngle = Vector2.zero;
@@ -201,7 +202,8 @@ namespace Transballer.PlaceableObjects
         private void SpawnGhostObject()
         {
             Debug.Log("SpawnGhostObject");
-            ghostObject = networkSpawner.Spawn(objects[selectedObject]).GetComponent<Placeable>();
+            ghostObject = networkSpawner.SpawnWithPeerScope(objects[selectedObject]).GetComponent<Placeable>();
+            ghostObject.OnSpawned(true);
             MoveGhostToHandPos();
         }
 
@@ -221,6 +223,12 @@ namespace Transballer.PlaceableObjects
                     }
                 }
             }
+
+            if(Input.mouseScrollDelta.magnitude > 0)
+            {
+                placeDist = Mathf.Clamp(placeDist + Input.mouseScrollDelta.y * 0.1f, minPlaceDist, maxPlaceDist);
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
                 PlaceObject();
@@ -277,6 +285,32 @@ namespace Transballer.PlaceableObjects
                     startAngle = Vector2.zero;
                 }
             }
+
+            var keySensitivity = 50f;
+
+            if(Input.GetKey(KeyCode.Q))
+            {
+                if (hitElapsed > 0.3f)
+                {
+                    snapAngle += keySensitivity * Time.deltaTime;
+                }
+                else
+                {
+                    horizAngle += keySensitivity * Time.deltaTime * Vector3.forward;
+                }                
+            }
+            if(Input.GetKey(KeyCode.E))
+            {
+                if (hitElapsed > 0.3f)
+                {
+                    snapAngle -= keySensitivity * Time.deltaTime;
+                }
+                else
+                {
+                    horizAngle -= keySensitivity * Time.deltaTime * Vector3.forward;
+                }
+            }
+
             customRotation = Quaternion.Euler(horizAngle + vertAngle);
         }
 
@@ -284,7 +318,6 @@ namespace Transballer.PlaceableObjects
         private int snapIndex = -1; // the index of the snap object on ghostObject
         private float hitElapsed;
         private float snapAngle;
-        const float maxRaycastDist = 2f;
         bool canBePlaced = false;
 
         private void MoveGhostToHandPos()
@@ -445,9 +478,9 @@ namespace Transballer.PlaceableObjects
             {
                 if (ghostObject.materialCost <= material)
                 {
-                    if (snapHit)
+                    if (snapHit && snapHit.placeable != null) // placeable should always be valid, except where there are static snap targets, such as in the tutorial
                     {
-                        ghostObject.Place(snapIndex, snapHit.placeable.Id, snapHit.index);
+                        ghostObject.Place(snapIndex, snapHit.placeable.NetworkId, snapHit.index);
                     }
                     else
                     {

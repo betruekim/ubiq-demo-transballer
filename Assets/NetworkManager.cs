@@ -1,22 +1,20 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Ubik.Messaging;
-using Ubik.Samples;
-using Ubik.Rooms;
+using Ubiq.Messaging;
+using Ubiq.Samples;
+using Ubiq.Rooms;
 
 namespace Transballer
 {
-    public class NetworkManager : MonoBehaviour, INetworkObject, INetworkComponent
+    public class NetworkManager : MonoBehaviour
     {
         // by setting a fixed networkId we can have objects synced in everyone's scenes
-        NetworkId INetworkObject.Id { get; } = new NetworkId(4);
+        public NetworkId NetworkId { get; } = new NetworkId(4);
         NetworkContext ctx;
         public static bool roomOwner = true;
         public static bool connected = false;
         public static bool inLevel = false;
         RoomClient roomClient;
-
-        public GameObject[] levels;
 
         // keep track of when we join a room, if everyone does this we should be able to figure out a room owner
         // it doesn't actually matter who is room owner, so long as all clients agree
@@ -24,39 +22,35 @@ namespace Transballer
         public static Dictionary<string, long> peers = new Dictionary<string, long>();
         public static long utcTime;
 
-        private void Awake()
-        {
-            ctx = NetworkScene.Register(this);
-            roomClient = GameObject.FindObjectOfType<RoomClient>();
-            roomClient.OnJoinedRoom.AddListener(OnJoinedRoom);
-        }
-
         private void Start()
         {
-            roomClient.OnPeer.AddListener(RequestAllTimes);
+            ctx = NetworkScene.Register(this);
+            roomClient = ctx.Scene.GetComponentInChildren<RoomClient>();
+            roomClient.OnJoinedRoom.AddListener(OnJoinedRoom);
+            roomClient.OnPeerAdded.AddListener(RequestAllTimes);
             roomClient.OnPeerRemoved.AddListener(OnPeerLeft);
         }
 
-        void OnJoinedRoom()
+        void OnJoinedRoom(IRoom room)
         {
             utcTime = new System.DateTimeOffset(System.DateTime.UtcNow).ToUnixTimeMilliseconds();
             connected = true;
-            ctx.Send(new JoinOrder(utcTime, roomClient.me.guid).Serialize());
+            ctx.Send(new JoinOrder(utcTime, roomClient.Me.uuid).Serialize());
             CheckRoomOwner();
         }
 
-        void RequestAllTimes(PeerArgs args)
+        void RequestAllTimes(IPeer args)
         {
             ctx.Send("requestAllTimes");
         }
 
-        void INetworkComponent.ProcessMessage(ReferenceCountedSceneGraphMessage message)
+        public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
             string messageType = Messages.GetType(message.ToString());
             switch (messageType)
             {
                 case "requestAllTimes":
-                    ctx.Send(new JoinOrder(utcTime, roomClient.me.guid).Serialize());
+                    ctx.Send(new JoinOrder(utcTime, roomClient.Me.uuid).Serialize());
                     break;
                 case "joinOrder":
                     JoinOrder info = JoinOrder.Deserialize(message.ToString());
@@ -74,7 +68,7 @@ namespace Transballer
             Debug.Log($"checking room owner with {peers.Count} peers");
             foreach (var kvp in peers)
             {
-                if (kvp.Key == roomClient.me.guid)
+                if (kvp.Key == roomClient.Me.uuid)
                 {
                     continue;
                 }
@@ -88,20 +82,20 @@ namespace Transballer
             roomOwner = true;
         }
 
-        void OnPeerLeft(PeerArgs args)
+        void OnPeerLeft(IPeer args)
         {
-            peers.Remove(args.guid);
+            peers.Remove(args.uuid);
             CheckRoomOwner();
         }
 
         public int GetMyPlayerIndex()
         {
             List<KeyValuePair<string, long>> sortedGuids = new List<KeyValuePair<string, long>>(peers.Count);
-            sortedGuids.Add(new KeyValuePair<string, long>(roomClient.me.guid, utcTime));
+            sortedGuids.Add(new KeyValuePair<string, long>(roomClient.Me.uuid, utcTime));
             sortedGuids.Sort((KeyValuePair<string, long> a, KeyValuePair<string, long> b) => { return (int)(a.Value - b.Value); });
             for (int i = 0; i < sortedGuids.Count; i++)
             {
-                if (sortedGuids[i].Key == roomClient.me.guid)
+                if (sortedGuids[i].Key == roomClient.Me.uuid)
                 {
                     return i;
                 }

@@ -1,5 +1,5 @@
+using Ubiq.Messaging;
 using UnityEngine;
-using Ubik.Messaging;
 using Random = System.Random;
 
 namespace Transballer.NetworkedPhysics
@@ -9,8 +9,10 @@ namespace Transballer.NetworkedPhysics
         [SerializeField] public Renderer ballRenderer;
         private Color[] colours = new Color[] { Color.green, Color.blue, Color.cyan, Color.green, Color.magenta, Color.red, Color.yellow };
 
-        void Start()
+        public override void Start()
         {
+            base.Start();
+
             ballRenderer = GetComponent<Renderer>();
             if (NetworkManager.roomOwner)
             {
@@ -22,7 +24,6 @@ namespace Transballer.NetworkedPhysics
             {
                 ctx.Send("askColour$");
             }
-
         }
 
         public override void ProcessMessage(ReferenceCountedSceneGraphMessage message)

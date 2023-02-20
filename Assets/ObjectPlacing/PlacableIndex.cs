@@ -1,30 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ubik.Messaging;
+using Ubiq.Messaging;
 
 namespace Transballer.PlaceableObjects
 {
     public static class PlaceableIndex
     {
-        public static Dictionary<int, Placeable> placedObjects = new Dictionary<int, Placeable>();
+        public static Dictionary<NetworkId, Placeable> placedObjects = new Dictionary<NetworkId, Placeable>();
 
         public static void AddPlacedObject(Placeable placeable)
         {
-            if (placedObjects.ContainsKey((int)placeable.Id))
+            if (placedObjects.ContainsKey(placeable.NetworkId))
             {
-                throw new System.Exception($"placed id {placeable.Id} already exists");
+                throw new System.Exception($"placed id {placeable.NetworkId} already exists");
             }
-            placedObjects[(int)placeable.Id] = placeable;
+            placedObjects[placeable.NetworkId] = placeable;
         }
 
         public static void RemovePlacedObject(Placeable placeable)
         {
-            if (!placedObjects.ContainsKey((int)placeable.Id))
+            if (!placedObjects.ContainsKey(placeable.NetworkId))
             {
-                throw new System.Exception($"placed id {placeable.Id} does not exist");
+                throw new System.Exception($"placed id {placeable.NetworkId} does not exist");
             }
-            placedObjects.Remove((int)placeable.Id);
+            placedObjects.Remove(placeable.NetworkId);
         }
 
 

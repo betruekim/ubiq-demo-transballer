@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ubik.Samples;
 using Transballer.NetworkedPhysics;
+using Ubiq.Spawning;
 
 namespace Transballer.Levels
 {
@@ -10,11 +10,11 @@ namespace Transballer.Levels
     public class Lava : MonoBehaviour
     {
         public GameObject lavaParticlesPrefab;
-        private NetworkSpawner spawner;
+        private NetworkSpawnManager spawner;
         new private ParticleSystem particleSystem;
         private void Awake()
         {
-            spawner = GameObject.FindObjectOfType<NetworkSpawner>();
+            spawner = GameObject.FindObjectOfType<NetworkSpawnManager>();
             particleSystem = GetComponentInChildren<ParticleSystem>();
             ParticleSystem.ShapeModule shape = particleSystem.shape;
             shape.scale = transform.lossyScale;

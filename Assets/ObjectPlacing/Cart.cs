@@ -1,5 +1,5 @@
 using UnityEngine;
-using Ubik.Messaging;
+using Ubiq.Messaging;
 using System.Collections.Generic;
 
 namespace Transballer.PlaceableObjects

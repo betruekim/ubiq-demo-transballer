@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-namespace Ubik.XR
+namespace Ubiq.XR
 {
     /// <summary>
     /// Uses the object under the cursor.

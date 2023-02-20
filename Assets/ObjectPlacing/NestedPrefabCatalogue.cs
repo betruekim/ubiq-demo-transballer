@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Ubik.Samples;
+using Ubiq.Samples;
+using Ubiq.Spawning;
 
 // nested prefab catalogue, can pass in sub-catalogues
 // make sure to not use indexing, since indexing isn't preserved
@@ -27,7 +28,7 @@ public class NestedPrefabCatalogue : PrefabCatalogue
 
     public static GameObject GetPrefabFromName(string name)
     {
-        PrefabCatalogue catalogue = GameObject.FindObjectOfType<NetworkSpawner>().catalogue;
+        PrefabCatalogue catalogue = GameObject.FindObjectOfType<NetworkSpawnManager>().catalogue;
         foreach (GameObject g in catalogue.prefabs)
         {
             if (g.name.CompareTo(name) == 0)

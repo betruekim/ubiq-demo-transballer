@@ -1,4 +1,4 @@
-using Ubik.Messaging;
+using Ubiq.Messaging;
 using UnityEngine;
 
 namespace Transballer.PlaceableObjects

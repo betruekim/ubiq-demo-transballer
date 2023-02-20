@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Transballer.PlaceableObjects;
-using Ubik.Samples;
+using Ubiq.Spawning;
 
 // had to create this to debug snapping direction and position
 // TODO: talk about this in report

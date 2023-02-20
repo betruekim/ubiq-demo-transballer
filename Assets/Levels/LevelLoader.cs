@@ -1,23 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Ubiq.Messaging;
+using Ubiq.Rooms;
+using Ubiq.Spawning;
 using UnityEngine;
-using Ubik.Samples;
-using Ubik.Messaging;
-using Ubik.Rooms;
 
 namespace Transballer.Levels
 {
-    public class LevelLoader : MonoBehaviour, INetworkComponent, INetworkObject
+    public class LevelLoader : MonoBehaviour
     {
-        NetworkSpawner networkSpawner;
+        NetworkSpawnManager networkSpawner;
         NetworkContext ctx;
-        NetworkId INetworkObject.Id { get; } = new NetworkId(10);
+        public NetworkId NetworkId { get; } = new NetworkId(10);
 
         public PrefabCatalogue levels;
         public GameObject doorPrefab;
         public PrefabCatalogue interactables;
+        public GameObject ui;
 
-        GameObject ui;
         GameObject environment;
 
         Transform doorsParent;
@@ -25,19 +26,29 @@ namespace Transballer.Levels
 
         LevelManager currentLevel;
 
-
         void Awake()
         {
-            ctx = NetworkScene.Register(this);
-
-            networkSpawner = GameObject.FindObjectOfType<NetworkSpawner>();
-            ui = GameObject.Find("UI");
-            environment = GameObject.Find("environment");
-
-            GameObject.FindObjectOfType<RoomClient>().OnRoom.AddListener(SpawnDoors);
+            environment = GameObject.Find("Environment");
         }
 
-        void SpawnDoors()
+        private void Start()
+        {
+            ctx = NetworkScene.Register(this);
+            RoomClient.Find(this).OnJoinedRoom.AddListener(SpawnDoors);
+            networkSpawner = NetworkSpawnManager.Find(this);
+            networkSpawner.OnSpawned.AddListener(OnSpawned);
+        }
+
+        void OnSpawned(GameObject g, IRoom room, IPeer peer, NetworkSpawnOrigin origin)
+        {
+            var lm = g.GetComponentInChildren<LevelManager>();
+            if(lm) // We have spawned a level
+            {
+                LevelSpawned(lm);
+            }
+        }
+
+        void SpawnDoors(IRoom room)
         {
             if (doorsParent != null)
             {
@@ -89,10 +100,9 @@ namespace Transballer.Levels
                         currentLevel.ballList.RemoveAt(0);
                     }
                 }
-                var ids = new List<int>(PlaceableObjects.PlaceableIndex.placedObjects.Keys);
-                foreach (var id in ids)
+
+                foreach (var id in PlaceableObjects.PlaceableIndex.placedObjects.Keys.ToArray())
                 {
-                    // TODO THIS STILL BREAKS CONTINUITY MAYBE?
                     PlaceableObjects.PlaceableIndex.placedObjects[id].RemoveSudo();
                 }
 
@@ -109,7 +119,7 @@ namespace Transballer.Levels
                 }
                 else if (levelIndex >= 0 && levelIndex < levels.prefabs.Count)
                 {
-                    networkSpawner.Spawn(levels.prefabs[levelIndex]);
+                    networkSpawner.SpawnWithRoomScope(levels.prefabs[levelIndex]);
                     ctx.Send(new OnLoad().Serialize());
                     OnLoadLevel();
                 }
@@ -165,7 +175,7 @@ namespace Transballer.Levels
 
             if (NetworkManager.roomOwner && currentLevel.name == "levelSandbox")
             {
-                interactablesTable = networkSpawner.Spawn(NestedPrefabCatalogue.GetPrefabFromName("interactablesTable")).GetComponent<Transballer.NetworkedPhysics.Table>();
+                interactablesTable = networkSpawner.SpawnWithPeerScope(NestedPrefabCatalogue.GetPrefabFromName("interactablesTable")).GetComponent<Transballer.NetworkedPhysics.Table>();
                 GameObject tableSpawnPoint = GameObject.Find("tableSpawnPoint");
                 if (tableSpawnPoint)
                 {
@@ -212,7 +222,7 @@ namespace Transballer.Levels
             movePlayer();
         }
 
-        void INetworkComponent.ProcessMessage(ReferenceCountedSceneGraphMessage message)
+        public void ProcessMessage(ReferenceCountedSceneGraphMessage message)
         {
             string msgType = Messages.GetType(message.ToString());
             switch (msgType)

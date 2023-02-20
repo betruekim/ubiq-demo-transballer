@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ubik.Samples;
+using Ubiq.Samples;
+using Ubiq.Spawning;
 
 namespace Transballer.NetworkedPhysics
 {
@@ -27,7 +28,7 @@ namespace Transballer.NetworkedPhysics
             }
             Debug.Log("ON SPAWNED TABLE");
             // spawn extras
-            NetworkSpawner spawner = GameObject.FindObjectOfType<NetworkSpawner>();
+            var spawner = GameObject.FindObjectOfType<NetworkSpawnManager>();
             spawned = new List<NetworkedRigidbody>();
             for (int i = 0; i < NetworkManager.peers.Count + 1; i++)
             {
@@ -38,7 +39,7 @@ namespace Transballer.NetworkedPhysics
                         continue;
                     }
                     Vector3 pos = transform.position + Vector3.up + Random.insideUnitSphere * 0.05f;
-                    GameObject spawnedPrefab = spawner.Spawn(prefab);
+                    GameObject spawnedPrefab = spawner.SpawnWithPeerScope(prefab);
                     spawnedPrefab.transform.position = pos;
                     spawnedPrefab.transform.rotation = Random.rotation;
                     NetworkedRigidbody networkedRigidbody = spawnedPrefab.GetComponent<NetworkedRigidbody>();
